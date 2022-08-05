@@ -30,11 +30,11 @@ namespace VIVA_report_analyser
         public String IN { get; set; }
         public String TR { get; set; }
         public String MU { get; set; }
-        public String ML { get; set; }
-        public String MM { get; set; }
-        public String MH { get; set; }
+        public Double ML { get; set; }
+        public Double MM { get; set; }
+        public Double MH { get; set; }
         public String MR { get; set; }
-        public String MP { get; set; }
+        public Double MP { get; set; }
         public String TT { get; set; }
         public String IS { get; set; }
         public String DG { get; set; }

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Xml.Linq;
+using System.Globalization;
 
 namespace VIVA_report_analyser
 {
@@ -34,7 +35,7 @@ namespace VIVA_report_analyser
                     XElement root = doc.Root;
                     List<XElement> tests = root.Element("BI").Elements("TEST").ToList();
 
-                    var queryContinuity = tests.Select(t => new TestDto { C = t.Attribute("C").Value, SG1 = t.Attribute("SG1").Value, SG2 = t.Attribute("SG2").Value, PD1 = t.Attribute("PD1").Value, PD2 = t.Attribute("PD2").Value, MR = t.Attribute("MR").Value, MP = t.Attribute("MP").Value, TT = t.Attribute("TT").Value });
+                    var queryContinuity = tests.Select(t => new TestDto { C = t.Attribute("C").Value, SG1 = t.Attribute("SG1").Value, SG2 = t.Attribute("SG2").Value, PD1 = t.Attribute("PD1").Value, PD2 = t.Attribute("PD2").Value, MR = t.Attribute("MR").Value, MP = Double.Parse(t.Attribute("MP").Value.TrimEnd('%'), new CultureInfo("en-US")) / 100, TT = t.Attribute("TT").Value, MM = Double.Parse(t.Attribute("TT").Value, new CultureInfo("en-US")) });
                     DataTable tableContinuity = this.ConvertToDataTable(queryContinuity.ToList());
                     DataView viewContinuity = tableContinuity.DefaultView;
 
@@ -80,6 +81,8 @@ namespace VIVA_report_analyser
                     DataGridView dataGridViewContinuity = new DataGridView();
                     pageTestContinuity.Controls.Add(dataGridViewContinuity);
                     dataGridViewContinuity.Dock = DockStyle.Fill;
+
+                    //dataGridViewContinuity.Columns["MP"].DefaultCellStyle.Format;
 
                     TabPage pageTestIsolation = new TabPage("Тест изоляции");
                     tabTests.TabPages.Add(pageTestIsolation);
@@ -135,7 +138,16 @@ namespace VIVA_report_analyser
         {
         }
 
-   
+        private void AddNewTabFile(string nameTab, TabControl tabControl, DataView view)
+        {
+            TabPage page = new TabPage(nameTab);
+            tabControl.TabPages.Add(page);
+            DataGridView dataGridView = new DataGridView();
+            page.Controls.Add(dataGridView);
+            dataGridView.Dock = DockStyle.Fill;
+            dataGridView.DataSource = view;
+        }
+
         private DataTable ConvertToDataTable<T>(IList<T> data)
         {
             PropertyDescriptorCollection properties =
