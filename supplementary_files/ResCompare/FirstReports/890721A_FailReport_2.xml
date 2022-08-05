@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<?xml-stylesheet type="text/xsl" href="TestReport.xsl"?>
+<R>
+<Info Version="1.0"/>
+
+<PrgC AD="15/06/2020" SD="O" PN="Single Tip 6mils" TU="40" TN="0" TD="-1" TT="0" BU="40" BN="0" BD="-1" BT="0" TH="1.5" SX="6" SZ="10" TO="Soft" TY="P" MR="N" TM="-0.5" BM="-0.5" RT="XY" NR="0" MO="0.05" RA="XY" PV="5" />
+
+<ST TN="SN 202382" NMP="LNVK_468119_002_8_PRM_C_V5" NM="LNVK_468119_002_8_PRM_C_V5" LT=" " BC="2001009037750" OP="seica" TS="Normal Test" WS="" SD="01-02-2022 16:59:36" ME="100" PA="0" SI="1" />
+
+<BI BCP="2001009037750" BC="" ID="0" TR="1" AK="0" SD="01-02-2022 16:59:36" TT="312" NT="1326" NF="1" >
+<TEST F="RESISTOR" FT="RESISTOR" C="239-244-986-471" SG1="GND" SG2="T_RST" PD1="PADVIA8" PD2="C64-1" XY1="X=103.854 Y=309.887" XY2="X=241.627 Y=263.276" CP1="GND" CP2="C64-1,DD1-4,DD3-91,R89-2" SC="RESISTOR" NM="R89" DN="R1-12-0A" PT="0.0" NT="0.0" IDC="249" MK="RESISTOR" IDM="47" PW="0" LB="Res" IN="" IDL="78" TR="1" MU="KOhm" ML="9" MM="10" MH="11" MR="8.83303" MP="-11.67%" TT="16088.531" IS="0" DG="7" />
+</BI>
+
+<ET NMP="LNVK_468119_002_8_PRM_C_V5" NM="LNVK_468119_002_8_PRM_C_V5" LT=" " BC="2001009037750" OP="seica" TR="1" AK="0" TT="00:05:12" NT="1326" NF="1" ED="01-02-2022 17:04:48" DM="0" >
+</ET>
+</R>

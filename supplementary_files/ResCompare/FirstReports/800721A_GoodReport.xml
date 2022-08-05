@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<?xml-stylesheet type="text/xsl" href="TestReport.xsl"?>
+<R>
+<Info Version="1.0"/>
+
+<PrgC AD="15/06/2020" SD="O" PN="Single Tip 6mils" TU="40" TN="0" TD="-1" TT="0" BU="40" BN="0" BD="-1" BT="0" TH="1.5" SX="6" SZ="10" TO="Soft" TY="P" MR="N" TM="-0.5" BM="-0.5" RT="XY" NR="0" MO="0.05" RA="XY" PV="5" />
+
+<ST TN="SN 202382" NMP="LNVK_468119_002_8_PRM_C_V5" NM="LNVK_468119_002_8_PRM_C_V5" LT=" " BC="2001009037941" OP="seica" TS="Normal Test" WS="" SD="01-02-2022 16:40:21" ME="100" PA="0" SI="1" />
+
+<BI BCP="2001009037941" BC="" ID="0" TR="0" AK="0" SD="01-02-2022 16:40:21" TT="277" NT="1326" NF="0" >
+</BI>
+
+<ET NMP="LNVK_468119_002_8_PRM_C_V5" NM="LNVK_468119_002_8_PRM_C_V5" LT=" " BC="2001009037941" OP="seica" TR="0" AK="0" TT="00:04:37" NT="1326" NF="0" ED="01-02-2022 16:44:58" DM="0" >
+</ET>
+</R>
