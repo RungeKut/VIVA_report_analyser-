@@ -20,6 +20,10 @@ namespace VIVA_report_analyser
             InitializeComponent();
         }
 
+        public static bool errorOpenFileFlag = false;
+        public static List<string> openFilesNames = new List<string>() { null };
+        public static List<string> errorOpenFilesNames = new List<string>() { null };
+
         private void button1_Click_1(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
@@ -36,183 +40,263 @@ namespace VIVA_report_analyser
                 Title = "Выберите файлы .xml"
                 //InitialDirectory = @"C:\"
             };
-            openFileDialog.ShowDialog();
+            //openFileDialog.ShowDialog();
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
             //if (openFileDialog.FileName == String.Empty)
-            //    return;
-            //if (openFileDialog.ShowDialog() == DialogResult.OK)
-            foreach (string file in openFileDialog.FileNames)
+            //return;
+            
+            for (int file = 0; file < openFileDialog.FileNames.Length; file++)
             {
                 try
                 {
                     XDocument doc = null; // создаем пустой XML документ
-                    using (var Reader = new StreamReader(file, System.Text.Encoding.UTF8))
+                    using (var Reader = new StreamReader(openFileDialog.FileNames[file], System.Text.Encoding.UTF8))
                     {
                         doc = XDocument.Load(Reader);
                         Reader.Close();
                     }
                     XElement root = doc.Root;
-                    List<XElement> tests = root.Element("BI").Elements("TEST").ToList();
-
-                    List<XElement> testsContinuity = SelectComponentTests("CONTINUITY", root);
-                    List<XElement> testsIsolation = SelectComponentTests("ISOLATION", root);
-                    List<XElement> testsResistor = SelectComponentTests("RESISTOR", root);
-                    List<XElement> testsCapacitor = SelectComponentTests("CAPACITOR", root);
-                    List<XElement> testsInductance = SelectComponentTests("INDUCTANCE", root);
-                    List<XElement> testsAutic = SelectComponentTests("AUTIC", root);
-                    //List<XElement> testsOther      = SelectComponentTests("", root);
-
-                    var queryContinuity = testsContinuity.Select(t =>
-                    new TestDto
+                    if ((root.Element("BI") == null) || (root.Element("BI").Element("TEST") == null))
                     {
-                        C = t.Attribute("C").Value,
-                        SG1 = t.Attribute("SG1").Value,
-                        SG2 = t.Attribute("SG2").Value,
-                        PD1 = t.Attribute("PD1").Value,
-                        PD2 = t.Attribute("PD2").Value,
-                        MR = Double.Parse(t.Attribute("MR").Value, new CultureInfo("en-US")),
-                        MP = Double.Parse(t.Attribute("MP").Value.TrimEnd('%'), new CultureInfo("en-US")) / 100,
-                        TT = Double.Parse(t.Attribute("TT").Value, new CultureInfo("en-US"))
-                    });
-                    DataTable tableContinuity = this.ConvertToDataTable(queryContinuity.ToList());
-                    DataView viewContinuity = tableContinuity.DefaultView;
-
-                    var queryIsolation = testsIsolation.Select(t =>
-                    new TestDto
+                        errorOpenFilesNames.Add(openFileDialog.SafeFileNames[file]);
+                        errorOpenFileFlag = true;
+                    }
+                    else
                     {
-                        C = t.Attribute("C").Value,
-                        SG1 = t.Attribute("SG1").Value,
-                        SG2 = t.Attribute("SG2").Value,
-                        PD1 = t.Attribute("PD1").Value,
-                        PD2 = t.Attribute("PD2").Value,
-                        MR = Double.Parse(t.Attribute("MR").Value, new CultureInfo("en-US")),
-                        MP = Double.Parse(t.Attribute("MP").Value.TrimEnd('%'), new CultureInfo("en-US")) / 100,
-                        TT = Double.Parse(t.Attribute("TT").Value, new CultureInfo("en-US"))
-                    });
-                    DataTable tableIsolation = this.ConvertToDataTable(queryIsolation.ToList());
-                    DataView viewIsolation = tableIsolation.DefaultView;
+                        List<XElement> tests = root.Element("BI").Elements("TEST").ToList();
+                        List<XElement> testsContinuity = SelectComponentTests("CONTINUITY", root);
+                        List<XElement> testsIsolation = SelectComponentTests("ISOLATION", root);
+                        List<XElement> testsResistor = SelectComponentTests("RESISTOR", root);
+                        List<XElement> testsCapacitor = SelectComponentTests("CAPACITOR", root);
+                        List<XElement> testsInductance = SelectComponentTests("INDUCTANCE", root);
+                        List<XElement> testsAutic = SelectComponentTests("AUTIC", root);
+                        //List<XElement> testsOther      = SelectComponentTests("", root);
 
-                    var queryResistor = testsResistor.Select(t =>
-                    new TestDto
-                    {
-                        C = t.Attribute("C").Value,
-                        SG1 = t.Attribute("SG1").Value,
-                        SG2 = t.Attribute("SG2").Value,
-                        PD1 = t.Attribute("PD1").Value,
-                        PD2 = t.Attribute("PD2").Value,
-                        MU = t.Attribute("MU").Value,
-                        ML = Double.Parse(t.Attribute("ML").Value, new CultureInfo("en-US")),
-                        MM = Double.Parse(t.Attribute("MM").Value, new CultureInfo("en-US")),
-                        MH = Double.Parse(t.Attribute("MH").Value, new CultureInfo("en-US")),
-                        MR = Double.Parse(t.Attribute("MR").Value, new CultureInfo("en-US")),
-                        MP = Double.Parse(t.Attribute("MP").Value.TrimEnd('%'), new CultureInfo("en-US")) / 100,
-                        TT = Double.Parse(t.Attribute("TT").Value, new CultureInfo("en-US"))
-                    });
-                    DataTable tableResistor = this.ConvertToDataTable(queryResistor.ToList());
-                    DataView viewResistor = tableResistor.DefaultView;
+                        var queryContinuity = testsContinuity.Select(t =>
+                        new TestDto
+                        {
+                            C = t.Attribute("C").Value,
+                            SG1 = t.Attribute("SG1").Value,
+                            SG2 = t.Attribute("SG2").Value,
+                            PD1 = t.Attribute("PD1").Value,
+                            PD2 = t.Attribute("PD2").Value,
+                            MR = Double.Parse(t.Attribute("MR").Value, new CultureInfo("en-US")),
+                            MP = Double.Parse(t.Attribute("MP").Value.TrimEnd('%'), new CultureInfo("en-US")),
+                            TT = Double.Parse(t.Attribute("TT").Value, new CultureInfo("en-US"))
+                        });
+                        DataTable tableContinuity = this.ConvertToDataTable(queryContinuity.ToList());
+                        DataView viewContinuity = tableContinuity.DefaultView;
 
-                    var queryCapacitor = testsCapacitor.Select(t =>
-                    new TestDto
-                    {
-                        C = t.Attribute("C").Value,
-                        SG1 = t.Attribute("SG1").Value,
-                        SG2 = t.Attribute("SG2").Value,
-                        PD1 = t.Attribute("PD1").Value,
-                        PD2 = t.Attribute("PD2").Value,
-                        MU = t.Attribute("MU").Value,
-                        ML = Double.Parse(t.Attribute("ML").Value, new CultureInfo("en-US")),
-                        MM = Double.Parse(t.Attribute("MM").Value, new CultureInfo("en-US")),
-                        MH = Double.Parse(t.Attribute("MH").Value, new CultureInfo("en-US")),
-                        MR = Double.Parse(t.Attribute("MR").Value, new CultureInfo("en-US")),
-                        MP = Double.Parse(t.Attribute("MP").Value.TrimEnd('%'), new CultureInfo("en-US")) / 100,
-                        TT = Double.Parse(t.Attribute("TT").Value, new CultureInfo("en-US"))
-                    });
-                    DataTable tableCapacitor = this.ConvertToDataTable(queryCapacitor.ToList());
-                    DataView viewCapacitor = tableCapacitor.DefaultView;
+                        var queryIsolation = testsIsolation.Select(t =>
+                        new TestDto
+                        {
+                            C = t.Attribute("C").Value,
+                            SG1 = t.Attribute("SG1").Value,
+                            SG2 = t.Attribute("SG2").Value,
+                            PD1 = t.Attribute("PD1").Value,
+                            PD2 = t.Attribute("PD2").Value,
+                            MR = Double.Parse(t.Attribute("MR").Value, new CultureInfo("en-US")),
+                            MP = Double.Parse(t.Attribute("MP").Value.TrimEnd('%'), new CultureInfo("en-US")),
+                            TT = Double.Parse(t.Attribute("TT").Value, new CultureInfo("en-US"))
+                        });
+                        DataTable tableIsolation = this.ConvertToDataTable(queryIsolation.ToList());
+                        DataView viewIsolation = tableIsolation.DefaultView;
 
-                    var queryInductance = testsInductance.Select(t =>
-                    new TestDto
-                    {
-                        C = t.Attribute("C").Value,
-                        SG1 = t.Attribute("SG1").Value,
-                        SG2 = t.Attribute("SG2").Value,
-                        PD1 = t.Attribute("PD1").Value,
-                        PD2 = t.Attribute("PD2").Value,
-                        MU = t.Attribute("MU").Value,
-                        ML = Double.Parse(t.Attribute("ML").Value, new CultureInfo("en-US")),
-                        MM = Double.Parse(t.Attribute("MM").Value, new CultureInfo("en-US")),
-                        MH = Double.Parse(t.Attribute("MH").Value, new CultureInfo("en-US")),
-                        MR = Double.Parse(t.Attribute("MR").Value, new CultureInfo("en-US")),
-                        MP = Double.Parse(t.Attribute("MP").Value.TrimEnd('%'), new CultureInfo("en-US")) / 100,
-                        TT = Double.Parse(t.Attribute("TT").Value, new CultureInfo("en-US"))
-                    });
-                    DataTable tableInductance = this.ConvertToDataTable(queryInductance.ToList());
-                    DataView viewInductance = tableInductance.DefaultView;
+                        var queryResistor = testsResistor.Select(t =>
+                        new TestDto
+                        {
+                            C = t.Attribute("C").Value,
+                            SG1 = t.Attribute("SG1").Value,
+                            SG2 = t.Attribute("SG2").Value,
+                            PD1 = t.Attribute("PD1").Value,
+                            PD2 = t.Attribute("PD2").Value,
+                            MU = t.Attribute("MU").Value,
+                            ML = Double.Parse(t.Attribute("ML").Value, new CultureInfo("en-US")),
+                            MM = Double.Parse(t.Attribute("MM").Value, new CultureInfo("en-US")),
+                            MH = Double.Parse(t.Attribute("MH").Value, new CultureInfo("en-US")),
+                            MR = Double.Parse(t.Attribute("MR").Value, new CultureInfo("en-US")),
+                            MP = Double.Parse(t.Attribute("MP").Value.TrimEnd('%'), new CultureInfo("en-US")),
+                            TT = Double.Parse(t.Attribute("TT").Value, new CultureInfo("en-US"))
+                        });
+                        DataTable tableResistor = this.ConvertToDataTable(queryResistor.ToList());
+                        DataView viewResistor = tableResistor.DefaultView;
 
-                    var queryAutic = testsAutic.Select(t =>
-                    new TestDto
-                    {
-                        C = t.Attribute("C").Value,
-                        SG1 = t.Attribute("SG1").Value,
-                        SG2 = t.Attribute("SG2").Value,
-                        PD1 = t.Attribute("PD1").Value,
-                        PD2 = t.Attribute("PD2").Value,
-                        MU = t.Attribute("MU").Value,
-                        ML = Double.Parse(t.Attribute("ML").Value, new CultureInfo("en-US")),
-                        MM = Double.Parse(t.Attribute("MM").Value, new CultureInfo("en-US")),
-                        MH = Double.Parse(t.Attribute("MH").Value, new CultureInfo("en-US")),
-                        MR = Double.Parse(t.Attribute("MR").Value, new CultureInfo("en-US")),
-                        MP = Double.Parse(t.Attribute("MP").Value.TrimEnd('%'), new CultureInfo("en-US")) / 100,
-                        TT = Double.Parse(t.Attribute("TT").Value, new CultureInfo("en-US"))
-                    });
-                    DataTable tableAutic = this.ConvertToDataTable(queryAutic.ToList());
-                    DataView viewAutic = tableAutic.DefaultView;
+                        var queryCapacitor = testsCapacitor.Select(t =>
+                        new TestDto
+                        {
+                            C = t.Attribute("C").Value,
+                            SG1 = t.Attribute("SG1").Value,
+                            SG2 = t.Attribute("SG2").Value,
+                            PD1 = t.Attribute("PD1").Value,
+                            PD2 = t.Attribute("PD2").Value,
+                            MU = t.Attribute("MU").Value,
+                            ML = Double.Parse(t.Attribute("ML").Value, new CultureInfo("en-US")),
+                            MM = Double.Parse(t.Attribute("MM").Value, new CultureInfo("en-US")),
+                            MH = Double.Parse(t.Attribute("MH").Value, new CultureInfo("en-US")),
+                            MR = Double.Parse(t.Attribute("MR").Value, new CultureInfo("en-US")),
+                            MP = Double.Parse(t.Attribute("MP").Value.TrimEnd('%'), new CultureInfo("en-US")),
+                            TT = Double.Parse(t.Attribute("TT").Value, new CultureInfo("en-US"))
+                        });
+                        DataTable tableCapacitor = this.ConvertToDataTable(queryCapacitor.ToList());
+                        DataView viewCapacitor = tableCapacitor.DefaultView;
 
-                    var queryOther = tests.Select(t =>
-                    new TestDto
-                    {
-                        F = t.Attribute("F").Value,
-                        C = t.Attribute("C").Value,
-                        SG1 = t.Attribute("SG1").Value,
-                        SG2 = t.Attribute("SG2").Value,
-                        PD1 = t.Attribute("PD1").Value,
-                        PD2 = t.Attribute("PD2").Value,
-                        MU = t.Attribute("MU").Value,
-                        ML = Double.Parse(t.Attribute("ML").Value, new CultureInfo("en-US")),
-                        MM = Double.Parse(t.Attribute("MM").Value, new CultureInfo("en-US")),
-                        MH = Double.Parse(t.Attribute("MH").Value, new CultureInfo("en-US")),
-                        MR = Double.Parse(t.Attribute("MR").Value, new CultureInfo("en-US")),
-                        MP = Double.Parse(t.Attribute("MP").Value.TrimEnd('%'), new CultureInfo("en-US")) / 100,
-                        TT = Double.Parse(t.Attribute("TT").Value, new CultureInfo("en-US"))
-                    });
-                    DataTable tableOther = this.ConvertToDataTable(queryOther.ToList());
-                    DataView viewOther = tableOther.DefaultView;
+                        var queryInductance = testsInductance.Select(t =>
+                        new TestDto
+                        {
+                            C = t.Attribute("C").Value,
+                            SG1 = t.Attribute("SG1").Value,
+                            SG2 = t.Attribute("SG2").Value,
+                            PD1 = t.Attribute("PD1").Value,
+                            PD2 = t.Attribute("PD2").Value,
+                            MU = t.Attribute("MU").Value,
+                            ML = Double.Parse(t.Attribute("ML").Value, new CultureInfo("en-US")),
+                            MM = Double.Parse(t.Attribute("MM").Value, new CultureInfo("en-US")),
+                            MH = Double.Parse(t.Attribute("MH").Value, new CultureInfo("en-US")),
+                            MR = Double.Parse(t.Attribute("MR").Value, new CultureInfo("en-US")),
+                            MP = Double.Parse(t.Attribute("MP").Value.TrimEnd('%'), new CultureInfo("en-US")),
+                            TT = Double.Parse(t.Attribute("TT").Value, new CultureInfo("en-US"))
+                        });
+                        DataTable tableInductance = this.ConvertToDataTable(queryInductance.ToList());
+                        DataView viewInductance = tableInductance.DefaultView;
 
+                        var queryAutic = testsAutic.Select(t =>
+                        new TestDto
+                        {
+                            C = t.Attribute("C").Value,
+                            SG1 = t.Attribute("SG1").Value,
+                            SG2 = t.Attribute("SG2").Value,
+                            PD1 = t.Attribute("PD1").Value,
+                            PD2 = t.Attribute("PD2").Value,
+                            MU = t.Attribute("MU").Value,
+                            ML = Double.Parse(t.Attribute("ML").Value, new CultureInfo("en-US")),
+                            MM = Double.Parse(t.Attribute("MM").Value, new CultureInfo("en-US")),
+                            MH = Double.Parse(t.Attribute("MH").Value, new CultureInfo("en-US")),
+                            MR = Double.Parse(t.Attribute("MR").Value, new CultureInfo("en-US")),
+                            MP = Double.Parse(t.Attribute("MP").Value.TrimEnd('%'), new CultureInfo("en-US")),
+                            TT = Double.Parse(t.Attribute("TT").Value, new CultureInfo("en-US"))
+                        });
+                        DataTable tableAutic = this.ConvertToDataTable(queryAutic.ToList());
+                        DataView viewAutic = tableAutic.DefaultView;
 
+                        var queryOther = tests.Select(t =>
+                        new TestDto
+                        {
+                            F = t.Attribute("F").Value,
+                            C = t.Attribute("C").Value,
+                            SG1 = t.Attribute("SG1").Value,
+                            SG2 = t.Attribute("SG2").Value,
+                            PD1 = t.Attribute("PD1").Value,
+                            PD2 = t.Attribute("PD2").Value,
+                            MU = t.Attribute("MU").Value,
+                            ML = Double.Parse(t.Attribute("ML").Value, new CultureInfo("en-US")),
+                            MM = Double.Parse(t.Attribute("MM").Value, new CultureInfo("en-US")),
+                            MH = Double.Parse(t.Attribute("MH").Value, new CultureInfo("en-US")),
+                            MR = Double.Parse(t.Attribute("MR").Value, new CultureInfo("en-US")),
+                            MP = Double.Parse(t.Attribute("MP").Value.TrimEnd('%'), new CultureInfo("en-US")),
+                            TT = Double.Parse(t.Attribute("TT").Value, new CultureInfo("en-US"))
+                        });
+                        DataTable tableOther = this.ConvertToDataTable(queryOther.ToList());
+                        DataView viewOther = tableOther.DefaultView;
 
+                        TabPage page = new TabPage(openFileDialog.SafeFileNames[file]);
+                        tabControl2.TabPages.Add(page);
 
-                    TabPage page = new TabPage(openFileDialog.SafeFileName);
-                    tabControl2.TabPages.Add(page);
+                        tabControl2.MouseClick += FileTab_MouseClick;
+                        page.MouseClick += Page_MouseClick;
 
-                    TabControl tabTests = new TabControl();
-                    page.Controls.Add(tabTests);
-                    tabTests.Dock = DockStyle.Fill;
-                    tabTests.ItemSize = new System.Drawing.Size(0, 24);
-                    tabTests.SelectedIndex = 0;
-                    tabTests.TabIndex = 1;
+                        ContextMenuStrip FileTabMenu = new ContextMenuStrip();
+                        ToolStripMenuItem CloseTab_MenuItem = new ToolStripMenuItem("Закрыть вкладку");
+                        ToolStripMenuItem CloseTabs_MenuItem = new ToolStripMenuItem("Закрыть все вкладки");
+                        ToolStripMenuItem RecoverTab_MenuItem = new ToolStripMenuItem("Открыть закрытую вкладку");
 
-                    AddNewComponentTab("Тест на обрыв", tabTests, viewContinuity, TestDto.ColumnMaskContinuity);
-                    AddNewComponentTab("Тест изоляции", tabTests, viewIsolation,  TestDto.ColumnMaskIsolation);
-                    AddNewComponentTab("Резисторы",     tabTests, viewResistor,   TestDto.ColumnMaskResistor);
-                    AddNewComponentTab("Конденсаторы",  tabTests, viewCapacitor,  TestDto.ColumnMaskCapacitor);
-                    AddNewComponentTab("Индуктивности", tabTests, viewInductance, TestDto.ColumnMaskInductance);
-                    AddNewComponentTab("Чип",           tabTests, viewAutic,      TestDto.ColumnMaskAutic);
-                    AddNewComponentTab("Остальное",     tabTests, viewOther,      TestDto.ColumnMaskOther);
+                        FileTabMenu.Items.AddRange(new[]
+                        {
+                            CloseTab_MenuItem,
+                            CloseTabs_MenuItem,
+                            RecoverTab_MenuItem
+                        });
+                        page.ContextMenuStrip = FileTabMenu;
+
+                        TabControl tabTests = new TabControl();
+                        page.Controls.Add(tabTests);
+                        tabTests.Dock = DockStyle.Fill;
+                        tabTests.ItemSize = new System.Drawing.Size(0, 24);
+                        tabTests.SelectedIndex = 0;
+                        tabTests.TabIndex = 1;
+                        tabTests.Name = openFileDialog.SafeFileNames[file];
+
+                        AddNewComponentTab("Тест на обрыв", tabTests, viewContinuity, TestDto.ColumnMaskContinuity);
+                        AddNewComponentTab("Тест изоляции", tabTests, viewIsolation,  TestDto.ColumnMaskIsolation);
+                        AddNewComponentTab("Резисторы",     tabTests, viewResistor,   TestDto.ColumnMaskResistor);
+                        AddNewComponentTab("Конденсаторы",  tabTests, viewCapacitor,  TestDto.ColumnMaskCapacitor);
+                        AddNewComponentTab("Индуктивности", tabTests, viewInductance, TestDto.ColumnMaskInductance);
+                        AddNewComponentTab("Чип",           tabTests, viewAutic,      TestDto.ColumnMaskAutic);
+                        AddNewComponentTab("Остальное",     tabTests, viewOther,      TestDto.ColumnMaskOther);
+
+                        openFilesNames.Add(tabTests.Name);
+                    }
                 }
                 catch (Exception ReadFileError)
                 {
                     MessageBox.Show("Ошибка при открытии файла из указанного места. Подробнее: " + ReadFileError.Message, "Ошибка чтения файла", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+            if (errorOpenFileFlag)
+            {
+                string files = String.Join("\n", errorOpenFilesNames);
+                MessageBox.Show("Неверный формат файлов:\n\n" + files, "Ошибка чтения", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                errorOpenFilesNames.Clear();
+                errorOpenFileFlag = false;
+            }
+        }
+
+        public int nowMouseClickFileTab = 0;
+        private void FileTab_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                ContextMenuStrip fileTabMenu = new ContextMenuStrip();
+                ToolStripMenuItem CloseTab_MenuItem   = new ToolStripMenuItem("Закрыть вкладку");
+                ToolStripMenuItem CloseTabs_MenuItem  = new ToolStripMenuItem("Закрыть все вкладки");
+                ToolStripMenuItem RecoverTab_MenuItem = new ToolStripMenuItem("Открыть закрытую вкладку");
+
+                fileTabMenu.Items.AddRange(new[]
+                {
+                    CloseTab_MenuItem,
+                    CloseTabs_MenuItem,
+                    RecoverTab_MenuItem
+                });
+                tabControl2.ContextMenuStrip = fileTabMenu;
+                
+                //FileTabMenu.Tag = FileTabMenu.AccessibilityObject;
+                CloseTab_MenuItem.Click += CloseTab_MenuItem_Click;
+                fileTabMenu.Show(tabControl2, e.Location);
+                
+                for (int i = 0; i < tabControl2.TabPages.Count; i++)
+                {
+                    if (tabControl2.GetTabRect(i).Contains(e.Location))
+                    {
+                        nowMouseClickFileTab = i;
+                        return;
+                    }
+                }
+                
+            }
+        }
+
+        private void CloseTab_MenuItem_Click(object sender, EventArgs e)
+        {
+            //tabControl1.TabPages.Remove(((sender as ToolStripMenuItem).Owner as ContextMenuStrip).SourceControl as );
+            //var sourceControl = ((ContextMenuStrip)((ToolStripMenuItem)sender).GetCurrentParent()).SourceControl;
+            tabControl2.TabPages.Remove(tabControl2.TabPages[nowMouseClickFileTab] as TabPage);
+        }
+
+        private void Page_MouseClick(object sender, MouseEventArgs e)
+        {
+        }
+
+        private void ComponentTab_MouseClick(object sender, EventArgs e)
+        {
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -237,6 +321,7 @@ namespace VIVA_report_analyser
                 dataGridView.VirtualMode = true; //отрисовываются только те ячейки, которые видны в данный момент
                 dataGridView.ColumnHeaderMouseClick += DataGridView_ColumnHeaderMouseClick; ;
                 TestDto.VisibleColumns(ColumnMask, dataGridView);
+                dataGridView.Columns["MP"].DefaultCellStyle.Format = "#0.0\\%";
                 
             }
             catch (Exception ReadFileError)
@@ -255,12 +340,8 @@ namespace VIVA_report_analyser
                 m.MenuItems.Add(new MenuItem("Помощь"));
                 
                 m.Show(tabControl2,e.Location);
+                tabControl2.ContextMenu = m;
             }
-        }
-
-        private void ComponentTab_MouseClick(object sender, EventArgs e)
-        {
-            
         }
 
         private List<XElement> SelectComponentTests(string nameTest, XElement data)
