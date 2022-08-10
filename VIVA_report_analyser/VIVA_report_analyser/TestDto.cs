@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace VIVA_report_analyser
 {
@@ -14,22 +18,20 @@ namespace VIVA_report_analyser
             return Enum.GetValues(typeof(T)).Cast<T>();
         }
         public static string GetName<T>(int value)
+            // Работает плохо. Только первые три члена - потом Null. Проблема глубоко
         {
             return Enum.GetName(typeof(T), value);
         }
     }
-
-    //public static IEnumerable<T> GetEnumValues<T>()
-    //{
-    //    // Can't use type constraints on value types, so have to do check like this
-    //    if (typeof(T).BaseType != typeof(Enum))
-    //    {
-    //        throw new ArgumentException("T must be of type System.Enum");
-    //    }
-    //
-    //    return Enum.GetValues(typeof(T)).Cast<T>();
-    //}
-
+    internal class VivaXmlColumnsClass
+    {
+        // Поля класса
+        public string Name { get; set; }
+        public string Translation { get; set; }
+        public ulong Mask { get; set; }
+    }
+    internal class VivaXmlTestsClass : VivaXmlColumnsClass { }
+    internal class СalculationsClass : VivaXmlColumnsClass { }
     internal class TestDto
     {
         // Поля класса
@@ -66,139 +68,61 @@ namespace VIVA_report_analyser
         public Double TT { get; set; }
         public Double IS { get; set; }
         public Double DG { get; set; }
-
+        public static bool errorOpenFileFlag = false;
+        public static List<string> openFilesNames = new List<string>() { null };
+        public static List<string> errorOpenFilesNames = new List<string>() { null };
         // Константы класса
-        public enum ColumnMask : ulong
+        public static List<VivaXmlColumnsClass> vivaXmlColumns = new List<VivaXmlColumnsClass>
         {
-            F   = 0x000000001, // 0 
-            FT  = 0x000000002, // 1
-            C   = 0x000000004, // 2
-            SG1 = 0x000000008, // 3
-            SG2 = 0x000000010, // 4
-            PD1 = 0x000000020, // 5
-            PD2 = 0x000000040, // 6
-            XY1 = 0x000000080, // 7
-            XY2 = 0x000000100, // 8
-            CP1 = 0x000000200, // 9
-            CP2 = 0x000000400, // 10
-            SC  = 0x000000800, // 11
-            NM  = 0x000001000, // 12
-            DN  = 0x000002000, // 13
-            PT  = 0x000004000, // 14
-            NT  = 0x000008000, // 15
-            IDC = 0x000010000, // 16
-            MK  = 0x000020000, // 17
-            IDM = 0x000040000, // 18
-            PW  = 0x000080000, // 19
-            LB  = 0x000100000, // 20
-            IN  = 0x000200000, // 21
-            IDL = 0x000400000, // 22
-            TR  = 0x000800000, // 23
-            MU  = 0x001000000, // 24
-            ML  = 0x002000000, // 25
-            MM  = 0x004000000, // 26
-            MH  = 0x008000000, // 27
-            MR  = 0x010000000, // 28
-            MP  = 0x020000000, // 29
-            TT  = 0x040000000, // 30
-            IS  = 0x080000000, // 31
-            DG  = 0x100000000  // 32
-        }
-
-        public const ulong ColumnMaskContinuity = 0x07000007C; // Тест на обрыв
-        public const ulong ColumnMaskIsolation = 0x07000007C; // Тест изоляции
-        public const ulong ColumnMaskResistor = 0x07F00007C; // Резисторы
-        public const ulong ColumnMaskCapacitor = 0x07F00007C; // Конденсаторы
-        public const ulong ColumnMaskInductance = 0x07F00007C; // Индуктивности
-        public const ulong ColumnMaskAutic = 0x07F00007C; // Чип
-        public const ulong ColumnMaskOther = 0x07F00007D; // Остальное
-
-        public enum TestMask : ulong
-        {
-            Continuity = 0x07000007C, // Тест на обрыв
-            Isolation  = 0x07000007C, // Тест изоляции
-            Resistor   = 0x07F00007C, // Резисторы
-            Capacitor  = 0x07F00007C, // Конденсаторы
-            Inductance = 0x07F00007C, // Индуктивности
-            Autic      = 0x07F00007C, // Чип
-            Other      = 0x07F00007D  // Остальное
-        }
-
-        public Type TypeColumnMask = typeof(ColumnMask);
-        public Type TypeTestMask = typeof(TestMask);
-
-        public static List<string> columnName = new List<string>()
-        {
-            "F",   // 0 
-            "F",   // 1
-            "C",   // 2
-            "SG1", // 3
-            "SG2", // 4
-            "PD1", // 5
-            "PD2", // 6
-            "XY1", // 7
-            "XY2", // 8
-            "CP1", // 9
-            "CP2", // 10
-            "SC",  // 11
-            "NM",  // 12
-            "DN",  // 13
-            "PT",  // 14
-            "NT",  // 15
-            "IDC", // 16
-            "MK",  // 17
-            "IDM", // 18
-            "PW",  // 19
-            "LB",  // 20
-            "IN",  // 21
-            "IDL", // 22
-            "TR",  // 23
-            "MU",  // 24
-            "ML",  // 25
-            "MM",  // 26
-            "MH",  // 27
-            "MR",  // 28
-            "MP",  // 29
-            "TT",  // 30
-            "IS",  // 31
-            "DG"   // 32
+            new VivaXmlColumnsClass { Name = "F"  , Translation ="Тест",                     Mask = 0x000000001 }, // 0
+            new VivaXmlColumnsClass { Name = "FT" , Translation ="Функция",                  Mask = 0x000000002 }, // 1
+            new VivaXmlColumnsClass { Name = "C"  , Translation ="Каналы",                   Mask = 0x000000004 }, // 2
+            new VivaXmlColumnsClass { Name = "SG1", Translation ="Имя цепи 1",               Mask = 0x000000008 }, // 3
+            new VivaXmlColumnsClass { Name = "SG2", Translation ="Имя цепи 2",               Mask = 0x000000010 }, // 4
+            new VivaXmlColumnsClass { Name = "PD1", Translation ="Точка подключения 1",      Mask = 0x000000020 }, // 5
+            new VivaXmlColumnsClass { Name = "PD2", Translation ="Точка подключения 2",      Mask = 0x000000040 }, // 6
+            new VivaXmlColumnsClass { Name = "XY1", Translation ="Координаты подключения 1", Mask = 0x000000080 }, // 7
+            new VivaXmlColumnsClass { Name = "XY2", Translation ="Координаты подключения 2", Mask = 0x000000100 }, // 8
+            new VivaXmlColumnsClass { Name = "CP1", Translation ="CP1",                      Mask = 0x000000200 }, // 9
+            new VivaXmlColumnsClass { Name = "CP2", Translation ="CP2",                      Mask = 0x000000400 }, // 10
+            new VivaXmlColumnsClass { Name = "SC" , Translation ="SC",                       Mask = 0x000000800 }, // 11
+            new VivaXmlColumnsClass { Name = "NM" , Translation ="NM",                       Mask = 0x000001000 }, // 12
+            new VivaXmlColumnsClass { Name = "DN" , Translation ="DN",                       Mask = 0x000002000 }, // 13
+            new VivaXmlColumnsClass { Name = "PT" , Translation ="PT",                       Mask = 0x000004000 }, // 14
+            new VivaXmlColumnsClass { Name = "NT" , Translation ="NT",                       Mask = 0x000008000 }, // 15
+            new VivaXmlColumnsClass { Name = "IDC", Translation ="IDC",                      Mask = 0x000010000 }, // 16
+            new VivaXmlColumnsClass { Name = "MK" , Translation ="MK",                       Mask = 0x000020000 }, // 17
+            new VivaXmlColumnsClass { Name = "IDM", Translation ="IDM",                      Mask = 0x000040000 }, // 18
+            new VivaXmlColumnsClass { Name = "PW" , Translation ="PW",                       Mask = 0x000080000 }, // 19
+            new VivaXmlColumnsClass { Name = "LB" , Translation ="LB",                       Mask = 0x000100000 }, // 20
+            new VivaXmlColumnsClass { Name = "IN" , Translation ="IN",                       Mask = 0x000200000 }, // 21
+            new VivaXmlColumnsClass { Name = "IDL", Translation ="IDL",                      Mask = 0x000400000 }, // 22
+            new VivaXmlColumnsClass { Name = "TR" , Translation ="TR",                       Mask = 0x000800000 }, // 23
+            new VivaXmlColumnsClass { Name = "MU" , Translation ="Единицы измерения",        Mask = 0x001000000 }, // 24
+            new VivaXmlColumnsClass { Name = "ML" , Translation ="Минимальное",              Mask = 0x002000000 }, // 25
+            new VivaXmlColumnsClass { Name = "MM" , Translation ="Уставка",                  Mask = 0x004000000 }, // 26
+            new VivaXmlColumnsClass { Name = "MH" , Translation ="Максимальное",             Mask = 0x008000000 }, // 27
+            new VivaXmlColumnsClass { Name = "MR" , Translation ="Измеренное",               Mask = 0x010000000 }, // 28
+            new VivaXmlColumnsClass { Name = "MP" , Translation ="Отклонение, %",            Mask = 0x020000000 }, // 29
+            new VivaXmlColumnsClass { Name = "TT" , Translation ="TT",                       Mask = 0x040000000 }, // 30
+            new VivaXmlColumnsClass { Name = "IS" , Translation ="IS",                       Mask = 0x080000000 }, // 31
+            new VivaXmlColumnsClass { Name = "DG" , Translation ="DG",                       Mask = 0x100000000 }  // 32
         };
-
-        public static string[] TestColumnName = new string[33]
+        public static List<VivaXmlTestsClass> vivaXmlTests = new List<VivaXmlTestsClass>
+        // Битовая маска указывает какие столбцы интересны для конкретного теста
         {
-            "Тест",// F
-            "Функция",// FT
-            "Каналы",// C
-            "Имя цепи 1",// SG1
-            "Имя цепи 2",// SG2
-            "Точка подключения 1",// PD1
-            "Точка подключения 2",// PD2
-            "Координаты подключения 1",// XY1
-            "Координаты подключения 2",// XY2
-            "CP1",// CP1
-            "CP2",// CP2
-            "SC",// SC
-            "NM",// NM
-            "DN",// DN
-            "PT",// PT
-            "NT",// NT
-            "IDC",// IDC
-            "MK",// MK
-            "IDM",// IDM
-            "PW",// PW
-            "LB",// LB
-            "IN",// IN
-            "IDL",// IDL
-            "TR",// TR
-            "MU",// MU
-            "ML",// ML
-            "MM",// MM
-            "MH",// MH
-            "MR",// MR
-            "MP",// MP
-            "TT",// TT
-            "IS",// IS
-            "DG" // DG
+            new VivaXmlTestsClass { Name = "CONTINUITY", Translation ="Тест на обрыв", Mask = 0x07000007C }, // 0 
+            new VivaXmlTestsClass { Name = "ISOLATION",  Translation ="Тест изоляции", Mask = 0x07000007C }, // 1
+            new VivaXmlTestsClass { Name = "RESISTOR",   Translation ="Резисторы",     Mask = 0x07F00007C }, // 2
+            new VivaXmlTestsClass { Name = "CAPACITOR",  Translation ="Конденсаторы",  Mask = 0x07F00007C }, // 3
+            new VivaXmlTestsClass { Name = "INDUCTANCE", Translation ="Индуктивности", Mask = 0x07F00007C }, // 4
+            new VivaXmlTestsClass { Name = "AUTIC",      Translation ="Чип",           Mask = 0x07F00007C }, // 5
+        };
+        public static List<СalculationsClass> Сalculations = new List<СalculationsClass>
+        // Битовая маска указывает какие столбцы интересны для конкретного вычисления
+        {
+            new СalculationsClass { Name = "Other", Translation ="Остальное", Mask = 0x07F00007D }, // 0 
+            new СalculationsClass { Name = "MaxDeviation",  Translation ="MAX отклонение", Mask = 0xFFFFFFFFF }, // 1
         };
 
         // Методы класса
@@ -206,16 +130,105 @@ namespace VIVA_report_analyser
         public static void VisibleColumns(ulong ColumnsMask, DataGridView dataGridView)
         // Настройка видимости столбцов
         {
-            int i = 0;
-            foreach (ulong column in EnumUtil.GetValues<ColumnMask>())
+            foreach (var column in TestDto.vivaXmlColumns)
             {
-                if ((ColumnsMask & column) > 0) dataGridView.Columns[columnName[i]].Visible = true; else dataGridView.Columns[columnName[i]].Visible = false;
-                i++;
+                if ((ColumnsMask & column.Mask) > 0) dataGridView.Columns[column.Name].Visible = true;
+                                                else dataGridView.Columns[column.Name].Visible = false;
             };
         }
-    }
+        public static Dictionary<string, DataView> SelectComponentTests(List<VivaXmlTestsClass> Tests, XElement data)
+        // Выборка результатов конкретного теста
+        {
+            try
+            {
+                var filteredTest = new Dictionary<string, DataView>();
+                foreach (var test in Tests)
+                {
+                    var temp1 = from n in data.Descendants("BI").Elements("TEST")
+                                where n.Attribute("F").Value == test.Name
+                                select n;
 
+                    List<XElement> temp2 = temp1.ToList();
+                    DataView temp3 = ParseToDataView(temp2);
+                    filteredTest.Add(test.Name, temp3);
+                }
+                filteredTest.Add(TestDto.Сalculations[0].Name, ParseToDataView(data.Element("BI").Elements("TEST").ToList()));
+                return filteredTest;
+            }
+            catch (Exception ReadFileError)
+            {
+                MessageBox.Show("Ошибка выборки результатов теста. Подробнее: " + ReadFileError.Message, "Ошибка чтения файла", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw new ArgumentException("Ошибка выборки результатов теста");
+            }
+        }
+
+        private static DataView ParseToDataView(List<XElement> data)
+        {
+            var temp3 = data.Select(t =>
+                new TestDto
+                {
+                    F = t.Attribute("F").Value,
+                    FT = t.Attribute("FT").Value,
+                    C = t.Attribute("C").Value,
+                    SG1 = t.Attribute("SG1").Value,
+                    SG2 = t.Attribute("SG2").Value,
+                    PD1 = t.Attribute("PD1").Value,
+                    PD2 = t.Attribute("PD2").Value,
+                    XY1 = t.Attribute("XY1").Value,
+                    XY2 = t.Attribute("XY2").Value,
+                    CP1 = t.Attribute("CP1").Value,
+                    CP2 = t.Attribute("CP2").Value,
+                    SC = t.Attribute("SC").Value,
+                    NM = t.Attribute("NM").Value,
+                    DN = t.Attribute("DN").Value,
+                    PT = Double.Parse(t.Attribute("PT").Value, new CultureInfo("en-US")),
+                    NT = Double.Parse(t.Attribute("NT").Value, new CultureInfo("en-US")),
+                    IDC = Double.Parse(t.Attribute("IDC").Value, new CultureInfo("en-US")),
+                    MK = t.Attribute("MK").Value,
+                    IDM = Double.Parse(t.Attribute("IDM").Value, new CultureInfo("en-US")),
+                    PW = Double.Parse(t.Attribute("PW").Value, new CultureInfo("en-US")),
+                    LB = t.Attribute("LB").Value,
+                    IN = t.Attribute("IN").Value,
+                    IDL = Double.Parse(t.Attribute("IDL").Value, new CultureInfo("en-US")),
+                    TR = Double.Parse(t.Attribute("TR").Value, new CultureInfo("en-US")),
+                    MU = t.Attribute("MU").Value,
+                    ML = Double.Parse(t.Attribute("ML").Value, new CultureInfo("en-US")),
+                    MM = Double.Parse(t.Attribute("MM").Value, new CultureInfo("en-US")),
+                    MH = Double.Parse(t.Attribute("MH").Value, new CultureInfo("en-US")),
+                    MR = Double.Parse(t.Attribute("MR").Value, new CultureInfo("en-US")),
+                    MP = Double.Parse(t.Attribute("MP").Value.TrimEnd('%'), new CultureInfo("en-US")),
+                    TT = Double.Parse(t.Attribute("TT").Value, new CultureInfo("en-US")),
+                    IS = Double.Parse(t.Attribute("IS").Value, new CultureInfo("en-US")),
+                    DG = Double.Parse(t.Attribute("DG").Value, new CultureInfo("en-US"))
+                });
+
+            DataTable temp4 = ConvertToDataTable(temp3.ToList());
+            return temp4.DefaultView;
+        }
+
+        private static DataTable ConvertToDataTable<T>(IList<T> data)
+        {
+            PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(typeof(T));
+            DataTable table = new DataTable();
+            //uint i = 0;
+            foreach (PropertyDescriptor prop in properties)
+            {
+                table.Columns.Add(prop.Name, Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType); //prop.Name
+                //table.Columns.
+                //i++;
+            }
+            foreach (T item in data)
+            {
+                DataRow row = table.NewRow();
+                foreach (PropertyDescriptor prop in properties)
+                    row[prop.Name] = prop.GetValue(item) ?? DBNull.Value;
+                table.Rows.Add(row);
+            }
+            return table;
+        }
+    }
     class DoubleBufferedDataGridView : DataGridView
+    // Двойная буфферизация для таблиц, ускоряет работу
     {
         protected override bool DoubleBuffered { get => true; }
     }

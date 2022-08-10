@@ -20,9 +20,7 @@ namespace VIVA_report_analyser
             InitializeComponent();
         }
 
-        public static bool errorOpenFileFlag = false;
-        public static List<string> openFilesNames = new List<string>() { null };
-        public static List<string> errorOpenFilesNames = new List<string>() { null };
+        public Dictionary<string, Dictionary<string, DataView>> filteredTestOnFile;
 
         private void button1_Click_1(object sender, EventArgs e)
         {
@@ -42,211 +40,85 @@ namespace VIVA_report_analyser
             };
             //openFileDialog.ShowDialog();
             if (openFileDialog.ShowDialog() == DialogResult.OK)
-            //if (openFileDialog.FileName == String.Empty)
-            //return;
-            
-            for (int file = 0; file < openFileDialog.FileNames.Length; file++)
-            {
-                try
+                //if (openFileDialog.FileName == String.Empty)
+                //return;
+
+                for (int file = 0; file < openFileDialog.FileNames.Length; file++)
                 {
-                    XDocument doc = null; // создаем пустой XML документ
-                    using (var Reader = new StreamReader(openFileDialog.FileNames[file], System.Text.Encoding.UTF8))
+                    try
                     {
-                        doc = XDocument.Load(Reader);
-                        Reader.Close();
-                    }
-                    XElement root = doc.Root;
-                    if ((root.Element("BI") == null) || (root.Element("BI").Element("TEST") == null))
-                    {
-                        errorOpenFilesNames.Add(openFileDialog.SafeFileNames[file]);
-                        errorOpenFileFlag = true;
-                    }
-                    else
-                    {
-                        List<XElement> tests = root.Element("BI").Elements("TEST").ToList();
-                        List<XElement> testsContinuity = SelectComponentTests("CONTINUITY", root);
-                        List<XElement> testsIsolation = SelectComponentTests("ISOLATION", root);
-                        List<XElement> testsResistor = SelectComponentTests("RESISTOR", root);
-                        List<XElement> testsCapacitor = SelectComponentTests("CAPACITOR", root);
-                        List<XElement> testsInductance = SelectComponentTests("INDUCTANCE", root);
-                        List<XElement> testsAutic = SelectComponentTests("AUTIC", root);
-                        //List<XElement> testsOther      = SelectComponentTests("", root);
-
-                        var queryContinuity = testsContinuity.Select(t =>
-                        new TestDto
+                        XDocument doc = null; // создаем пустой XML документ
+                        using (var Reader = new StreamReader(openFileDialog.FileNames[file], System.Text.Encoding.UTF8))
                         {
-                            C = t.Attribute("C").Value,
-                            SG1 = t.Attribute("SG1").Value,
-                            SG2 = t.Attribute("SG2").Value,
-                            PD1 = t.Attribute("PD1").Value,
-                            PD2 = t.Attribute("PD2").Value,
-                            MR = Double.Parse(t.Attribute("MR").Value, new CultureInfo("en-US")),
-                            MP = Double.Parse(t.Attribute("MP").Value.TrimEnd('%'), new CultureInfo("en-US")),
-                            TT = Double.Parse(t.Attribute("TT").Value, new CultureInfo("en-US"))
-                        });
-                        DataTable tableContinuity = this.ConvertToDataTable(queryContinuity.ToList());
-                        DataView viewContinuity = tableContinuity.DefaultView;
-
-                        var queryIsolation = testsIsolation.Select(t =>
-                        new TestDto
+                            doc = XDocument.Load(Reader);
+                            Reader.Close();
+                        }
+                        XElement root = doc.Root;
+                        if ((root.Element("BI") == null) || (root.Element("BI").Element("TEST") == null))
                         {
-                            C = t.Attribute("C").Value,
-                            SG1 = t.Attribute("SG1").Value,
-                            SG2 = t.Attribute("SG2").Value,
-                            PD1 = t.Attribute("PD1").Value,
-                            PD2 = t.Attribute("PD2").Value,
-                            MR = Double.Parse(t.Attribute("MR").Value, new CultureInfo("en-US")),
-                            MP = Double.Parse(t.Attribute("MP").Value.TrimEnd('%'), new CultureInfo("en-US")),
-                            TT = Double.Parse(t.Attribute("TT").Value, new CultureInfo("en-US"))
-                        });
-                        DataTable tableIsolation = this.ConvertToDataTable(queryIsolation.ToList());
-                        DataView viewIsolation = tableIsolation.DefaultView;
-
-                        var queryResistor = testsResistor.Select(t =>
-                        new TestDto
+                            TestDto.errorOpenFilesNames.Add(openFileDialog.SafeFileNames[file]);
+                            TestDto.errorOpenFileFlag = true;
+                        }
+                        else
                         {
-                            C = t.Attribute("C").Value,
-                            SG1 = t.Attribute("SG1").Value,
-                            SG2 = t.Attribute("SG2").Value,
-                            PD1 = t.Attribute("PD1").Value,
-                            PD2 = t.Attribute("PD2").Value,
-                            MU = t.Attribute("MU").Value,
-                            ML = Double.Parse(t.Attribute("ML").Value, new CultureInfo("en-US")),
-                            MM = Double.Parse(t.Attribute("MM").Value, new CultureInfo("en-US")),
-                            MH = Double.Parse(t.Attribute("MH").Value, new CultureInfo("en-US")),
-                            MR = Double.Parse(t.Attribute("MR").Value, new CultureInfo("en-US")),
-                            MP = Double.Parse(t.Attribute("MP").Value.TrimEnd('%'), new CultureInfo("en-US")),
-                            TT = Double.Parse(t.Attribute("TT").Value, new CultureInfo("en-US"))
-                        });
-                        DataTable tableResistor = this.ConvertToDataTable(queryResistor.ToList());
-                        DataView viewResistor = tableResistor.DefaultView;
+                            Dictionary<string, DataView> filteredTest = TestDto.SelectComponentTests(TestDto.vivaXmlTests, root);
+                            filteredTestOnFile.Add(openFileDialog.SafeFileNames[file], filteredTest);
 
-                        var queryCapacitor = testsCapacitor.Select(t =>
-                        new TestDto
-                        {
-                            C = t.Attribute("C").Value,
-                            SG1 = t.Attribute("SG1").Value,
-                            SG2 = t.Attribute("SG2").Value,
-                            PD1 = t.Attribute("PD1").Value,
-                            PD2 = t.Attribute("PD2").Value,
-                            MU = t.Attribute("MU").Value,
-                            ML = Double.Parse(t.Attribute("ML").Value, new CultureInfo("en-US")),
-                            MM = Double.Parse(t.Attribute("MM").Value, new CultureInfo("en-US")),
-                            MH = Double.Parse(t.Attribute("MH").Value, new CultureInfo("en-US")),
-                            MR = Double.Parse(t.Attribute("MR").Value, new CultureInfo("en-US")),
-                            MP = Double.Parse(t.Attribute("MP").Value.TrimEnd('%'), new CultureInfo("en-US")),
-                            TT = Double.Parse(t.Attribute("TT").Value, new CultureInfo("en-US"))
-                        });
-                        DataTable tableCapacitor = this.ConvertToDataTable(queryCapacitor.ToList());
-                        DataView viewCapacitor = tableCapacitor.DefaultView;
+                            TabPage page = new TabPage(openFileDialog.SafeFileNames[file]);
+                            tabControl2.TabPages.Add(page);
 
-                        var queryInductance = testsInductance.Select(t =>
-                        new TestDto
-                        {
-                            C = t.Attribute("C").Value,
-                            SG1 = t.Attribute("SG1").Value,
-                            SG2 = t.Attribute("SG2").Value,
-                            PD1 = t.Attribute("PD1").Value,
-                            PD2 = t.Attribute("PD2").Value,
-                            MU = t.Attribute("MU").Value,
-                            ML = Double.Parse(t.Attribute("ML").Value, new CultureInfo("en-US")),
-                            MM = Double.Parse(t.Attribute("MM").Value, new CultureInfo("en-US")),
-                            MH = Double.Parse(t.Attribute("MH").Value, new CultureInfo("en-US")),
-                            MR = Double.Parse(t.Attribute("MR").Value, new CultureInfo("en-US")),
-                            MP = Double.Parse(t.Attribute("MP").Value.TrimEnd('%'), new CultureInfo("en-US")),
-                            TT = Double.Parse(t.Attribute("TT").Value, new CultureInfo("en-US"))
-                        });
-                        DataTable tableInductance = this.ConvertToDataTable(queryInductance.ToList());
-                        DataView viewInductance = tableInductance.DefaultView;
+                            tabControl2.MouseClick += FileTab_MouseClick;
+                            page.MouseClick += Page_MouseClick;
 
-                        var queryAutic = testsAutic.Select(t =>
-                        new TestDto
-                        {
-                            C = t.Attribute("C").Value,
-                            SG1 = t.Attribute("SG1").Value,
-                            SG2 = t.Attribute("SG2").Value,
-                            PD1 = t.Attribute("PD1").Value,
-                            PD2 = t.Attribute("PD2").Value,
-                            MU = t.Attribute("MU").Value,
-                            ML = Double.Parse(t.Attribute("ML").Value, new CultureInfo("en-US")),
-                            MM = Double.Parse(t.Attribute("MM").Value, new CultureInfo("en-US")),
-                            MH = Double.Parse(t.Attribute("MH").Value, new CultureInfo("en-US")),
-                            MR = Double.Parse(t.Attribute("MR").Value, new CultureInfo("en-US")),
-                            MP = Double.Parse(t.Attribute("MP").Value.TrimEnd('%'), new CultureInfo("en-US")),
-                            TT = Double.Parse(t.Attribute("TT").Value, new CultureInfo("en-US"))
-                        });
-                        DataTable tableAutic = this.ConvertToDataTable(queryAutic.ToList());
-                        DataView viewAutic = tableAutic.DefaultView;
+                            ContextMenuStrip FileTabMenu = new ContextMenuStrip();
+                            ToolStripMenuItem CloseTab_MenuItem = new ToolStripMenuItem("Закрыть вкладку");
+                            ToolStripMenuItem CloseTabs_MenuItem = new ToolStripMenuItem("Закрыть все вкладки");
+                            ToolStripMenuItem RecoverTab_MenuItem = new ToolStripMenuItem("Открыть закрытую вкладку");
 
-                        var queryOther = tests.Select(t =>
-                        new TestDto
-                        {
-                            F = t.Attribute("F").Value,
-                            C = t.Attribute("C").Value,
-                            SG1 = t.Attribute("SG1").Value,
-                            SG2 = t.Attribute("SG2").Value,
-                            PD1 = t.Attribute("PD1").Value,
-                            PD2 = t.Attribute("PD2").Value,
-                            MU = t.Attribute("MU").Value,
-                            ML = Double.Parse(t.Attribute("ML").Value, new CultureInfo("en-US")),
-                            MM = Double.Parse(t.Attribute("MM").Value, new CultureInfo("en-US")),
-                            MH = Double.Parse(t.Attribute("MH").Value, new CultureInfo("en-US")),
-                            MR = Double.Parse(t.Attribute("MR").Value, new CultureInfo("en-US")),
-                            MP = Double.Parse(t.Attribute("MP").Value.TrimEnd('%'), new CultureInfo("en-US")),
-                            TT = Double.Parse(t.Attribute("TT").Value, new CultureInfo("en-US"))
-                        });
-                        DataTable tableOther = this.ConvertToDataTable(queryOther.ToList());
-                        DataView viewOther = tableOther.DefaultView;
-
-                        TabPage page = new TabPage(openFileDialog.SafeFileNames[file]);
-                        tabControl2.TabPages.Add(page);
-
-                        tabControl2.MouseClick += FileTab_MouseClick;
-                        page.MouseClick += Page_MouseClick;
-
-                        ContextMenuStrip FileTabMenu = new ContextMenuStrip();
-                        ToolStripMenuItem CloseTab_MenuItem = new ToolStripMenuItem("Закрыть вкладку");
-                        ToolStripMenuItem CloseTabs_MenuItem = new ToolStripMenuItem("Закрыть все вкладки");
-                        ToolStripMenuItem RecoverTab_MenuItem = new ToolStripMenuItem("Открыть закрытую вкладку");
-
-                        FileTabMenu.Items.AddRange(new[]
-                        {
+                            FileTabMenu.Items.AddRange(new[]
+                            {
                             CloseTab_MenuItem,
                             CloseTabs_MenuItem,
                             RecoverTab_MenuItem
                         });
-                        page.ContextMenuStrip = FileTabMenu;
+                            page.ContextMenuStrip = FileTabMenu;
 
-                        TabControl tabTests = new TabControl();
-                        page.Controls.Add(tabTests);
-                        tabTests.Dock = DockStyle.Fill;
-                        tabTests.ItemSize = new System.Drawing.Size(0, 24);
-                        tabTests.SelectedIndex = 0;
-                        tabTests.TabIndex = 1;
-                        tabTests.Name = openFileDialog.SafeFileNames[file];
+                            TabControl tabTests = new TabControl();
+                            page.Controls.Add(tabTests);
+                            tabTests.Dock = DockStyle.Fill;
+                            tabTests.ItemSize = new System.Drawing.Size(0, 24);
+                            tabTests.SelectedIndex = 0;
+                            tabTests.TabIndex = 1;
+                            tabTests.Name = openFileDialog.SafeFileNames[file];
 
-                        AddNewComponentTab("Тест на обрыв", tabTests, viewContinuity, TestDto.ColumnMaskContinuity);
-                        AddNewComponentTab("Тест изоляции", tabTests, viewIsolation,  TestDto.ColumnMaskIsolation);
-                        AddNewComponentTab("Резисторы",     tabTests, viewResistor,   TestDto.ColumnMaskResistor);
-                        AddNewComponentTab("Конденсаторы",  tabTests, viewCapacitor,  TestDto.ColumnMaskCapacitor);
-                        AddNewComponentTab("Индуктивности", tabTests, viewInductance, TestDto.ColumnMaskInductance);
-                        AddNewComponentTab("Чип",           tabTests, viewAutic,      TestDto.ColumnMaskAutic);
-                        AddNewComponentTab("Остальное",     tabTests, viewOther,      TestDto.ColumnMaskOther);
+                            DataView gettedView;
+                            foreach (var test in TestDto.vivaXmlTests)
+                            {
+                                if (filteredTest.TryGetValue(test.Name, out gettedView))
+                                    AddNewComponentTab(test.Translation, tabTests, gettedView, test.Mask);
+                                else
+                                    MessageBox.Show("Ошибка чтения словаря по ключу " + test.Name, "Ошибка чтения данных словаря", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
 
-                        openFilesNames.Add(tabTests.Name);
+                            if (filteredTest.TryGetValue(TestDto.Сalculations[0].Name, out gettedView))
+                                AddNewComponentTab(TestDto.Сalculations[0].Translation, tabTests, gettedView, TestDto.Сalculations[0].Mask);
+                            else
+                                MessageBox.Show("Ошибка чтения словаря по ключу " + TestDto.Сalculations[0].Name, "Ошибка чтения данных словаря", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                            TestDto.openFilesNames.Add(tabTests.Name);
+                        }
+                    }
+                    catch (Exception ReadFileError)
+                    {
+                        MessageBox.Show("Ошибка при открытии файла из указанного места. Подробнее: " + ReadFileError.Message, "Ошибка чтения файла", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
-                catch (Exception ReadFileError)
-                {
-                    MessageBox.Show("Ошибка при открытии файла из указанного места. Подробнее: " + ReadFileError.Message, "Ошибка чтения файла", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            if (errorOpenFileFlag)
+            if (TestDto.errorOpenFileFlag)
             {
-                string files = String.Join("\n", errorOpenFilesNames);
+                string files = String.Join("\n", TestDto.errorOpenFilesNames);
                 MessageBox.Show("Неверный формат файлов:\n\n" + files, "Ошибка чтения", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                errorOpenFilesNames.Clear();
-                errorOpenFileFlag = false;
+                TestDto.errorOpenFilesNames.Clear();
+                TestDto.errorOpenFileFlag = false;
             }
         }
 
@@ -256,8 +128,8 @@ namespace VIVA_report_analyser
             if (e.Button == MouseButtons.Right)
             {
                 ContextMenuStrip fileTabMenu = new ContextMenuStrip();
-                ToolStripMenuItem CloseTab_MenuItem   = new ToolStripMenuItem("Закрыть вкладку");
-                ToolStripMenuItem CloseTabs_MenuItem  = new ToolStripMenuItem("Закрыть все вкладки");
+                ToolStripMenuItem CloseTab_MenuItem = new ToolStripMenuItem("Закрыть вкладку");
+                ToolStripMenuItem CloseTabs_MenuItem = new ToolStripMenuItem("Закрыть все вкладки");
                 ToolStripMenuItem RecoverTab_MenuItem = new ToolStripMenuItem("Открыть закрытую вкладку");
 
                 fileTabMenu.Items.AddRange(new[]
@@ -267,11 +139,11 @@ namespace VIVA_report_analyser
                     RecoverTab_MenuItem
                 });
                 tabControl2.ContextMenuStrip = fileTabMenu;
-                
+
                 //FileTabMenu.Tag = FileTabMenu.AccessibilityObject;
                 CloseTab_MenuItem.Click += CloseTab_MenuItem_Click;
                 fileTabMenu.Show(tabControl2, e.Location);
-                
+
                 for (int i = 0; i < tabControl2.TabPages.Count; i++)
                 {
                     if (tabControl2.GetTabRect(i).Contains(e.Location))
@@ -280,7 +152,7 @@ namespace VIVA_report_analyser
                         return;
                     }
                 }
-                
+
             }
         }
 
@@ -302,7 +174,7 @@ namespace VIVA_report_analyser
         private void Form1_Load(object sender, EventArgs e)
         {
         }
-        
+
         private void AddNewComponentTab(string nameTab, TabControl tabControl, DataView view, ulong ColumnMask)
         // Создание фкладки с именем компонента во вкладке с файлом
         {
@@ -322,7 +194,7 @@ namespace VIVA_report_analyser
                 dataGridView.ColumnHeaderMouseClick += DataGridView_ColumnHeaderMouseClick; ;
                 TestDto.VisibleColumns(ColumnMask, dataGridView);
                 dataGridView.Columns["MP"].DefaultCellStyle.Format = "#0.0\\%";
-                
+
             }
             catch (Exception ReadFileError)
             {
@@ -338,26 +210,9 @@ namespace VIVA_report_analyser
                 m.MenuItems.Add(new MenuItem("Выбрать столбцы"));
                 m.MenuItems.Add(new MenuItem("Скрыть"));
                 m.MenuItems.Add(new MenuItem("Помощь"));
-                
-                m.Show(tabControl2,e.Location);
-                tabControl2.ContextMenu = m;
-            }
-        }
 
-        private List<XElement> SelectComponentTests(string nameTest, XElement data)
-        // Выборка результатов конкретного теста
-        {
-            try
-            {
-                var test = from n in data.Descendants("BI").Elements("TEST")
-                           where n.Attribute("F").Value == nameTest
-                           select n;
-                return test.ToList();
-            }
-            catch (Exception ReadFileError)
-            {
-                MessageBox.Show("Ошибка выборки результатов " + nameTest + " теста. Подробнее: " + ReadFileError.Message, "Ошибка чтения файла", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return null;
+                m.Show(tabControl2, e.Location);
+                tabControl2.ContextMenu = m;
             }
         }
 
@@ -385,48 +240,20 @@ namespace VIVA_report_analyser
 
         private void page_MouseClick(object sender, MouseEventArgs e)
         {
-
-            //if (e.Button == MouseButtons.Right)
-            //{
             MessageBox.Show("Ну", "Зачем");
-            
-            /*ContextMenu m = new ContextMenu();
-                m.MenuItems.Add(new MenuItem("Cut"));
-                m.MenuItems.Add(new MenuItem("Copy"));
-                m.MenuItems.Add(new MenuItem("Paste"));
-
-            /*int currentMouseOverRow = dataGridView.HitTest(e.X, e.Y).RowIndex;
-
-            if (currentMouseOverRow >= 0)
-            {
-                m.MenuItems.Add(new MenuItem(string.Format("Do something to row {0}", currentMouseOverRow.ToString())));
-            }
-
-            m.Show(dataGridView, new Point(e.X, e.Y));
-
-
-            //добавление вкладки
-TabPage newTabPage = new TabPage();
-newTabPage.Text = "Континенты";
-tabControl1.TabPages.Add(newTabPage);
-             // удаление вкладки
-// по индексу
-tabControl1.TabPages.RemoveAt(0);
-// по объекту
-tabControl1.TabPages.Remove(newTabPage);
-            // изменение свойств
-tabControl1.TabPages[0].Text = "Первая вкладка";
-
-
-
-             */
-
-            //}
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Ну", "Зачем");
+            try
+            {
+                DataView view = MaxDeviationCalculate.DeviationCalculate(filteredTestOnFile);
+                AddNewComponentTab(TestDto.Сalculations[1].Translation, tabControl2, view, TestDto.Сalculations[1].Mask);
+            }
+            catch (Exception CalculateError)
+            {
+                MessageBox.Show("Ошибка при создании вкладки вычислений. Подробнее: " + CalculateError.Message, "Ошибка вычисления максимального отклонения", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 
