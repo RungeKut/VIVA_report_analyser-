@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -42,30 +43,78 @@ namespace VIVA_report_analyser
             new MaxDeviationColumnsClass { Name = "maxValueP", Translation ="max %",             Mask = 0x000000100 }, // 8
             new MaxDeviationColumnsClass { Name = "deltaP",    Translation ="Размах %",          Mask = 0x000000200 }, // 9
         };
-        public static DataView DeviationCalculate(Dictionary<string, Dictionary<string, DataView>> filesTests)
+        public static Dictionary<string, DataTable> DeviationCalculate(Dictionary<string, Dictionary<string, DataTable>> filesTests)
         // Выборка результатов конкретного теста
         {
             try
             {
+                
+                Dictionary<string, DataTable> CalculatedTable = new Dictionary<string, DataTable>();
+                DataTable table = new DataTable();
+                table.Columns.Add(TestDto.vivaXmlColumns[12].Translation);
+                
+                foreach (var columns in MaxDeviationColumns)
+                {
+                    table.Columns.Add(columns.Translation);
+                }
+                Dictionary<string, DataTable> gettedFirstFileDictionary = new Dictionary<string, DataTable>();
+                if (filesTests.TryGetValue(TestDto.openFilesNames[0], out gettedFirstFileDictionary)) { }
+                else throw new ArgumentException("Ошибка чтения данных словаря");
+                foreach (var tests in gettedFirstFileDictionary) // Цикл по вкладкам компонентов
+                {
+                    //for (int i = 0; i < tests.Value.Rows.Count; i++)
+                    //{
+                    //    DataRow row = table.NewRow();
+                    //    table.Rows.Add(row);
+                    //}
+                    foreach (DataRow test in tests.Value.Rows)
+                    {
+                        table.Rows.Add(test["NM"]);
+                        //table.Rows[ = test["MR"];
+                        //table.Rows.Add(test["MP"]);
+                    }
+                    CalculatedTable.Add(tests.Key.ToString(), table);
+                }
+
                 foreach (var file in filesTests) // По файлам
                 {
                     foreach (var tests in file.Value) // По вкладкам тестов
                     {
-                        foreach (DataRow row in tests.Value) // По строкам
+                        for(int i = 0; i < tests.Value.Rows.Count; i++)
                         {
-                            row[]
+                            //table.NewRow() 
                         }
+                        
                     }
                 }
                 
 
-                return null;
+                return CalculatedTable;
             }
             catch (Exception Error)
             {
-                MessageBox.Show("Ошибка выборки максимального отклонения. Подробнее: " + Error.Message, "выборки максимального отклонения", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                throw new ArgumentException("Ошибка выборки максимального отклонения");
+                MessageBox.Show("Ошибка выборки максимального отклонения.\nПодробнее:\n" + Error.Message, "Ошибка выборки максимального отклонения", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
             }
         }
+        /*private static DataTable DeviCalc(DataTable data)
+        {
+            DataTable table = new DataTable();
+            //uint i = 0;
+            foreach (PropertyDescriptor prop in properties)
+            {
+                table.Columns.Add(prop.Name, Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType); //prop.Name
+                //table.Columns.
+                //i++;
+            }
+            foreach (T item in data)
+            {
+                DataRow row = table.NewRow();
+                foreach (PropertyDescriptor prop in properties)
+                    row[prop.Name] = prop.GetValue(item) ?? DBNull.Value;
+                table.Rows.Add(row);
+            }
+            return table;
+        }*/
     }
 }

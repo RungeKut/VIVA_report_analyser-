@@ -69,8 +69,8 @@ namespace VIVA_report_analyser
         public Double IS { get; set; }
         public Double DG { get; set; }
         public static bool errorOpenFileFlag = false;
-        public static List<string> openFilesNames = new List<string>() { null };
-        public static List<string> errorOpenFilesNames = new List<string>() { null };
+        public static List<string> openFilesNames = new List<string>();
+        public static List<string> errorOpenFilesNames = new List<string>();
         // Константы класса
         public static List<VivaXmlColumnsClass> vivaXmlColumns = new List<VivaXmlColumnsClass>
         {
@@ -86,7 +86,7 @@ namespace VIVA_report_analyser
             new VivaXmlColumnsClass { Name = "CP1", Translation ="CP1",                      Mask = 0x000000200 }, // 9
             new VivaXmlColumnsClass { Name = "CP2", Translation ="CP2",                      Mask = 0x000000400 }, // 10
             new VivaXmlColumnsClass { Name = "SC" , Translation ="SC",                       Mask = 0x000000800 }, // 11
-            new VivaXmlColumnsClass { Name = "NM" , Translation ="NM",                       Mask = 0x000001000 }, // 12
+            new VivaXmlColumnsClass { Name = "NM" , Translation ="Имя компонента",           Mask = 0x000001000 }, // 12
             new VivaXmlColumnsClass { Name = "DN" , Translation ="DN",                       Mask = 0x000002000 }, // 13
             new VivaXmlColumnsClass { Name = "PT" , Translation ="PT",                       Mask = 0x000004000 }, // 14
             new VivaXmlColumnsClass { Name = "NT" , Translation ="NT",                       Mask = 0x000008000 }, // 15
@@ -111,17 +111,17 @@ namespace VIVA_report_analyser
         public static List<VivaXmlTestsClass> vivaXmlTests = new List<VivaXmlTestsClass>
         // Битовая маска указывает какие столбцы интересны для конкретного теста
         {
-            new VivaXmlTestsClass { Name = "CONTINUITY", Translation ="Тест на обрыв", Mask = 0x07000007C }, // 0 
-            new VivaXmlTestsClass { Name = "ISOLATION",  Translation ="Тест изоляции", Mask = 0x07000007C }, // 1
-            new VivaXmlTestsClass { Name = "RESISTOR",   Translation ="Резисторы",     Mask = 0x07F00007C }, // 2
-            new VivaXmlTestsClass { Name = "CAPACITOR",  Translation ="Конденсаторы",  Mask = 0x07F00007C }, // 3
-            new VivaXmlTestsClass { Name = "INDUCTANCE", Translation ="Индуктивности", Mask = 0x07F00007C }, // 4
-            new VivaXmlTestsClass { Name = "AUTIC",      Translation ="Чип",           Mask = 0x07F00007C }, // 5
+            new VivaXmlTestsClass { Name = "CONTINUITY", Translation ="Тест на обрыв", Mask = 0x07000107C }, // 0 
+            new VivaXmlTestsClass { Name = "ISOLATION",  Translation ="Тест изоляции", Mask = 0x07000107C }, // 1
+            new VivaXmlTestsClass { Name = "RESISTOR",   Translation ="Резисторы",     Mask = 0x07F00107C }, // 2
+            new VivaXmlTestsClass { Name = "CAPACITOR",  Translation ="Конденсаторы",  Mask = 0x07F00107C }, // 3
+            new VivaXmlTestsClass { Name = "INDUCTANCE", Translation ="Индуктивности", Mask = 0x07F00107C }, // 4
+            new VivaXmlTestsClass { Name = "AUTIC",      Translation ="Чип",           Mask = 0x07F00107C }, // 5
         };
         public static List<СalculationsClass> Сalculations = new List<СalculationsClass>
         // Битовая маска указывает какие столбцы интересны для конкретного вычисления
         {
-            new СalculationsClass { Name = "Other", Translation ="Остальное", Mask = 0x07F00007D }, // 0 
+            new СalculationsClass { Name = "Other", Translation ="Остальное", Mask = 0x07F00107D }, // 0 
             new СalculationsClass { Name = "MaxDeviation",  Translation ="MAX отклонение", Mask = 0xFFFFFFFFF }, // 1
         };
 
@@ -130,18 +130,19 @@ namespace VIVA_report_analyser
         public static void VisibleColumns(ulong ColumnsMask, DataGridView dataGridView)
         // Настройка видимости столбцов
         {
+            if (dataGridView.Columns[0].HeaderText == TestDto.vivaXmlColumns[0].Name)
             foreach (var column in TestDto.vivaXmlColumns)
             {
                 if ((ColumnsMask & column.Mask) > 0) dataGridView.Columns[column.Name].Visible = true;
                                                 else dataGridView.Columns[column.Name].Visible = false;
             };
         }
-        public static Dictionary<string, DataView> SelectComponentTests(List<VivaXmlTestsClass> Tests, XElement data)
+        public static Dictionary<string, DataTable> SelectComponentTests(List<VivaXmlTestsClass> Tests, XElement data)
         // Выборка результатов конкретного теста
         {
             try
             {
-                var filteredTest = new Dictionary<string, DataView>();
+                var filteredTest = new Dictionary<string, DataTable>();
                 foreach (var test in Tests)
                 {
                     var temp1 = from n in data.Descendants("BI").Elements("TEST")
@@ -149,10 +150,9 @@ namespace VIVA_report_analyser
                                 select n;
 
                     List<XElement> temp2 = temp1.ToList();
-                    DataView temp3 = ParseToDataView(temp2);
-                    filteredTest.Add(test.Name, temp3);
+                    filteredTest.Add(test.Translation, ParseToDataView(temp2));
                 }
-                filteredTest.Add(TestDto.Сalculations[0].Name, ParseToDataView(data.Element("BI").Elements("TEST").ToList()));
+                filteredTest.Add(TestDto.Сalculations[0].Translation, ParseToDataView(data.Element("BI").Elements("TEST").ToList()));
                 return filteredTest;
             }
             catch (Exception ReadFileError)
@@ -162,7 +162,7 @@ namespace VIVA_report_analyser
             }
         }
 
-        private static DataView ParseToDataView(List<XElement> data)
+        private static DataTable ParseToDataView(List<XElement> data)
         {
             var temp3 = data.Select(t =>
                 new TestDto
@@ -203,7 +203,8 @@ namespace VIVA_report_analyser
                 });
 
             DataTable temp4 = ConvertToDataTable(temp3.ToList());
-            return temp4.DefaultView;
+            //return temp4.DefaultView;
+            return temp4;
         }
 
         private static DataTable ConvertToDataTable<T>(IList<T> data)

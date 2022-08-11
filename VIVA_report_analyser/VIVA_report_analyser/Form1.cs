@@ -20,7 +20,8 @@ namespace VIVA_report_analyser
             InitializeComponent();
         }
 
-        public Dictionary<string, Dictionary<string, DataView>> filteredTestOnFile;
+        public static Dictionary<string, Dictionary<string, DataTable>> filteredTestOnFile = new Dictionary<string, Dictionary<string, DataTable>>();
+        public static Dictionary<string, DataTable> filteredTest = new Dictionary<string, DataTable>();
 
         private void button1_Click_1(object sender, EventArgs e)
         {
@@ -61,8 +62,7 @@ namespace VIVA_report_analyser
                         }
                         else
                         {
-                            Dictionary<string, DataView> filteredTest = TestDto.SelectComponentTests(TestDto.vivaXmlTests, root);
-                            filteredTestOnFile.Add(openFileDialog.SafeFileNames[file], filteredTest);
+                            filteredTest = TestDto.SelectComponentTests(TestDto.vivaXmlTests, root);
 
                             TabPage page = new TabPage(openFileDialog.SafeFileNames[file]);
                             tabControl2.TabPages.Add(page);
@@ -77,10 +77,10 @@ namespace VIVA_report_analyser
 
                             FileTabMenu.Items.AddRange(new[]
                             {
-                            CloseTab_MenuItem,
-                            CloseTabs_MenuItem,
-                            RecoverTab_MenuItem
-                        });
+                                CloseTab_MenuItem,
+                                CloseTabs_MenuItem,
+                                RecoverTab_MenuItem
+                            });
                             page.ContextMenuStrip = FileTabMenu;
 
                             TabControl tabTests = new TabControl();
@@ -91,21 +91,23 @@ namespace VIVA_report_analyser
                             tabTests.TabIndex = 1;
                             tabTests.Name = openFileDialog.SafeFileNames[file];
 
-                            DataView gettedView;
+                            DataTable gettedView;
                             foreach (var test in TestDto.vivaXmlTests)
                             {
-                                if (filteredTest.TryGetValue(test.Name, out gettedView))
-                                    AddNewComponentTab(test.Translation, tabTests, gettedView, test.Mask);
+                                if (filteredTest.TryGetValue(test.Translation, out gettedView))
+                                    AddNewComponentTab(test.Translation, tabTests, gettedView.DefaultView, test.Mask);
                                 else
                                     MessageBox.Show("Ошибка чтения словаря по ключу " + test.Name, "Ошибка чтения данных словаря", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
 
-                            if (filteredTest.TryGetValue(TestDto.Сalculations[0].Name, out gettedView))
-                                AddNewComponentTab(TestDto.Сalculations[0].Translation, tabTests, gettedView, TestDto.Сalculations[0].Mask);
+                            if (filteredTest.TryGetValue(TestDto.Сalculations[0].Translation, out gettedView))
+                                AddNewComponentTab(TestDto.Сalculations[0].Translation, tabTests, gettedView.DefaultView, TestDto.Сalculations[0].Mask);
                             else
                                 MessageBox.Show("Ошибка чтения словаря по ключу " + TestDto.Сalculations[0].Name, "Ошибка чтения данных словаря", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                             TestDto.openFilesNames.Add(tabTests.Name);
+
+                            filteredTestOnFile.Add(tabTests.Name, filteredTest);
                         }
                     }
                     catch (Exception ReadFileError)
@@ -180,7 +182,8 @@ namespace VIVA_report_analyser
         {
             try
             {
-                TabPage page = new TabPage(nameTab);
+                int rowCount = view.Count;
+                TabPage page = new TabPage(nameTab + " (" + rowCount + ")");
                 tabControl.Click += ComponentTab_MouseClick;
                 tabControl.TabPages.Add(page);
                 //page.Tag = "";
@@ -189,16 +192,37 @@ namespace VIVA_report_analyser
                 DoubleBufferedDataGridView dataGridView = new DoubleBufferedDataGridView();
                 page.Controls.Add(dataGridView);
                 dataGridView.Dock = DockStyle.Fill;
+                dataGridView.AllowUserToAddRows = false;
+                dataGridView.AllowUserToDeleteRows = false;
+                dataGridView.ReadOnly = true;
+                //dataGridView.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
+                //dataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
                 dataGridView.DataSource = view;
                 dataGridView.VirtualMode = true; //отрисовываются только те ячейки, которые видны в данный момент
                 dataGridView.ColumnHeaderMouseClick += DataGridView_ColumnHeaderMouseClick; ;
                 TestDto.VisibleColumns(ColumnMask, dataGridView);
+                if (dataGridView.Columns["MP"] != null)
                 dataGridView.Columns["MP"].DefaultCellStyle.Format = "#0.0\\%";
-
+                dataGridView.TopLeftHeaderCell.Value = "Тест"; // Заголовок столбца названия строк
+                //DataGridView.Columns[0].HeaderText = "название столбца";
+                //dataGridView.Rows[0].HeaderCell.Value = "Название строки";
+                if (view.Count > 0)
+                {
+                    int i = 0;
+                    foreach (var columnHeader in TestDto.vivaXmlColumns)
+                    {
+                        dataGridView.Columns[i].HeaderText = columnHeader.Translation;
+                        i++;
+                    }
+                    //for (i = 1; i <= rowCount; i++)
+                    //{
+                    //    dataGridView.Rows[i - 1].HeaderCell.Value = i.ToString();
+                    //}
+                }
             }
             catch (Exception ReadFileError)
             {
-                MessageBox.Show("Ошибка при создании вкладки " + nameTab + ". Подробнее: " + ReadFileError.Message, "Ошибка чтения файла", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Ошибка при создании вкладки " + nameTab + ". Подробнее: " + ReadFileError.Message, "Ошибка создания вкладки", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -242,17 +266,35 @@ namespace VIVA_report_analyser
         {
             MessageBox.Show("Ну", "Зачем");
         }
-
+        public static Dictionary<string, DataTable> DeviationCalculateTable = new Dictionary<string, DataTable>();
         private void button2_Click(object sender, EventArgs e)
         {
             try
             {
-                DataView view = MaxDeviationCalculate.DeviationCalculate(filteredTestOnFile);
-                AddNewComponentTab(TestDto.Сalculations[1].Translation, tabControl2, view, TestDto.Сalculations[1].Mask);
+                if (TestDto.openFilesNames.Count == 0) throw new ArgumentException("Нет открытых файлов");
+                if (TestDto.openFilesNames.Count == 1) throw new ArgumentException("Необходимо хотя бы ДВА открытых файла для выборки значений");
+                DeviationCalculateTable = MaxDeviationCalculate.DeviationCalculate(filteredTestOnFile);
+                TabPage page = new TabPage(TestDto.Сalculations[1].Translation);
+                tabControl2.TabPages.Add(page);
+                page.Visible = true;
+                page.Select();
+                TabControl tabTests = new TabControl();
+                page.Controls.Add(tabTests);
+                tabTests.Dock = DockStyle.Fill;
+                tabTests.ItemSize = new System.Drawing.Size(0, 24);
+                tabTests.SelectedIndex = 0;
+                tabTests.TabIndex = 1;
+                tabTests.Name = TestDto.Сalculations[1].Translation;
+                tabTests.Visible = true;
+                tabTests.Select();
+                foreach (var tests in DeviationCalculateTable)
+                {
+                    AddNewComponentTab(tests.Key, tabTests, tests.Value.DefaultView, TestDto.Сalculations[1].Mask);
+                }
             }
             catch (Exception CalculateError)
             {
-                MessageBox.Show("Ошибка при создании вкладки вычислений. Подробнее: " + CalculateError.Message, "Ошибка вычисления максимального отклонения", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Ошибка при создании вкладки вычислений.\nПодробнее:\n" + CalculateError.Message, "Ошибка вычисления максимального отклонения", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
