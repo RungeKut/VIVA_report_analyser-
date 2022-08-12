@@ -19,109 +19,64 @@ namespace VIVA_report_analyser
         {
             InitializeComponent();
         }
-
+        public static Dictionary<string, Dictionary<string, List<XElement>>> ExtractedDataOnFile = new Dictionary<string, Dictionary<string, List<XElement>>>();
         public static Dictionary<string, Dictionary<string, DataTable>> filteredTestOnFile = new Dictionary<string, Dictionary<string, DataTable>>();
         public static Dictionary<string, DataTable> filteredTest = new Dictionary<string, DataTable>();
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog
-            {
-                AddExtension = true,
-                CheckFileExists = true,
-                CheckPathExists = true,
-                DefaultExt = "xml",
-                DereferenceLinks = true,
-                Filter = "VIVA full report xml file (*.xml)|*.xml|All files (*.*)|*.*",
-                FilterIndex = 1,
-                ValidateNames = true,
-                Multiselect = true,
-                Title = "Выберите файлы .xml"
-                //InitialDirectory = @"C:\"
-            };
-            //openFileDialog.ShowDialog();
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-                //if (openFileDialog.FileName == String.Empty)
-                //return;
+            var dataOpenFiles = TestDto.LoadXmlDocument();
 
-                for (int file = 0; file < openFileDialog.FileNames.Length; file++)
-                {
-                    try
-                    {
-                        XDocument doc = null; // создаем пустой XML документ
-                        using (var Reader = new StreamReader(openFileDialog.FileNames[file], System.Text.Encoding.UTF8))
-                        {
-                            doc = XDocument.Load(Reader);
-                            Reader.Close();
-                        }
-                        XElement root = doc.Root;
-                        if ((root.Element("BI") == null) || (root.Element("BI").Element("TEST") == null))
-                        {
-                            TestDto.errorOpenFilesNames.Add(openFileDialog.SafeFileNames[file]);
-                            TestDto.errorOpenFileFlag = true;
-                        }
-                        else
-                        {
-                            filteredTest = TestDto.SelectComponentTests(TestDto.vivaXmlTests, root);
+                //ExtractedDataOnFile.Add(fileName, TestDto.ExtractData(fileName, root));
 
-                            TabPage page = new TabPage(openFileDialog.SafeFileNames[file]);
-                            tabControl2.TabPages.Add(page);
-
-                            tabControl2.MouseClick += FileTab_MouseClick;
-                            page.MouseClick += Page_MouseClick;
-
-                            ContextMenuStrip FileTabMenu = new ContextMenuStrip();
-                            ToolStripMenuItem CloseTab_MenuItem = new ToolStripMenuItem("Закрыть вкладку");
-                            ToolStripMenuItem CloseTabs_MenuItem = new ToolStripMenuItem("Закрыть все вкладки");
-                            ToolStripMenuItem RecoverTab_MenuItem = new ToolStripMenuItem("Открыть закрытую вкладку");
-
-                            FileTabMenu.Items.AddRange(new[]
-                            {
-                                CloseTab_MenuItem,
-                                CloseTabs_MenuItem,
-                                RecoverTab_MenuItem
-                            });
-                            page.ContextMenuStrip = FileTabMenu;
-
-                            TabControl tabTests = new TabControl();
-                            page.Controls.Add(tabTests);
-                            tabTests.Dock = DockStyle.Fill;
-                            tabTests.ItemSize = new System.Drawing.Size(0, 24);
-                            tabTests.SelectedIndex = 0;
-                            tabTests.TabIndex = 1;
-                            tabTests.Name = openFileDialog.SafeFileNames[file];
-
-                            DataTable gettedView;
-                            foreach (var test in TestDto.vivaXmlTests)
-                            {
-                                if (filteredTest.TryGetValue(test.Translation, out gettedView))
-                                    AddNewComponentTab(test.Translation, tabTests, gettedView.DefaultView, test.Mask);
-                                else
-                                    MessageBox.Show("Ошибка чтения словаря по ключу " + test.Name, "Ошибка чтения данных словаря", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            }
-
-                            if (filteredTest.TryGetValue(TestDto.Сalculations[0].Translation, out gettedView))
-                                AddNewComponentTab(TestDto.Сalculations[0].Translation, tabTests, gettedView.DefaultView, TestDto.Сalculations[0].Mask);
-                            else
-                                MessageBox.Show("Ошибка чтения словаря по ключу " + TestDto.Сalculations[0].Name, "Ошибка чтения данных словаря", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-                            TestDto.openFilesNames.Add(tabTests.Name);
-
-                            filteredTestOnFile.Add(tabTests.Name, filteredTest);
-                        }
-                    }
-                    catch (Exception ReadFileError)
-                    {
-                        MessageBox.Show("Ошибка при открытии файла из указанного места. Подробнее: " + ReadFileError.Message, "Ошибка чтения файла", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                }
-            if (TestDto.errorOpenFileFlag)
-            {
-                string files = String.Join("\n", TestDto.errorOpenFilesNames);
-                MessageBox.Show("Неверный формат файлов:\n\n" + files, "Ошибка чтения", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                TestDto.errorOpenFilesNames.Clear();
-                TestDto.errorOpenFileFlag = false;
-            }
+                        //filteredTest = TestDto.SelectComponentTests(TestDto.vivaXmlTests, root);
+                        //
+                        //TabPage page = new TabPage(openFileDialog.SafeFileNames[file]);
+                        //tabControl2.TabPages.Add(page);
+                        //
+                        //tabControl2.MouseClick += FileTab_MouseClick;
+                        //page.MouseClick += Page_MouseClick;
+                        //
+                        //ContextMenuStrip FileTabMenu = new ContextMenuStrip();
+                        //ToolStripMenuItem CloseTab_MenuItem = new ToolStripMenuItem("Закрыть вкладку");
+                        //ToolStripMenuItem CloseTabs_MenuItem = new ToolStripMenuItem("Закрыть все вкладки");
+                        //ToolStripMenuItem RecoverTab_MenuItem = new ToolStripMenuItem("Открыть закрытую вкладку");
+                        //
+                        //FileTabMenu.Items.AddRange(new[]
+                        //{
+                        //    CloseTab_MenuItem,
+                        //    CloseTabs_MenuItem,
+                        //    RecoverTab_MenuItem
+                        //});
+                        //page.ContextMenuStrip = FileTabMenu;
+                        //
+                        //TabControl tabTests = new TabControl();
+                        //page.Controls.Add(tabTests);
+                        //tabTests.Dock = DockStyle.Fill;
+                        //tabTests.ItemSize = new System.Drawing.Size(0, 24);
+                        //tabTests.SelectedIndex = 0;
+                        //tabTests.TabIndex = 1;
+                        //tabTests.Name = openFileDialog.SafeFileNames[file];
+                        //
+                        //DataTable gettedView;
+                        //foreach (var test in TestDto.vivaXmlTests)
+                        //{
+                        //    if (filteredTest.TryGetValue(test.Translation, out gettedView))
+                        //        AddNewComponentTab(test.Translation, tabTests, gettedView.DefaultView, test.Mask);
+                        //    else
+                        //        MessageBox.Show("Ошибка чтения словаря по ключу " + test.Name, "Ошибка чтения данных словаря", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        //}
+                        //
+                        //if (filteredTest.TryGetValue(TestDto.Сalculations[0].Translation, out gettedView))
+                        //    AddNewComponentTab(TestDto.Сalculations[0].Translation, tabTests, gettedView.DefaultView, TestDto.Сalculations[0].Mask);
+                        //else
+                        //    MessageBox.Show("Ошибка чтения словаря по ключу " + TestDto.Сalculations[0].Name, "Ошибка чтения данных словаря", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        //
+                        //TestDto.openFilesNames.Add(tabTests.Name);
+                        //
+                        //filteredTestOnFile.Add(tabTests.Name, filteredTest);
+            
+            
         }
 
         public int nowMouseClickFileTab = 0;
