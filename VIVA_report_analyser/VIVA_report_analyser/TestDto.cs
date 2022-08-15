@@ -13,18 +13,6 @@ using System.Xml.Serialization;
 
 namespace VIVA_report_analyser
 {
-    public static class EnumUtil
-    {
-        public static IEnumerable<T> GetValues<T>()
-        {
-            return Enum.GetValues(typeof(T)).Cast<T>();
-        }
-        public static string GetName<T>(int value)
-            // Работает плохо. Только первые три члена - потом Null. Проблема глубоко
-        {
-            return Enum.GetName(typeof(T), value);
-        }
-    }
     internal class VivaXmlColumnsClass
     {
         // Поля класса
@@ -34,17 +22,6 @@ namespace VIVA_report_analyser
     }
     internal class VivaXmlTestsClass : VivaXmlColumnsClass { }
     internal class СalculationsClass : VivaXmlColumnsClass { }
-    internal class ListOfVivaXml
-    {
-        public string Info { get; set; }
-        public string PrgC { get; set; }
-        public string ST { get; set; }
-        public GroupBI BI { get; set; }
-        internal class GroupBI
-        {
-            public string TEST { get; set; }
-        }
-    }
     internal class XmlColumsClass
     {
         // Поля класса
@@ -81,12 +58,15 @@ namespace VIVA_report_analyser
         public Double TT { get; set; }
         public Double IS { get; set; }
         public Double DG { get; set; }
+        public String uniqueTestName { get { return NM + "|" + F + "|" + PD1 + "|" + PD2; } }
     }
     internal class TestDto
     {
         // Поля класса
+        public static bool errorOpenFileFlag = false;
         public static List<string> openFilesNames = new List<string>();
         public static List<string> errorOpenFilesNames = new List<string>();
+        public static List<DataFilesClass> dataFile = new List<DataFilesClass>();
         // Константы класса
         public static List<VivaXmlColumnsClass> vivaXmlColumns = new List<VivaXmlColumnsClass>
         {
@@ -137,7 +117,7 @@ namespace VIVA_report_analyser
         public static List<СalculationsClass> Сalculations = new List<СalculationsClass>
         // Битовая маска указывает какие столбцы интересны для конкретного вычисления
         {
-            new СalculationsClass { Name = "Other", Translation ="Остальное", Mask = 0x07F00107D }, // 0 
+            new СalculationsClass { Name = "All", Translation ="Все тесты", Mask = 0x07F00107D }, // 0 
             new СalculationsClass { Name = "MaxDeviation",  Translation ="MAX отклонение", Mask = 0xFFFFFFFFF }, // 1
         };
         // Методы класса
@@ -158,12 +138,12 @@ namespace VIVA_report_analyser
                 throw new ArgumentException("Ошибка метода VisibleColumns.\nПодробнее:\n" + e.Message);
             }
         }
-        public static Dictionary<string, DataTable> SelectComponentTests(List<VivaXmlTestsClass> Tests, XElement data)
+        public static Dictionary<string, List<XElement>> SelectComponentTests(List<VivaXmlTestsClass> Tests, XElement data)
         {
             // Выборка результатов конкретного теста
             try
             {
-                var filteredTest = new Dictionary<string, DataTable>();
+                var filteredTest = new Dictionary<string, List<XElement>>();
                 List<XmlColumsClass> table = new List<XmlColumsClass>();
                 //table = data.Element("BI").Elements("TEST").ToList();
                 foreach (var test in Tests)
@@ -174,9 +154,9 @@ namespace VIVA_report_analyser
 
                     List<XElement> temp2 = temp1.ToList();
                     
-                    filteredTest.Add(test.Translation, ParseToDataView(temp2));
+                    filteredTest.Add(test.Translation, temp2);
                 }
-                filteredTest.Add(TestDto.Сalculations[0].Translation, ParseToDataView(data.Element("BI").Elements("TEST").ToList()));
+                filteredTest.Add(TestDto.Сalculations[0].Translation, data.Element("BI").Elements("TEST").ToList());
                 return filteredTest;
             }
             catch (Exception e)
@@ -184,7 +164,7 @@ namespace VIVA_report_analyser
                 throw new ArgumentException("Ошибка метода SelectComponentTests.\nПодробнее:\n" + e.Message);
             }
         }
-        private static DataTable ParseToDataView(List<XElement> data)
+        public static DataTable ParseToDataView(List<XElement> data)
         {
             try
             {
@@ -269,9 +249,18 @@ namespace VIVA_report_analyser
             public string filePath { get; set; }
             public XDocument data { get; set; }
         }
+        public class DataFilesClass
+        {
+            // Поля класса
+            public string fileName { get; set; }
+            public string filePath { get; set; }
+            public XDocument dataDoc { get; set; }
+            public List<XElement> property { get; set; }
+            public List<XElement> allTests { get; set; }
+            public Dictionary<string, List<XElement>> filterByTests { get; set; }
+        }
         public static List<ExtractDataClass> LoadXmlDocument()
         {
-            bool errorOpenFileFlag = false;
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 AddExtension = true,
@@ -308,7 +297,50 @@ namespace VIVA_report_analyser
                     filePath = Path,
                     data = doc
                 });
+                var u = ParseXml.Parse(doc);
             }
+            return returnData;
+        }
+        public static void ExtractData(List<TestDto.ExtractDataClass> dataOpenFiles)
+        {
+            foreach (var file in dataOpenFiles)
+            {
+                if ((file.data.Root.Element("BI") == null) || (file.data.Root.Element("BI").Element("TEST") == null))
+                {
+                    errorOpenFilesNames.Add(file.fileName);
+                    errorOpenFileFlag = true;
+                    //throw new ArgumentException("Ошибка метода ExtractData. Структура документа не соответсвует:\n<master>\n    <BI>\n        <TEST>\n        <TEST>\n         ***\n    </BI>\n<master>\n\nПодробнее:\n");
+                }
+                else
+                {
+                    List<XElement> fileProperty = new List<XElement>();
+                    XElement Info = new XElement("Info");
+                    Info.Add(file.data.Root.Element("Info").Attributes().ToArray());
+                    fileProperty.Add(Info);
+                    XElement PrgC = new XElement("PrgC");
+                    PrgC.Add(file.data.Root.Element("PrgC").Attributes().ToArray());
+                    fileProperty.Add(PrgC);
+                    XElement ST = new XElement("ST");
+                    ST.Add(file.data.Root.Element("ST").Attributes().ToArray());
+                    fileProperty.Add(ST);
+                    XElement BI = new XElement("BI");
+                    BI.Add(file.data.Root.Element("BI").Attributes().ToArray());
+                    fileProperty.Add(BI);
+                    List<XElement> temp1 = file.data.Root.Element("BI").Elements().ToList();
+                    
+                    dataFile.Add(new DataFilesClass()
+                    {
+                        fileName = file.fileName,
+                        filePath = file.filePath,
+                        dataDoc = file.data,
+                        property = fileProperty,
+                        allTests = temp1,
+                        filterByTests = SelectComponentTests(vivaXmlTests, file.data.Root)
+                    });
+                    openFilesNames.Add(file.fileName);
+                }
+            }
+                
             if (errorOpenFileFlag)
             {
                 string files = String.Join("\n", errorOpenFilesNames);
@@ -316,33 +348,6 @@ namespace VIVA_report_analyser
                 errorOpenFilesNames.Clear();
                 errorOpenFileFlag = false;
             }
-            return returnData;
-        }
-        public static Dictionary<string, List<XElement>> ExtractData(string fileName, XElement data)
-        {
-            Dictionary<string, List<XElement>> dataDictionary = new Dictionary<string, List<XElement>>();
-            if ((data.Element("BI") == null) || (data.Element("BI").Element("TEST") == null))
-            {
-                errorOpenFilesNames.Add(fileName);
-                errorOpenFileFlag = true;
-                //throw new ArgumentException("Ошибка метода ExtractData. Структура документа не соответсвует:\n<master>\n    <BI>\n        <TEST>\n        <TEST>\n         ***\n    </BI>\n<master>\n\nПодробнее:\n");
-            }
-            else
-            {
-                XElement Info = new XElement("Info");
-                Info.Add(data.Element("Info").Attributes().ToArray());
-                XElement PrgC = new XElement("PrgC");
-                PrgC.Add(data.Element("PrgC").Attributes().ToArray());
-                XElement ST = new XElement("ST");
-                ST.Add(data.Element("ST").Attributes().ToArray());
-                XElement BI = new XElement("BI");
-                BI.Add(data.Element("BI").Attributes().ToArray());
-                //List<XElement> temp1 
-                List<XElement> temp1 = data.Element("BI").Elements().ToList();
-                //List<XElement> temp2 = data.Descendants("BI").Elements("TEST").ToList();
-                dataDictionary.Add("Data",temp1);
-            }
-            return dataDictionary;
         }
     }
     class DoubleBufferedDataGridView : DataGridView

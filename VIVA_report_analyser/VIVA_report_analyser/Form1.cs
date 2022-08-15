@@ -19,64 +19,79 @@ namespace VIVA_report_analyser
         {
             InitializeComponent();
         }
-        public static Dictionary<string, Dictionary<string, List<XElement>>> ExtractedDataOnFile = new Dictionary<string, Dictionary<string, List<XElement>>>();
         public static Dictionary<string, Dictionary<string, DataTable>> filteredTestOnFile = new Dictionary<string, Dictionary<string, DataTable>>();
-        public static Dictionary<string, DataTable> filteredTest = new Dictionary<string, DataTable>();
-
+        
         private void button1_Click_1(object sender, EventArgs e)
         {
-            var dataOpenFiles = TestDto.LoadXmlDocument();
+            TestDto.ExtractData(TestDto.LoadXmlDocument());
+            
+            foreach (var files in TestDto.dataFile)
+            {
+                TabPage page = new TabPage(files.fileName);
+                tabControl2.TabPages.Add(page);
 
-                //ExtractedDataOnFile.Add(fileName, TestDto.ExtractData(fileName, root));
+                tabControl2.MouseClick += FileTab_MouseClick;
+                page.MouseClick += Page_MouseClick;
 
-                        //filteredTest = TestDto.SelectComponentTests(TestDto.vivaXmlTests, root);
-                        //
-                        //TabPage page = new TabPage(openFileDialog.SafeFileNames[file]);
-                        //tabControl2.TabPages.Add(page);
-                        //
-                        //tabControl2.MouseClick += FileTab_MouseClick;
-                        //page.MouseClick += Page_MouseClick;
-                        //
-                        //ContextMenuStrip FileTabMenu = new ContextMenuStrip();
-                        //ToolStripMenuItem CloseTab_MenuItem = new ToolStripMenuItem("Закрыть вкладку");
-                        //ToolStripMenuItem CloseTabs_MenuItem = new ToolStripMenuItem("Закрыть все вкладки");
-                        //ToolStripMenuItem RecoverTab_MenuItem = new ToolStripMenuItem("Открыть закрытую вкладку");
-                        //
-                        //FileTabMenu.Items.AddRange(new[]
-                        //{
-                        //    CloseTab_MenuItem,
-                        //    CloseTabs_MenuItem,
-                        //    RecoverTab_MenuItem
-                        //});
-                        //page.ContextMenuStrip = FileTabMenu;
-                        //
-                        //TabControl tabTests = new TabControl();
-                        //page.Controls.Add(tabTests);
-                        //tabTests.Dock = DockStyle.Fill;
-                        //tabTests.ItemSize = new System.Drawing.Size(0, 24);
-                        //tabTests.SelectedIndex = 0;
-                        //tabTests.TabIndex = 1;
-                        //tabTests.Name = openFileDialog.SafeFileNames[file];
-                        //
-                        //DataTable gettedView;
-                        //foreach (var test in TestDto.vivaXmlTests)
-                        //{
-                        //    if (filteredTest.TryGetValue(test.Translation, out gettedView))
-                        //        AddNewComponentTab(test.Translation, tabTests, gettedView.DefaultView, test.Mask);
-                        //    else
-                        //        MessageBox.Show("Ошибка чтения словаря по ключу " + test.Name, "Ошибка чтения данных словаря", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        //}
-                        //
-                        //if (filteredTest.TryGetValue(TestDto.Сalculations[0].Translation, out gettedView))
-                        //    AddNewComponentTab(TestDto.Сalculations[0].Translation, tabTests, gettedView.DefaultView, TestDto.Сalculations[0].Mask);
-                        //else
-                        //    MessageBox.Show("Ошибка чтения словаря по ключу " + TestDto.Сalculations[0].Name, "Ошибка чтения данных словаря", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        //
-                        //TestDto.openFilesNames.Add(tabTests.Name);
-                        //
-                        //filteredTestOnFile.Add(tabTests.Name, filteredTest);
+                TabControl tabTests = new TabControl();
+                page.Controls.Add(tabTests);
+                tabTests.Dock = DockStyle.Fill;
+                tabTests.ItemSize = new System.Drawing.Size(0, 24);
+                tabTests.SelectedIndex = 0;
+                tabTests.TabIndex = 1;
+                tabTests.Name = files.fileName;
+                int numTest = TestDto.vivaXmlTests.Count;
+                List<XElement> gettedView = new List<XElement>();
+                
+                
+                foreach (var test in TestDto.vivaXmlTests)
+                {
+                    if (files.filterByTests.TryGetValue(test.Translation, out gettedView))
+                        AddNewComponentTab(test.Translation, tabTests, gettedView, test.Mask);
+                    else
+                        MessageBox.Show("Ошибка чтения словаря по ключу " + test.Name, "Ошибка чтения данных словаря", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                if (files.filterByTests.TryGetValue(TestDto.Сalculations[0].Translation, out gettedView))
+                    AddNewComponentTab(TestDto.Сalculations[0].Translation, tabTests, gettedView, TestDto.Сalculations[0].Mask);
+                else
+                    MessageBox.Show("Ошибка чтения словаря по ключу " + TestDto.Сalculations[0].Name, "Ошибка чтения данных словаря", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             
             
+            //ContextMenuStrip FileTabMenu = new ContextMenuStrip();
+            //ToolStripMenuItem CloseTab_MenuItem = new ToolStripMenuItem("Закрыть вкладку");
+            //ToolStripMenuItem CloseTabs_MenuItem = new ToolStripMenuItem("Закрыть все вкладки");
+            //ToolStripMenuItem RecoverTab_MenuItem = new ToolStripMenuItem("Открыть закрытую вкладку");
+            //
+            //FileTabMenu.Items.AddRange(new[]
+            //{
+            //    CloseTab_MenuItem,
+            //    CloseTabs_MenuItem,
+            //    RecoverTab_MenuItem
+            //});
+            //page.ContextMenuStrip = FileTabMenu;
+            //
+            //
+            //
+            //DataTable gettedView;
+            //foreach (var test in TestDto.vivaXmlTests)
+            //{
+            //    if (filteredTest.TryGetValue(test.Translation, out gettedView))
+            //        AddNewComponentTab(test.Translation, tabTests, gettedView.DefaultView, test.Mask);
+            //    else
+            //        MessageBox.Show("Ошибка чтения словаря по ключу " + test.Name, "Ошибка чтения данных словаря", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //}
+            //
+            //if (filteredTest.TryGetValue(TestDto.Сalculations[0].Translation, out gettedView))
+            //    AddNewComponentTab(TestDto.Сalculations[0].Translation, tabTests, gettedView.DefaultView, TestDto.Сalculations[0].Mask);
+            //else
+            //    MessageBox.Show("Ошибка чтения словаря по ключу " + TestDto.Сalculations[0].Name, "Ошибка чтения данных словаря", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            //
+            //TestDto.openFilesNames.Add(tabTests.Name);
+            //
+            //filteredTestOnFile.Add(tabTests.Name, filteredTest);
+
+
         }
 
         public int nowMouseClickFileTab = 0;
@@ -132,11 +147,12 @@ namespace VIVA_report_analyser
         {
         }
 
-        private void AddNewComponentTab(string nameTab, TabControl tabControl, DataView view, ulong ColumnMask)
+        private void AddNewComponentTab(string nameTab, TabControl tabControl, List<XElement> data, ulong ColumnMask)
         // Создание фкладки с именем компонента во вкладке с файлом
         {
             try
             {
+                DataView view = TestDto.ParseToDataView(data).DefaultView;
                 int rowCount = view.Count;
                 TabPage page = new TabPage(nameTab + " (" + rowCount + ")");
                 tabControl.Click += ComponentTab_MouseClick;
@@ -221,14 +237,14 @@ namespace VIVA_report_analyser
         {
             MessageBox.Show("Ну", "Зачем");
         }
-        public static Dictionary<string, DataTable> DeviationCalculateTable = new Dictionary<string, DataTable>();
+        public static Dictionary<string, List<XElement>> deviationCalculate = new Dictionary<string, List<XElement>>();
         private void button2_Click(object sender, EventArgs e)
         {
             try
             {
                 if (TestDto.openFilesNames.Count == 0) throw new ArgumentException("Нет открытых файлов");
                 if (TestDto.openFilesNames.Count == 1) throw new ArgumentException("Необходимо хотя бы ДВА открытых файла для выборки значений");
-                DeviationCalculateTable = MaxDeviationCalculate.DeviationCalculate(filteredTestOnFile);
+                deviationCalculate = MaxDeviationCalculate.DeviationCalculate();
                 TabPage page = new TabPage(TestDto.Сalculations[1].Translation);
                 tabControl2.TabPages.Add(page);
                 page.Visible = true;
@@ -242,10 +258,21 @@ namespace VIVA_report_analyser
                 tabTests.Name = TestDto.Сalculations[1].Translation;
                 tabTests.Visible = true;
                 tabTests.Select();
-                foreach (var tests in DeviationCalculateTable)
+                
+                List<XElement> gettedView = new List<XElement>();
+                
+
+                foreach (var test in TestDto.vivaXmlTests)
                 {
-                    AddNewComponentTab(tests.Key, tabTests, tests.Value.DefaultView, TestDto.Сalculations[1].Mask);
+                    if (deviationCalculate.TryGetValue(test.Translation, out gettedView))
+                        AddNewComponentTab(test.Translation, tabTests, gettedView, test.Mask);
+                    else
+                        MessageBox.Show("Ошибка чтения словаря по ключу " + test.Name, "Ошибка чтения данных словаря", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
+                if (deviationCalculate.TryGetValue(TestDto.Сalculations[0].Translation, out gettedView))
+                    AddNewComponentTab(TestDto.Сalculations[0].Translation, tabTests, gettedView, TestDto.Сalculations[0].Mask);
+                else
+                    MessageBox.Show("Ошибка чтения словаря по ключу " + TestDto.Сalculations[0].Name, "Ошибка чтения данных словаря", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (Exception CalculateError)
             {

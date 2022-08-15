@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,6 +17,14 @@ namespace VIVA_report_analyser
         public string Name { get; set; }
         public string Translation { get; set; }
         public ulong Mask { get; set; }
+    }
+    internal class UniqueTestNameClass
+    {
+        // Поля класса
+        public string uniqueTestName { get; set; }
+        public Double MR { get; set; }
+        public Double MP { get; set; }
+        public bool attend { get; set; }
     }
     internal class MaxDeviationCalculate
     {
@@ -43,53 +52,15 @@ namespace VIVA_report_analyser
             new MaxDeviationColumnsClass { Name = "maxValueP", Translation ="max %",             Mask = 0x000000100 }, // 8
             new MaxDeviationColumnsClass { Name = "deltaP",    Translation ="Размах %",          Mask = 0x000000200 }, // 9
         };
-        public static Dictionary<string, DataTable> DeviationCalculate(Dictionary<string, Dictionary<string, DataTable>> filesTests)
+        public static Dictionary<string, List<XElement>> DeviationCalculate()
         // Выборка результатов конкретного теста
         {
             try
             {
-                
-                Dictionary<string, DataTable> CalculatedTable = new Dictionary<string, DataTable>();
-                DataTable table = new DataTable();
-                table.Columns.Add(TestDto.vivaXmlColumns[12].Translation);
-                
-                foreach (var columns in MaxDeviationColumns)
-                {
-                    table.Columns.Add(columns.Translation);
-                }
-                Dictionary<string, DataTable> gettedFirstFileDictionary = new Dictionary<string, DataTable>();
-                if (filesTests.TryGetValue(TestDto.openFilesNames[0], out gettedFirstFileDictionary)) { }
-                else throw new ArgumentException("Ошибка чтения данных словаря");
-                foreach (var tests in gettedFirstFileDictionary) // Цикл по вкладкам компонентов
-                {
-                    //for (int i = 0; i < tests.Value.Rows.Count; i++)
-                    //{
-                    //    DataRow row = table.NewRow();
-                    //    table.Rows.Add(row);
-                    //}
-                    foreach (DataRow test in tests.Value.Rows)
-                    {
-                        table.Rows.Add(test["NM"]);
-                        //table.Rows[ = test["MR"];
-                        //table.Rows.Add(test["MP"]);
-                    }
-                    CalculatedTable.Add(tests.Key.ToString(), table);
-                }
+                var t = CollectValuesForCalc();
 
-                foreach (var file in filesTests) // По файлам
-                {
-                    foreach (var tests in file.Value) // По вкладкам тестов
-                    {
-                        for(int i = 0; i < tests.Value.Rows.Count; i++)
-                        {
-                            //table.NewRow() 
-                        }
-                        
-                    }
-                }
-                
 
-                return CalculatedTable;
+                return null;
             }
             catch (Exception Error)
             {
@@ -97,24 +68,77 @@ namespace VIVA_report_analyser
                 return null;
             }
         }
-        /*private static DataTable DeviCalc(DataTable data)
+        public static List<List<UniqueTestNameClass>> CollectValuesForCalc()
         {
-            DataTable table = new DataTable();
-            //uint i = 0;
-            foreach (PropertyDescriptor prop in properties)
+            List<string> uniTest = UniqueTest();
+            int numTests = uniTest.Count;
+            int numFiles = TestDto.openFilesNames.Count;
+            List<List<UniqueTestNameClass>> valuesForCalc = new List<List<UniqueTestNameClass>>();
+            for (int f = 0; f < numFiles; f++)
             {
-                table.Columns.Add(prop.Name, Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType); //prop.Name
-                //table.Columns.
-                //i++;
+                List<UniqueTestNameClass> uniqueTests = new List<UniqueTestNameClass>();
+                for (int t = 0; t < numTests; t++)
+                {
+                    if ((TestDto.dataFile[f].allTests[t].Attribute("NM").Value  + "|" +
+                         TestDto.dataFile[f].allTests[t].Attribute("F").Value   + "|" +
+                         TestDto.dataFile[f].allTests[t].Attribute("PD1").Value + "|" +
+                         TestDto.dataFile[f].allTests[t].Attribute("PD2").Value)
+                         == uniTest[t])
+                    {
+                        uniqueTests.Add(new UniqueTestNameClass()
+                        {
+                            uniqueTestName = uniTest[t],
+                            MR = Double.Parse(TestDto.dataFile[f].allTests[t].Attribute("MR").Value, new CultureInfo("en-US")),
+                            MP = Double.Parse(TestDto.dataFile[f].allTests[t].Attribute("MP").Value, new CultureInfo("en-US")),
+                            attend = true
+                        });
+                    }
+                    else
+                    {
+                        uniqueTests.Add(new UniqueTestNameClass()
+                        {
+                            uniqueTestName = uniTest[t],
+                            MR = 0,
+                            MP = 0,
+                            attend = false
+                        });
+                    }
+                    valuesForCalc.Add(uniqueTests);
+                }
             }
-            foreach (T item in data)
+            return valuesForCalc;
+        }
+        public static List<string> UniqueTest()
+        {
+            int numFiles = TestDto.openFilesNames.Count;
+            List<string> returnFile = new List<string>();
+            foreach (var test in TestDto.dataFile[0].allTests)
             {
-                DataRow row = table.NewRow();
-                foreach (PropertyDescriptor prop in properties)
-                    row[prop.Name] = prop.GetValue(item) ?? DBNull.Value;
-                table.Rows.Add(row);
+                returnFile.Add
+                (
+                    test.Attribute("NM").Value  + "|" +
+                    test.Attribute("F").Value   + "|" +
+                    test.Attribute("PD1").Value + "|" +
+                    test.Attribute("PD2").Value
+                );
             }
-            return table;
-        }*/
+            for ( int i = 1; i < numFiles; i++ )
+            {
+                List<string> tempFile = new List<string>();
+                foreach (var test in TestDto.dataFile[i].allTests)
+                {
+                    tempFile.Add
+                    (
+                        test.Attribute("NM").Value  + "|" +
+                        test.Attribute("F").Value   + "|" +
+                        test.Attribute("PD1").Value + "|" +
+                        test.Attribute("PD2").Value
+                    );
+                }
+                returnFile = (from cell in returnFile.Union(tempFile)
+                             select cell).ToList();
+            }
+            return returnFile;
+        }
     }
 }
