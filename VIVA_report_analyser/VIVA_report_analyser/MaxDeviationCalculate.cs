@@ -55,41 +55,27 @@ namespace VIVA_report_analyser
         public static Dictionary<string, List<XElement>> DeviationCalculate()
         // Выборка результатов конкретного теста
         {
-            try
-            {
                 var t = CollectValuesForCalc();
-
-
                 return null;
-            }
-            catch (Exception Error)
-            {
-                MessageBox.Show("Ошибка выборки максимального отклонения.\nПодробнее:\n" + Error.Message, "Ошибка выборки максимального отклонения", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return null;
-            }
         }
         public static List<List<UniqueTestNameClass>> CollectValuesForCalc()
         {
             List<string> uniTest = UniqueTest();
             int numTests = uniTest.Count;
-            int numFiles = TestDto.openFilesNames.Count;
             List<List<UniqueTestNameClass>> valuesForCalc = new List<List<UniqueTestNameClass>>();
-            for (int f = 0; f < numFiles; f++)
+            for (int f = 0; f < OpenFiles.openCount; f++)
             {
                 List<UniqueTestNameClass> uniqueTests = new List<UniqueTestNameClass>();
                 for (int t = 0; t < numTests; t++)
                 {
-                    if ((TestDto.dataFile[f].allTests[t].Attribute("NM").Value  + "|" +
-                         TestDto.dataFile[f].allTests[t].Attribute("F").Value   + "|" +
-                         TestDto.dataFile[f].allTests[t].Attribute("PD1").Value + "|" +
-                         TestDto.dataFile[f].allTests[t].Attribute("PD2").Value)
+                    if (OpenFiles.dataFile[f].dataParse.BI.Test[t].uniqueTestName
                          == uniTest[t])
                     {
                         uniqueTests.Add(new UniqueTestNameClass()
                         {
                             uniqueTestName = uniTest[t],
-                            MR = Double.Parse(TestDto.dataFile[f].allTests[t].Attribute("MR").Value, new CultureInfo("en-US")),
-                            MP = Double.Parse(TestDto.dataFile[f].allTests[t].Attribute("MP").Value, new CultureInfo("en-US")),
+                            MR = OpenFiles.dataFile[f].dataParse.BI.Test[t].MR,
+                            MP = OpenFiles.dataFile[f].dataParse.BI.Test[t].MP,
                             attend = true
                         });
                     }
@@ -110,33 +96,34 @@ namespace VIVA_report_analyser
         }
         public static List<string> UniqueTest()
         {
-            int numFiles = TestDto.openFilesNames.Count;
             List<string> returnFile = new List<string>();
-            foreach (var test in TestDto.dataFile[0].allTests)
+            int firstFile = 0;
+            for (int i = 0; i < OpenFiles.dataFile.Count; i++)
             {
-                returnFile.Add
-                (
-                    test.Attribute("NM").Value  + "|" +
-                    test.Attribute("F").Value   + "|" +
-                    test.Attribute("PD1").Value + "|" +
-                    test.Attribute("PD2").Value
-                );
+                if (OpenFiles.dataFile[i].errorOpenFile != true)
+                    if (OpenFiles.dataFile[i].visibleFile == true)
+                    {
+                        firstFile = i;
+                        foreach (var test in OpenFiles.dataFile[i].dataParse.BI.Test)
+                        {
+                            returnFile.Add(test.uniqueTestName);
+                        }
+                        i = OpenFiles.dataFile.Count;
+                    }
             }
-            for ( int i = 1; i < numFiles; i++ )
+            for ( int i = firstFile + 1; i < OpenFiles.dataFile.Count; i++ )
             {
-                List<string> tempFile = new List<string>();
-                foreach (var test in TestDto.dataFile[i].allTests)
-                {
-                    tempFile.Add
-                    (
-                        test.Attribute("NM").Value  + "|" +
-                        test.Attribute("F").Value   + "|" +
-                        test.Attribute("PD1").Value + "|" +
-                        test.Attribute("PD2").Value
-                    );
-                }
-                returnFile = (from cell in returnFile.Union(tempFile)
-                             select cell).ToList();
+                if (OpenFiles.dataFile[i].errorOpenFile != true)
+                if (OpenFiles.dataFile[i].visibleFile == true)
+                    {
+                        List<string> tempFile = new List<string>();
+                        foreach (var test in OpenFiles.dataFile[i].dataParse.BI.Test)
+                        {
+                            tempFile.Add(test.uniqueTestName);
+                        }
+                        returnFile = (from cell in returnFile.Union(tempFile)
+                                      select cell).ToList();
+                    }
             }
             return returnFile;
         }
