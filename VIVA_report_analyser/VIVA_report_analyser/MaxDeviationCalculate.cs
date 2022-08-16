@@ -58,7 +58,7 @@ namespace VIVA_report_analyser
                 var t = CollectValuesForCalc();
                 return null;
         }
-        public static List<List<UniqueTestNameClass>> CollectValuesForCalc()
+        public static List<UniqueTestNameClass> CollectValuesForCalc()
         {
             List<string> uniTest = UniqueTest();
             int numTests = uniTest.Count;
