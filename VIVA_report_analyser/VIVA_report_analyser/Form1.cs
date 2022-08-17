@@ -119,7 +119,7 @@ namespace VIVA_report_analyser
         {
         }
 
-        private void AddNewComponentTab(string nameTab, TabControl tabControl, List<ColumnsClass> data, ulong ColumnMask)
+        private void AddNewComponentTab<T>(string nameTab, TabControl tabControl, IList<T> data, ulong ColumnMask)
         // Создание фкладки с именем компонента во вкладке с файлом
         {
             try
@@ -209,14 +209,13 @@ namespace VIVA_report_analyser
         {
             MessageBox.Show("Ну", "Зачем");
         }
-        public static Dictionary<string, List<XElement>> deviationCalculate = new Dictionary<string, List<XElement>>();
         private void button2_Click(object sender, EventArgs e)
         {
             try
             {
                 if (OpenFiles.openCount == 0) throw new ArgumentException("Нет открытых файлов");
                 if (OpenFiles.openCount == 1) throw new ArgumentException("Необходимо хотя бы ДВА открытых файла для выборки значений");
-                deviationCalculate = MaxDeviationCalculate.DeviationCalculate();
+                List<MaxDeviationCalculateFilteredTests> data = MaxDeviationCalculate.DeviationCalculate();
                 TabPage page = new TabPage(ParseXml.Сalculations[1].Translation);
                 tabControl2.TabPages.Add(page);
                 page.Visible = true;
@@ -230,9 +229,19 @@ namespace VIVA_report_analyser
                 tabTests.Name = ParseXml.Сalculations[1].Translation;
                 tabTests.Visible = true;
                 tabTests.Select();
-                
-                List<XElement> gettedView = new List<XElement>();
-                
+
+                for (int test = 0; test < ParseXml.testCount; test++)
+                {
+                    AddNewComponentTab
+                    (
+                        ParseXml.vivaXmlTests[test].Translation,
+                        tabTests,
+                        data[test].data,
+                        ParseXml.vivaXmlTests[test].Mask
+                    );
+
+                }
+
 
                 /*foreach (var test in ParseXml.vivaXmlTests)
                 {

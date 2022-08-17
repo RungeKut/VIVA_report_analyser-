@@ -40,22 +40,28 @@ namespace VIVA_report_analyser
     {
         // Поля класса
         public string uniqueTestName { get; set; }
-        public Double MR { get; set; }
-        public Double MP { get; set; }
+        public double MR { get; set; }
+        public double MP { get; set; }
         public bool attend { get; set; }
+    }
+    internal class MaxDeviationCalculateFilteredTests
+    {
+        // Поля класса
+        public string testName { get; set; }
+        public List<MaxDeviationCalculate> data { get; set; }
     }
     internal class MaxDeviationCalculate
     {
-        public Double fileMin { get; set; }
-        public Double minValue { get; set; }
-        public Double fileMax { get; set; }
-        public Double maxValue { get; set; }
-        public Double delta { get; set; }
-        public Double fileMinP { get; set; }
-        public Double minValueP { get; set; }
-        public Double fileMaxP { get; set; }
-        public Double maxValueP { get; set; }
-        public Double deltaP { get; set; }
+        public string fileMin { get; set; }
+        public double minValue { get; set; }
+        public string fileMax { get; set; }
+        public double maxValue { get; set; }
+        public double delta { get; set; }
+        public string fileMinP { get; set; }
+        public double minValueP { get; set; }
+        public string fileMaxP { get; set; }
+        public double maxValueP { get; set; }
+        public double deltaP { get; set; }
         public static List<MaxDeviationColumnsClass> MaxDeviationColumns = new List<MaxDeviationColumnsClass>
         // Битовая маска указывает какие столбцы интересны для конкретного теста
         {
@@ -70,11 +76,80 @@ namespace VIVA_report_analyser
             new MaxDeviationColumnsClass { Name = "maxValueP", Translation ="max %",             Mask = 0x000000100 }, // 8
             new MaxDeviationColumnsClass { Name = "deltaP",    Translation ="Размах %",          Mask = 0x000000200 }, // 9
         };
-        public static Dictionary<string, List<XElement>> DeviationCalculate()
+        public static List<MaxDeviationCalculateFilteredTests> DeviationCalculate()
         // Выборка результатов конкретного теста
         {
-                var t = CollectValuesForCalc();
-                return null;
+            List<UniqueFileClass> data = CollectValuesForCalc();
+            List<MaxDeviationCalculateFilteredTests> maxDeviationCalculate = new List<MaxDeviationCalculateFilteredTests>();
+            for (int f = 0; f < data.Count; f++)
+            {
+                for (int fltr = 0; fltr < data[f].tests.Count; fltr++)
+                {
+                    try
+                    {
+                        if (maxDeviationCalculate[fltr].testName != null)
+                        {
+
+                        }
+                    }
+                    catch (Exception e) // Если елемента с таким индексом нет - то создаем
+                    {
+                        maxDeviationCalculate.Add(new MaxDeviationCalculateFilteredTests() // Создали раздел с фильтра по тесту
+                        {
+                            testName = data[f].tests[fltr].testName,
+                            data = new List<MaxDeviationCalculate>()
+                        });
+                    }
+                    
+                    for (int t = 0; t < data[f].tests[fltr].uniqueTests.Count; t++)
+                    {
+                        try
+                        {
+                            if (maxDeviationCalculate[fltr].data[t].fileMin != null)
+                            {
+
+                            }
+                        }
+                        catch (Exception e) // Если елемента с таким индексом нет - то создаем
+                        {
+                            maxDeviationCalculate[fltr].data.Add(new MaxDeviationCalculate() // Создали раздел теста
+                            {
+                                fileMin = data[f].fileName,
+                                minValue = data[f].tests[fltr].uniqueTests[t].MR,
+                                fileMax = data[f].fileName,
+                                maxValue = data[f].tests[fltr].uniqueTests[t].MR,
+                                fileMinP = data[f].fileName,
+                                minValueP = data[f].tests[fltr].uniqueTests[t].MP,
+                                fileMaxP = data[f].fileName,
+                                maxValueP = data[f].tests[fltr].uniqueTests[t].MP
+                            });
+                        }
+                        if (maxDeviationCalculate[fltr].data[t].minValue > data[f].tests[fltr].uniqueTests[t].MR)
+                        {
+                            maxDeviationCalculate[fltr].data[t].minValue = data[f].tests[fltr].uniqueTests[t].MR;
+                            maxDeviationCalculate[fltr].data[t].fileMin = data[f].fileName;
+                        }
+                        if (maxDeviationCalculate[fltr].data[t].maxValue < data[f].tests[fltr].uniqueTests[t].MR)
+                        {
+                            maxDeviationCalculate[fltr].data[t].maxValue = data[f].tests[fltr].uniqueTests[t].MR;
+                            maxDeviationCalculate[fltr].data[t].fileMax = data[f].fileName;
+                        }
+                        maxDeviationCalculate[fltr].data[t].delta = maxDeviationCalculate[fltr].data[t].maxValue - maxDeviationCalculate[fltr].data[t].minValue;
+                        if (maxDeviationCalculate[fltr].data[t].minValueP > data[f].tests[fltr].uniqueTests[t].MP)
+                        {
+                            maxDeviationCalculate[fltr].data[t].minValueP = data[f].tests[fltr].uniqueTests[t].MP;
+                            maxDeviationCalculate[fltr].data[t].fileMinP = data[f].fileName;
+                        }
+                        if (maxDeviationCalculate[fltr].data[t].maxValueP < data[f].tests[fltr].uniqueTests[t].MP)
+                        {
+                            maxDeviationCalculate[fltr].data[t].maxValueP = data[f].tests[fltr].uniqueTests[t].MP;
+                            maxDeviationCalculate[fltr].data[t].fileMaxP = data[f].fileName;
+                        }
+                        maxDeviationCalculate[fltr].data[t].deltaP = maxDeviationCalculate[fltr].data[t].maxValueP - maxDeviationCalculate[fltr].data[t].minValueP;
+                    }
+                }
+            }
+            return maxDeviationCalculate;
         }
         public static List<UniqueFileClass> CollectValuesForCalc()
         {
@@ -99,6 +174,8 @@ namespace VIVA_report_analyser
                             });
                             for (int t = 0; t < uniTest[filter].uniqueTests.Count; t++)
                             {
+                                //Следующее условие - ошибочно. Нужно выполнять поиск в массиве а не сравнивать. Пока как заглушка
+                                //т.к. если длинна массива dataFile будет меньше уникального - то выборка будет неверной
                                 if (OpenFiles.dataFile[f].dataFilteredByTests[filter].Tests[t].uniqueTestName
                                      == uniTest[filter].uniqueTests[t])
                                 {
@@ -114,7 +191,7 @@ namespace VIVA_report_analyser
                                 {
                                     uniqFile[f].tests[filter].uniqueTests.Add(new UniqueTestClass() //Если такой тест НЕнайден в разделе фильтра то всеравно создаем тест но без данных с флагом отсутсвует
                                     {
-                                        uniqueTestName = uniTest[t].testName,
+                                        uniqueTestName = uniTest[filter].testName,
                                         MR = 0,
                                         MP = 0,
                                         attend = false
@@ -128,6 +205,7 @@ namespace VIVA_report_analyser
         }
         public static List<FilterTestClass> UniqueTest()
         {
+            //Составляем выборку уникальных тестов внутри фильтра по названию теста
             List<FilterTestClass> returnFile = new List<FilterTestClass>();
             int firstFile = 0;
             for (int f = 0; f < OpenFiles.dataFile.Count; f++)
@@ -168,6 +246,7 @@ namespace VIVA_report_analyser
                         }
                     }
             }
+            //Составляем выборку уникальных тестов из всего списка тестов
             returnFile.Add(new FilterTestClass()
             {
                 testName = ParseXml.Сalculations[0].Translation,
