@@ -142,7 +142,7 @@ namespace VIVA_report_analyser
                 //dataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
                 dataGridView.DataSource = view;
                 dataGridView.VirtualMode = true; //отрисовываются только те ячейки, которые видны в данный момент
-                dataGridView.ColumnHeaderMouseClick += DataGridView_ColumnHeaderMouseClick; ;
+                dataGridView.ColumnHeaderMouseClick += DataGridView_ColumnHeaderMouseClick;
                 TestDto.VisibleColumns(ColumnMask, dataGridView);
                 if (dataGridView.Columns["MP"] != null)
                 dataGridView.Columns["MP"].DefaultCellStyle.Format = "#0.0\\%";
@@ -228,16 +228,17 @@ namespace VIVA_report_analyser
                 tabTests.TabIndex = 1;
                 tabTests.Name = ParseXml.Сalculations[1].Translation;
                 tabTests.Visible = true;
-                tabTests.Select();
+                //int tabCount = tabControl2.TabCount;
+                tabControl2.SelectTab(tabControl2.TabCount - 1);
 
-                for (int test = 0; test < ParseXml.testCount; test++)
+                //for (int test = 0; test < ParseXml.testCount; test++)
+                foreach ( var test in data)
                 {
-                    AddNewComponentTab
+                    MaxDeviationCalculate.DeviationAddNewComponentTab
                     (
-                        ParseXml.vivaXmlTests[test].Translation,
+                        test.testName,
                         tabTests,
-                        data[test].data,
-                        ParseXml.vivaXmlTests[test].Mask
+                        test.data
                     );
 
                 }

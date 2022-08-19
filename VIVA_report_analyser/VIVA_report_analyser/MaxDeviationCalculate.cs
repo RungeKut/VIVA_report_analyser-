@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -52,6 +53,7 @@ namespace VIVA_report_analyser
     }
     internal class MaxDeviationCalculate
     {
+        public string NM { get; set; }
         public string fileMin { get; set; }
         public double minValue { get; set; }
         public string fileMax { get; set; }
@@ -65,16 +67,17 @@ namespace VIVA_report_analyser
         public static List<MaxDeviationColumnsClass> MaxDeviationColumns = new List<MaxDeviationColumnsClass>
         // Битовая маска указывает какие столбцы интересны для конкретного теста
         {
-            new MaxDeviationColumnsClass { Name = "fileMin",   Translation ="Файл с минимумом",  Mask = 0x000000001 }, // 0
-            new MaxDeviationColumnsClass { Name = "minValue",  Translation ="Минимум",           Mask = 0x000000002 }, // 1
-            new MaxDeviationColumnsClass { Name = "fileMax",   Translation ="Файл с максимумом", Mask = 0x000000004 }, // 2
-            new MaxDeviationColumnsClass { Name = "maxValue",  Translation ="Максимум",          Mask = 0x000000008 }, // 3
-            new MaxDeviationColumnsClass { Name = "delta",     Translation ="Размах",            Mask = 0x000000010 }, // 4
-            new MaxDeviationColumnsClass { Name = "fileMinP",  Translation ="Файл с min %",      Mask = 0x000000020 }, // 5
-            new MaxDeviationColumnsClass { Name = "minValueP", Translation ="min %",             Mask = 0x000000040 }, // 6
-            new MaxDeviationColumnsClass { Name = "fileMaxP",  Translation ="Файл с max %",      Mask = 0x000000080 }, // 7
-            new MaxDeviationColumnsClass { Name = "maxValueP", Translation ="max %",             Mask = 0x000000100 }, // 8
-            new MaxDeviationColumnsClass { Name = "deltaP",    Translation ="Размах %",          Mask = 0x000000200 }, // 9
+            new MaxDeviationColumnsClass { Name = "NM" ,       Translation ="Имя компонента",    Mask = 0x000001000 },
+            new MaxDeviationColumnsClass { Name = "fileMin",   Translation ="Файл с минимумом",  Mask = 0x000000001 },
+            new MaxDeviationColumnsClass { Name = "minValue",  Translation ="Минимум",           Mask = 0x000000002 },
+            new MaxDeviationColumnsClass { Name = "fileMax",   Translation ="Файл с максимумом", Mask = 0x000000004 },
+            new MaxDeviationColumnsClass { Name = "maxValue",  Translation ="Максимум",          Mask = 0x000000008 },
+            new MaxDeviationColumnsClass { Name = "delta",     Translation ="Размах",            Mask = 0x000000010 },
+            new MaxDeviationColumnsClass { Name = "fileMinP",  Translation ="Файл с min %",      Mask = 0x000000020 },
+            new MaxDeviationColumnsClass { Name = "minValueP", Translation ="min %",             Mask = 0x000000040 },
+            new MaxDeviationColumnsClass { Name = "fileMaxP",  Translation ="Файл с max %",      Mask = 0x000000080 },
+            new MaxDeviationColumnsClass { Name = "maxValueP", Translation ="max %",             Mask = 0x000000100 },
+            new MaxDeviationColumnsClass { Name = "deltaP",    Translation ="Размах %",          Mask = 0x000000200 }
         };
         public static List<MaxDeviationCalculateFilteredTests> DeviationCalculate()
         // Выборка результатов конкретного теста
@@ -83,6 +86,7 @@ namespace VIVA_report_analyser
             List<MaxDeviationCalculateFilteredTests> maxDeviationCalculate = new List<MaxDeviationCalculateFilteredTests>();
             for (int f = 0; f < data.Count; f++)
             {
+                if (data[f].tests.Count != 0)
                 for (int fltr = 0; fltr < data[f].tests.Count; fltr++)
                 {
                     try
@@ -112,40 +116,55 @@ namespace VIVA_report_analyser
                         }
                         catch (Exception e) // Если елемента с таким индексом нет - то создаем
                         {
-                            maxDeviationCalculate[fltr].data.Add(new MaxDeviationCalculate() // Создали раздел теста
-                            {
-                                fileMin = data[f].fileName,
-                                minValue = data[f].tests[fltr].uniqueTests[t].MR,
-                                fileMax = data[f].fileName,
-                                maxValue = data[f].tests[fltr].uniqueTests[t].MR,
-                                fileMinP = data[f].fileName,
-                                minValueP = data[f].tests[fltr].uniqueTests[t].MP,
-                                fileMaxP = data[f].fileName,
-                                maxValueP = data[f].tests[fltr].uniqueTests[t].MP
-                            });
-                        }
+                            if ( fltr < data[f].tests.Count - 1)
+                                maxDeviationCalculate[fltr].data.Add(new MaxDeviationCalculate() // Создали раздел теста
+                                {
+                                    NM = OpenFiles.dataFile[f].dataFilteredByTests[fltr].Tests[t].NM,
+                                    fileMin = data[f].fileName,
+                                    minValue = Math.Round(data[f].tests[fltr].uniqueTests[t].MR, 3),
+                                    fileMax = data[f].fileName,
+                                    maxValue = Math.Round(data[f].tests[fltr].uniqueTests[t].MR, 3),
+                                    fileMinP = data[f].fileName,
+                                    minValueP = Math.Round(data[f].tests[fltr].uniqueTests[t].MP, 1),
+                                    fileMaxP = data[f].fileName,
+                                    maxValueP = Math.Round(data[f].tests[fltr].uniqueTests[t].MP, 1)
+                                });
+                            else
+                                maxDeviationCalculate[fltr].data.Add(new MaxDeviationCalculate() // Создали раздел теста
+                                {
+                                    NM = OpenFiles.dataFile[f].dataParse.BI.Test[t].NM,
+                                    fileMin = data[f].fileName,
+                                    minValue = Math.Round(data[f].tests[fltr].uniqueTests[t].MR, 3),
+                                    fileMax = data[f].fileName,
+                                    maxValue = Math.Round(data[f].tests[fltr].uniqueTests[t].MR, 3),
+                                    fileMinP = data[f].fileName,
+                                    minValueP = Math.Round(data[f].tests[fltr].uniqueTests[t].MP, 1),
+                                    fileMaxP = data[f].fileName,
+                                    maxValueP = Math.Round(data[f].tests[fltr].uniqueTests[t].MP, 1)
+                                });
+                            }
                         if (maxDeviationCalculate[fltr].data[t].minValue > data[f].tests[fltr].uniqueTests[t].MR)
                         {
-                            maxDeviationCalculate[fltr].data[t].minValue = data[f].tests[fltr].uniqueTests[t].MR;
+                            maxDeviationCalculate[fltr].data[t].minValue = Math.Round(data[f].tests[fltr].uniqueTests[t].MR, 3);
                             maxDeviationCalculate[fltr].data[t].fileMin = data[f].fileName;
                         }
                         if (maxDeviationCalculate[fltr].data[t].maxValue < data[f].tests[fltr].uniqueTests[t].MR)
                         {
-                            maxDeviationCalculate[fltr].data[t].maxValue = data[f].tests[fltr].uniqueTests[t].MR;
+                            maxDeviationCalculate[fltr].data[t].maxValue = Math.Round(data[f].tests[fltr].uniqueTests[t].MR, 3);
                             maxDeviationCalculate[fltr].data[t].fileMax = data[f].fileName;
                         }
-                        maxDeviationCalculate[fltr].data[t].delta = maxDeviationCalculate[fltr].data[t].maxValue - maxDeviationCalculate[fltr].data[t].minValue;
+                        maxDeviationCalculate[fltr].data[t].delta = Math.Round(maxDeviationCalculate[fltr].data[t].maxValue - maxDeviationCalculate[fltr].data[t].minValue, 3);
                         if (maxDeviationCalculate[fltr].data[t].minValueP > data[f].tests[fltr].uniqueTests[t].MP)
                         {
-                            maxDeviationCalculate[fltr].data[t].minValueP = data[f].tests[fltr].uniqueTests[t].MP;
+                            maxDeviationCalculate[fltr].data[t].minValueP = Math.Round(data[f].tests[fltr].uniqueTests[t].MP, 1);
                             maxDeviationCalculate[fltr].data[t].fileMinP = data[f].fileName;
                         }
                         if (maxDeviationCalculate[fltr].data[t].maxValueP < data[f].tests[fltr].uniqueTests[t].MP)
                         {
-                            maxDeviationCalculate[fltr].data[t].maxValueP = data[f].tests[fltr].uniqueTests[t].MP;
+                            maxDeviationCalculate[fltr].data[t].maxValueP = Math.Round(data[f].tests[fltr].uniqueTests[t].MP, 1);
                             maxDeviationCalculate[fltr].data[t].fileMaxP = data[f].fileName;
                         }
-                        maxDeviationCalculate[fltr].data[t].deltaP = maxDeviationCalculate[fltr].data[t].maxValueP - maxDeviationCalculate[fltr].data[t].minValueP;
+                        maxDeviationCalculate[fltr].data[t].deltaP = Math.Round(maxDeviationCalculate[fltr].data[t].maxValueP - maxDeviationCalculate[fltr].data[t].minValueP, 1);
                     }
                 }
             }
@@ -199,6 +218,46 @@ namespace VIVA_report_analyser
                                 }
                             }
                         }  
+                    }
+            }
+            //И повторяем для всех тестов
+            int allTestNum = uniTest.Count - 1;
+            for (int f = 0; f < OpenFiles.dataFile.Count; f++)
+            {
+                if (OpenFiles.dataFile[f].errorOpenFile != true)
+                    if (OpenFiles.dataFile[f].visibleFile == true)
+                    {
+                            uniqFile[f].tests.Add(new UniqueTestsClass() //Создали раздел с фильтра тестов
+                            {
+                                testName = ParseXml.Сalculations[0].Translation,
+                                uniqueTests = new List<UniqueTestClass>()
+                            });
+                            for (int t = 0; t < uniTest[allTestNum].uniqueTests.Count; t++)
+                            {
+                                //Следующее условие - ошибочно. Нужно выполнять поиск в массиве а не сравнивать. Пока как заглушка
+                                //т.к. если длинна массива dataFile будет меньше уникального - то выборка будет неверной
+                                if (OpenFiles.dataFile[f].dataParse.BI.Test[t].uniqueTestName
+                                     == uniTest[allTestNum].uniqueTests[t])
+                                {
+                                    uniqFile[f].tests[allTestNum].uniqueTests.Add(new UniqueTestClass() //Если такой тест найден в разделе фильтра то создаем тест и копируем из него данные
+                                    {
+                                        uniqueTestName = uniTest[allTestNum].testName,
+                                        MR = OpenFiles.dataFile[f].dataParse.BI.Test[t].MR,
+                                        MP = OpenFiles.dataFile[f].dataParse.BI.Test[t].MP,
+                                        attend = true
+                                    });
+                                }
+                                else
+                                {
+                                    uniqFile[f].tests[allTestNum].uniqueTests.Add(new UniqueTestClass() //Если такой тест НЕнайден в разделе фильтра то всеравно создаем тест но без данных с флагом отсутсвует
+                                    {
+                                        uniqueTestName = uniTest[uniTest.Count].testName,
+                                        MR = 0,
+                                        MP = 0,
+                                        attend = false
+                                    });
+                                }
+                            }
                     }
             }
             return uniqFile;
@@ -283,6 +342,58 @@ namespace VIVA_report_analyser
             }
 
             return returnFile;
+        }
+        public static void DeviationAddNewComponentTab<T>(string nameTab, TabControl tabControl, IList<T> data)
+        // Создание фкладки с именем компонента во вкладке с файлом
+        {
+            try
+            {
+                DataView view = TestDto.ConvertToDataTable(data).DefaultView;
+                int rowCount = view.Count;
+                TabPage page = new TabPage(nameTab + " (" + rowCount + ")");
+                tabControl.TabPages.Add(page);
+                //page.Tag = "";
+                //page.MouseClick += page_MouseClick;
+                //page.MouseClick += new MouseEventHandler(page_MouseClick);
+                DoubleBufferedDataGridView dataGridView = new DoubleBufferedDataGridView();
+                page.Controls.Add(dataGridView);
+                dataGridView.Dock = DockStyle.Fill;
+                dataGridView.AllowUserToAddRows = false;
+                dataGridView.AllowUserToDeleteRows = false;
+                dataGridView.ReadOnly = true;
+                //dataGridView.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
+                //dataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+                dataGridView.DataSource = view;
+                dataGridView.VirtualMode = true; //отрисовываются только те ячейки, которые видны в данный момент
+
+                dataGridView.Columns["minValueP"].DefaultCellStyle.Format = "#0.0\\%";
+                dataGridView.Columns["maxValueP"].DefaultCellStyle.Format = "#0.0\\%";
+                dataGridView.Columns["deltaP"].DefaultCellStyle.Format = "#0.0\\%";
+
+                dataGridView.TopLeftHeaderCell.Value = "Тест"; // Заголовок столбца названия строк
+                if (view.Count > 0)
+                {
+                    int i = 0;
+                    foreach (var columnHeader in MaxDeviationColumns)
+                    {
+                        dataGridView.Columns[i].HeaderText = columnHeader.Translation;
+                        i++;
+                    }
+                }
+                dataGridView.RowsDefaultCellStyle.BackColor = Color.Ivory; //Строки всей таблицы
+                //dataGridView.Rows[1].DefaultCellStyle.BackColor = Color.IndianRed; //Одной строки
+                dataGridView.AlternatingRowsDefaultCellStyle.BackColor = Color.MintCream; //Цвет четных строк
+                
+                for (int r = 0; r < rowCount; r++)
+                {
+                    var h = dataGridView.Rows[r].Cells[2].Value;
+                        
+                }
+            }
+            catch (Exception ReadFileError)
+            {
+                MessageBox.Show("Ошибка при создании вкладки " + nameTab + ". Подробнее: " + ReadFileError.Message, "Ошибка создания вкладки", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }
