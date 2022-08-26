@@ -1,4 +1,6 @@
-﻿namespace VIVA_report_analyser
+﻿using System.Drawing;
+
+namespace VIVA_report_analyser
 {
     partial class Form1
     {
@@ -28,6 +30,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.button2 = new System.Windows.Forms.Button();
@@ -60,7 +63,8 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Инструменты";
             this.tabPage2.UseVisualStyleBackColor = true;
-            // 
+            //this.tabPage2.ForeColor = Color.Black;
+            //this.tabPage2.BackColor = Color.MediumAquamarine;
             // button2
             // 
             this.button2.Location = new System.Drawing.Point(18, 18);
@@ -109,13 +113,17 @@
             // 
             // Form1
             // 
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(1424, 971);
             this.Controls.Add(this.tabControl2);
             this.Controls.Add(this.tabControl1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Location = new System.Drawing.Point(100, 15);
             this.Name = "Form1";
+            this.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "VIVA report analyser V0.0";
             this.Load += new System.EventHandler(this.Form1_Load);

@@ -99,9 +99,12 @@ namespace VIVA_report_analyser
                     });
                 }
             }
-            if (errOpenCount > 0)
+            List<string> errOFN = (from DataFilesClass file in returnData
+                                  where file.errorOpenFile == true
+                                  select file.fileName).ToList();
+            if (errOFN.Count > 0)
             {
-                string files = String.Join("\n", errorOpenFilesNames);
+                string files = String.Join("\n", errOFN);
                 MessageBox.Show("Неверный формат файлов:\n\n" + files, "Ошибка чтения", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 //errorOpenFilesNames.Clear();
             }

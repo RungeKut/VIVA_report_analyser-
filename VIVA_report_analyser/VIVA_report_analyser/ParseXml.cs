@@ -169,12 +169,14 @@ namespace VIVA_report_analyser
         public static List<VivaXmlTestsClass> vivaXmlTests = new List<VivaXmlTestsClass>
         // Битовая маска указывает какие столбцы интересны для конкретного теста
         {
-            new VivaXmlTestsClass { Name = "CONTINUITY", Translation ="Тест на обрыв", Mask = 0x07000107C }, // 0 
-            new VivaXmlTestsClass { Name = "ISOLATION",  Translation ="Тест изоляции", Mask = 0x07000107C }, // 1
-            new VivaXmlTestsClass { Name = "RESISTOR",   Translation ="Резисторы",     Mask = 0x07F00107C }, // 2
-            new VivaXmlTestsClass { Name = "CAPACITOR",  Translation ="Конденсаторы",  Mask = 0x07F00107C }, // 3
-            new VivaXmlTestsClass { Name = "INDUCTANCE", Translation ="Индуктивности", Mask = 0x07F00107C }, // 4
-            new VivaXmlTestsClass { Name = "AUTIC",      Translation ="Чип",           Mask = 0x07F00107C }, // 5
+            new VivaXmlTestsClass { Name = "CONTINUITY", Translation ="Тест на обрыв", Mask = 0x07000107C }, 
+            new VivaXmlTestsClass { Name = "ISOLATION",  Translation ="Тест изоляции", Mask = 0x07000107C },
+            new VivaXmlTestsClass { Name = "RESISTOR",   Translation ="Резисторы",     Mask = 0x07F00107C },
+            new VivaXmlTestsClass { Name = "CAPACITOR",  Translation ="Конденсаторы",  Mask = 0x07F00107C },
+            new VivaXmlTestsClass { Name = "INDUCTANCE", Translation ="Индуктивности", Mask = 0x07F00107C },
+            new VivaXmlTestsClass { Name = "DIODE",      Translation ="Диоды",         Mask = 0x07F00107C },
+            new VivaXmlTestsClass { Name = "TRANSISTOR", Translation ="Транзисторы",   Mask = 0x07F00107C },
+            new VivaXmlTestsClass { Name = "AUTIC",      Translation ="Чип",           Mask = 0x07F00107C }
         };
         public static List<СalculationsClass> Сalculations = new List<СalculationsClass>
         // Битовая маска указывает какие столбцы интересны для конкретного вычисления
