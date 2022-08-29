@@ -86,17 +86,10 @@ namespace VIVA_report_analyser
             List<MaxDeviationCalculateFilteredTests> maxDeviationCalculate = new List<MaxDeviationCalculateFilteredTests>();
             for (int f = 0; f < data.Count; f++)
             {
-                if (data[f].tests.Count != 0)
                 for (int fltr = 0; fltr < data[f].tests.Count; fltr++)
                 {
-                    try
-                    {
-                        if (maxDeviationCalculate[fltr].testName != null)
-                        {
-
-                        }
-                    }
-                    catch (Exception e) // Если елемента с таким индексом нет - то создаем
+                    try { if (maxDeviationCalculate[fltr].testName != null){} }
+                    catch (Exception) // Если елемента с таким индексом нет - то создаем
                     {
                         maxDeviationCalculate.Add(new MaxDeviationCalculateFilteredTests() // Создали раздел с фильтра по тесту
                         {
@@ -107,19 +100,14 @@ namespace VIVA_report_analyser
                     
                     for (int t = 0; t < data[f].tests[fltr].uniqueTests.Count; t++)
                     {
-                        try
+                        try { if (maxDeviationCalculate[fltr].data[t].fileMin != null){} }
+                        catch (Exception) // Если елемента с таким индексом нет - то создаем
                         {
-                            if (maxDeviationCalculate[fltr].data[t].fileMin != null)
+                            if (data[f].tests[fltr].uniqueTests[t].attend == true)
                             {
-
-                            }
-                        }
-                        catch (Exception e) // Если елемента с таким индексом нет - то создаем
-                        {
-                            if ( fltr < data[f].tests.Count - 1)
                                 maxDeviationCalculate[fltr].data.Add(new MaxDeviationCalculate() // Создали раздел теста
                                 {
-                                    NM = OpenFiles.dataFile[f].dataFilteredByTests[fltr].Tests[t].NM,
+                                    NM = data[f].tests[fltr].uniqueTests[t].uniqueTestName,
                                     fileMin = data[f].fileName,
                                     minValue = Math.Round(data[f].tests[fltr].uniqueTests[t].MR, 3),
                                     fileMax = data[f].fileName,
@@ -129,42 +117,53 @@ namespace VIVA_report_analyser
                                     fileMaxP = data[f].fileName,
                                     maxValueP = Math.Round(data[f].tests[fltr].uniqueTests[t].MP, 1)
                                 });
+                            }
                             else
+                            {
+                                int fl = f + 1;
+                                while (data[fl].tests[fltr].uniqueTests[t].attend != true)
+                                {
+                                    fl++;
+                                }
                                 maxDeviationCalculate[fltr].data.Add(new MaxDeviationCalculate() // Создали раздел теста
                                 {
-                                    NM = OpenFiles.dataFile[f].dataParse.BI.Test[t].NM,
-                                    fileMin = data[f].fileName,
-                                    minValue = Math.Round(data[f].tests[fltr].uniqueTests[t].MR, 3),
-                                    fileMax = data[f].fileName,
-                                    maxValue = Math.Round(data[f].tests[fltr].uniqueTests[t].MR, 3),
-                                    fileMinP = data[f].fileName,
-                                    minValueP = Math.Round(data[f].tests[fltr].uniqueTests[t].MP, 1),
-                                    fileMaxP = data[f].fileName,
-                                    maxValueP = Math.Round(data[f].tests[fltr].uniqueTests[t].MP, 1)
+                                    NM = data[fl].tests[fltr].uniqueTests[t].uniqueTestName,
+                                    fileMin = data[fl].fileName,
+                                    minValue = Math.Round(data[fl].tests[fltr].uniqueTests[t].MR, 3),
+                                    fileMax = data[fl].fileName,
+                                    maxValue = Math.Round(data[fl].tests[fltr].uniqueTests[t].MR, 3),
+                                    fileMinP = data[fl].fileName,
+                                    minValueP = Math.Round(data[fl].tests[fltr].uniqueTests[t].MP, 1),
+                                    fileMaxP = data[fl].fileName,
+                                    maxValueP = Math.Round(data[fl].tests[fltr].uniqueTests[t].MP, 1)
                                 });
                             }
-                        if (maxDeviationCalculate[fltr].data[t].minValue > data[f].tests[fltr].uniqueTests[t].MR)
-                        {
-                            maxDeviationCalculate[fltr].data[t].minValue = Math.Round(data[f].tests[fltr].uniqueTests[t].MR, 3);
-                            maxDeviationCalculate[fltr].data[t].fileMin = data[f].fileName;
                         }
-                        if (maxDeviationCalculate[fltr].data[t].maxValue < data[f].tests[fltr].uniqueTests[t].MR)
+                        if (data[f].tests[fltr].uniqueTests[t].attend == true)
                         {
-                            maxDeviationCalculate[fltr].data[t].maxValue = Math.Round(data[f].tests[fltr].uniqueTests[t].MR, 3);
-                            maxDeviationCalculate[fltr].data[t].fileMax = data[f].fileName;
+                            if (maxDeviationCalculate[fltr].data[t].minValue > data[f].tests[fltr].uniqueTests[t].MR)
+                            {
+                                maxDeviationCalculate[fltr].data[t].minValue = Math.Round(data[f].tests[fltr].uniqueTests[t].MR, 3);
+                                maxDeviationCalculate[fltr].data[t].fileMin = data[f].fileName;
+                            }
+                            if (maxDeviationCalculate[fltr].data[t].maxValue < data[f].tests[fltr].uniqueTests[t].MR)
+                            {
+                                maxDeviationCalculate[fltr].data[t].maxValue = Math.Round(data[f].tests[fltr].uniqueTests[t].MR, 3);
+                                maxDeviationCalculate[fltr].data[t].fileMax = data[f].fileName;
+                            }
+                            maxDeviationCalculate[fltr].data[t].delta = Math.Round(maxDeviationCalculate[fltr].data[t].maxValue - maxDeviationCalculate[fltr].data[t].minValue, 3);
+                            if (maxDeviationCalculate[fltr].data[t].minValueP > data[f].tests[fltr].uniqueTests[t].MP)
+                            {
+                                maxDeviationCalculate[fltr].data[t].minValueP = Math.Round(data[f].tests[fltr].uniqueTests[t].MP, 1);
+                                maxDeviationCalculate[fltr].data[t].fileMinP = data[f].fileName;
+                            }
+                            if (maxDeviationCalculate[fltr].data[t].maxValueP < data[f].tests[fltr].uniqueTests[t].MP)
+                            {
+                                maxDeviationCalculate[fltr].data[t].maxValueP = Math.Round(data[f].tests[fltr].uniqueTests[t].MP, 1);
+                                maxDeviationCalculate[fltr].data[t].fileMaxP = data[f].fileName;
+                            }
+                            maxDeviationCalculate[fltr].data[t].deltaP = Math.Round(maxDeviationCalculate[fltr].data[t].maxValueP - maxDeviationCalculate[fltr].data[t].minValueP, 1);
                         }
-                        maxDeviationCalculate[fltr].data[t].delta = Math.Round(maxDeviationCalculate[fltr].data[t].maxValue - maxDeviationCalculate[fltr].data[t].minValue, 3);
-                        if (maxDeviationCalculate[fltr].data[t].minValueP > data[f].tests[fltr].uniqueTests[t].MP)
-                        {
-                            maxDeviationCalculate[fltr].data[t].minValueP = Math.Round(data[f].tests[fltr].uniqueTests[t].MP, 1);
-                            maxDeviationCalculate[fltr].data[t].fileMinP = data[f].fileName;
-                        }
-                        if (maxDeviationCalculate[fltr].data[t].maxValueP < data[f].tests[fltr].uniqueTests[t].MP)
-                        {
-                            maxDeviationCalculate[fltr].data[t].maxValueP = Math.Round(data[f].tests[fltr].uniqueTests[t].MP, 1);
-                            maxDeviationCalculate[fltr].data[t].fileMaxP = data[f].fileName;
-                        }
-                        maxDeviationCalculate[fltr].data[t].deltaP = Math.Round(maxDeviationCalculate[fltr].data[t].maxValueP - maxDeviationCalculate[fltr].data[t].minValueP, 1);
                     }
                 }
             }
@@ -193,24 +192,33 @@ namespace VIVA_report_analyser
                             });
                             for (int t = 0; t < uniTest[filter].uniqueTests.Count; t++)
                             {
-                                //Следующее условие - ошибочно. Нужно выполнять поиск в массиве а не сравнивать. Пока как заглушка
-                                //т.к. если длинна массива dataFile будет меньше уникального - то выборка будет неверной
-                                if (OpenFiles.dataFile[f].dataFilteredByTests[filter].Tests[t].uniqueTestName
-                                     == uniTest[filter].uniqueTests[t])
+                                List<ColumnsClass> tempData = (from ColumnsClass n in OpenFiles.dataFile[f].dataFilteredByTests[filter].Tests
+                                                           where n.uniqueTestName == uniTest[filter].uniqueTests[t]
+                                                           select n).ToList();
+                                if (tempData.Count != 0)
                                 {
-                                    uniqFile[f].tests[filter].uniqueTests.Add(new UniqueTestClass() //Если такой тест найден в разделе фильтра то создаем тест и копируем из него данные
+                                    int repeatData = 0;
+                                    foreach (ColumnsClass columns in tempData)
                                     {
-                                        uniqueTestName = uniTest[filter].testName,
-                                        MR = OpenFiles.dataFile[f].dataFilteredByTests[filter].Tests[t].MR,
-                                        MP = OpenFiles.dataFile[f].dataFilteredByTests[filter].Tests[t].MP,
-                                        attend = true
-                                    });
+                                        repeatData++;
+                                        uniqFile[f].tests[filter].uniqueTests.Add(new UniqueTestClass() //Если такой тест найден в разделе фильтра то создаем тест и копируем из него данные
+                                        {
+                                            uniqueTestName = uniTest[filter].uniqueTests[t],
+                                            MR = columns.MR,
+                                            MP = columns.MP,
+                                            attend = true
+                                        });
+                                        if (repeatData > 1)
+                                        {
+                                            MessageBox.Show("Уникальное имя: " + uniTest[filter].uniqueTests[t], "Внимание, повторяющийся тест!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                        }
+                                    }
                                 }
                                 else
                                 {
                                     uniqFile[f].tests[filter].uniqueTests.Add(new UniqueTestClass() //Если такой тест НЕнайден в разделе фильтра то всеравно создаем тест но без данных с флагом отсутсвует
                                     {
-                                        uniqueTestName = uniTest[filter].testName,
+                                        uniqueTestName = uniTest[filter].uniqueTests[t],
                                         MR = 0,
                                         MP = 0,
                                         attend = false
@@ -227,37 +235,46 @@ namespace VIVA_report_analyser
                 if (OpenFiles.dataFile[f].errorOpenFile != true)
                     if (OpenFiles.dataFile[f].visibleFile == true)
                     {
-                            uniqFile[f].tests.Add(new UniqueTestsClass() //Создали раздел с фильтра тестов
+                        uniqFile[f].tests.Add(new UniqueTestsClass() //Создали раздел с фильтра тестов
+                        {
+                            testName = ParseXml.Сalculations[0].Translation,
+                            uniqueTests = new List<UniqueTestClass>()
+                        });
+                        for (int t = 0; t < uniTest[allTestNum].uniqueTests.Count; t++)
+                        {
+                            List<ColumnsClass> tempData = (from ColumnsClass n in OpenFiles.dataFile[f].dataParse.BI.Test
+                                                           where n.uniqueTestName == uniTest[allTestNum].uniqueTests[t]
+                                                           select n).ToList();
+                            if (tempData.Count != 0)
                             {
-                                testName = ParseXml.Сalculations[0].Translation,
-                                uniqueTests = new List<UniqueTestClass>()
-                            });
-                            for (int t = 0; t < uniTest[allTestNum].uniqueTests.Count; t++)
-                            {
-                                //Следующее условие - ошибочно. Нужно выполнять поиск в массиве а не сравнивать. Пока как заглушка
-                                //т.к. если длинна массива dataFile будет меньше уникального - то выборка будет неверной
-                                if (OpenFiles.dataFile[f].dataParse.BI.Test[t].uniqueTestName
-                                     == uniTest[allTestNum].uniqueTests[t])
+                                int repeatData = 0;
+                                foreach (ColumnsClass columns in tempData)
                                 {
+                                    repeatData++;
                                     uniqFile[f].tests[allTestNum].uniqueTests.Add(new UniqueTestClass() //Если такой тест найден в разделе фильтра то создаем тест и копируем из него данные
                                     {
-                                        uniqueTestName = uniTest[allTestNum].testName,
-                                        MR = OpenFiles.dataFile[f].dataParse.BI.Test[t].MR,
-                                        MP = OpenFiles.dataFile[f].dataParse.BI.Test[t].MP,
+                                        uniqueTestName = uniTest[allTestNum].uniqueTests[t],
+                                        MR = columns.MR,
+                                        MP = columns.MP,
                                         attend = true
                                     });
-                                }
-                                else
-                                {
-                                    uniqFile[f].tests[allTestNum].uniqueTests.Add(new UniqueTestClass() //Если такой тест НЕнайден в разделе фильтра то всеравно создаем тест но без данных с флагом отсутсвует
+                                    if (repeatData > 1)
                                     {
-                                        uniqueTestName = uniTest[uniTest.Count].testName,
-                                        MR = 0,
-                                        MP = 0,
-                                        attend = false
-                                    });
+                                        MessageBox.Show("Уникальное имя: " + uniTest[allTestNum].uniqueTests[t], "Внимание, повторяющийся тест!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    }
                                 }
                             }
+                            else
+                            {
+                                uniqFile[f].tests[allTestNum].uniqueTests.Add(new UniqueTestClass() //Если такой тест НЕнайден в разделе фильтра то всеравно создаем тест но без данных с флагом отсутсвует
+                                {
+                                    uniqueTestName = uniTest[allTestNum].uniqueTests[t],
+                                    MR = 0,
+                                    MP = 0,
+                                    attend = false
+                                });
+                            }
+                        }
                     }
             }
             return uniqFile;

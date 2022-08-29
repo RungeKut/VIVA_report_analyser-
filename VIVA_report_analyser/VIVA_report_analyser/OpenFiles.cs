@@ -45,6 +45,8 @@ namespace VIVA_report_analyser
         public static int errOpenCount { get { return OpenFiles.errorOpenFilesNames.Count; } }
         public static List<DataFilesClass> LoadXmlDocument()
         {
+            string errorList = null;
+            List<DataFilesClass> returnData = new List<DataFilesClass>();
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 AddExtension = true,
@@ -59,54 +61,55 @@ namespace VIVA_report_analyser
                 Title = "Выберите файлы .xml"
                 //InitialDirectory = @"C:\"
             };
-            if (openFileDialog.ShowDialog() != DialogResult.OK) return null;
-            int quantityFiles = openFileDialog.FileNames.Length;
-
-            List<DataFilesClass> returnData = new List<DataFilesClass>();
-
-            for (int file = 0; file < quantityFiles; file++)
+            if (openFileDialog.ShowDialog() != DialogResult.OK) errorList += "Что-то не так в диалоге выбора файлов.\n";
+            else
             {
-                string Path = openFileDialog.FileNames[file];
-                string Name = openFileDialog.SafeFileNames[file];
+                int quantityFiles = openFileDialog.FileNames.Length;
+                for (int file = 0; file < quantityFiles; file++)
+                {
+                    string Path = openFileDialog.FileNames[file];
+                    string Name = openFileDialog.SafeFileNames[file];
 
-                XDocument doc = new XDocument(); // создаем пустой XML документ
-                using (var Reader = new StreamReader(Path, System.Text.Encoding.UTF8))
-                {
-                    doc = XDocument.Load(Reader);
-                    Reader.Close();
-                }
-                if ((doc.Root.Element("BI") == null) || (doc.Root.Element("BI").Element("TEST") == null))
-                {
-                    returnData.Add(new DataFilesClass()
+                    XDocument doc = new XDocument(); // создаем пустой XML документ
+                    using (var Reader = new StreamReader(Path, System.Text.Encoding.UTF8))
                     {
-                        fileName = Name,
-                        filePath = Path,
-                        errorOpenFile = true,
-                        dataDoc = doc
-                    });
-                }
-                else
-                {
-                    ParsedXml d = ParseXml.Parse(doc);
-                    returnData.Add(new DataFilesClass()
+                        doc = XDocument.Load(Reader);
+                        Reader.Close();
+                    }
+                    var tuple = ParseXml.Parse(doc);
+                    if (tuple.Item1 != null)
                     {
-                        fileName = Name,
-                        filePath = Path,
-                        errorOpenFile = false,
-                        dataDoc = doc,
-                        dataParse = d,
-                        dataFilteredByTests = FilterByTests.FilteringTests(d)
-                    });
+                        returnData.Add(new DataFilesClass()
+                        {
+                            fileName = Name,
+                            filePath = Path,
+                            errorOpenFile = false,
+                            dataDoc = doc,
+                            dataParse = tuple.Item1,
+                            dataFilteredByTests = FilterByTests.FilteringTests(tuple.Item1)
+                        });
+                        if (tuple.Item2 != null)
+                        {
+                            errorList += "В файле " + Name + " отсутствуют параметры:\n" + tuple.Item2;
+                        }
+                    }
+                    else
+                    {
+                        returnData.Add(new DataFilesClass()
+                        {
+                            fileName = Name,
+                            filePath = Path,
+                            errorOpenFile = true,
+                            dataDoc = doc
+                        });
+                        errorList += "Неверный формат файла " + Name + "\n";
+                    }
                 }
             }
-            List<string> errOFN = (from DataFilesClass file in returnData
-                                  where file.errorOpenFile == true
-                                  select file.fileName).ToList();
-            if (errOFN.Count > 0)
+            if (errorList != null)
             {
-                string files = String.Join("\n", errOFN);
-                MessageBox.Show("Неверный формат файлов:\n\n" + files, "Ошибка чтения", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //errorOpenFilesNames.Clear();
+                if (MessageBox.Show(errorList + "\nПродолжить выполнение?", "Чтение файлов", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
+                    return null;
             }
             return returnData;
         }

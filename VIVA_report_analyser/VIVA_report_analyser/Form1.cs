@@ -24,6 +24,7 @@ namespace VIVA_report_analyser
         private void button1_Click_1(object sender, EventArgs e)
         {
             OpenFiles.dataFile = OpenFiles.LoadXmlDocument();
+            if (OpenFiles.dataFile == null) return;
             for (int file = 0; file < OpenFiles.dataFile.Count; file++)
             {
                 if (OpenFiles.dataFile[file].errorOpenFile != true)
@@ -211,8 +212,8 @@ namespace VIVA_report_analyser
         }
         private void button2_Click(object sender, EventArgs e)
         {
-            try
-            {
+            /*try
+            {*/
                 if (OpenFiles.openCount == 0) throw new ArgumentException("Нет открытых файлов");
                 if (OpenFiles.openCount == 1) throw new ArgumentException("Необходимо хотя бы ДВА открытых файла для выборки значений");
                 List<MaxDeviationCalculateFilteredTests> data = MaxDeviationCalculate.DeviationCalculate();
@@ -256,11 +257,11 @@ namespace VIVA_report_analyser
                 else
                     MessageBox.Show("Ошибка чтения словаря по ключу " + ParseXml.Сalculations[0].Name, "Ошибка чтения данных словаря", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 */
-            }
+            /*}
             catch (Exception CalculateError)
             {
                 MessageBox.Show("Ошибка при создании вкладки вычислений.\nПодробнее:\n" + CalculateError.Message, "Ошибка вычисления максимального отклонения", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            }*/
         }
     }
 
