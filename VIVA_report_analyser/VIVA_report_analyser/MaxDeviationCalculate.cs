@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FastMember;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -365,7 +366,7 @@ namespace VIVA_report_analyser
         {
             try
             {
-                DataView view = TestDto.ConvertToDataTable(data).DefaultView;
+                DataView view = MaxDeviationCalculate.ConvertToDataTable(data).DefaultView;
                 int rowCount = view.Count;
                 TabPage page = new TabPage(nameTab + " (" + rowCount + ")");
                 tabControl.TabPages.Add(page);
@@ -381,6 +382,7 @@ namespace VIVA_report_analyser
                 //dataGridView.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
                 //dataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
                 dataGridView.DataSource = view;
+                dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
                 dataGridView.VirtualMode = true; //отрисовываются только те ячейки, которые видны в данный момент
 
                 dataGridView.Columns["minValueP"].DefaultCellStyle.Format = "#0.0\\%";
@@ -388,7 +390,7 @@ namespace VIVA_report_analyser
                 dataGridView.Columns["deltaP"].DefaultCellStyle.Format = "#0.0\\%";
 
                 dataGridView.TopLeftHeaderCell.Value = "Тест"; // Заголовок столбца названия строк
-                if (view.Count > 0)
+                /*if (view.Count > 0)
                 {
                     int i = 0;
                     foreach (var columnHeader in MaxDeviationColumns)
@@ -396,21 +398,31 @@ namespace VIVA_report_analyser
                         dataGridView.Columns[i].HeaderText = columnHeader.Translation;
                         i++;
                     }
-                }
+                }*/
                 dataGridView.RowsDefaultCellStyle.BackColor = Color.Ivory; //Строки всей таблицы
                 //dataGridView.Rows[1].DefaultCellStyle.BackColor = Color.IndianRed; //Одной строки
                 dataGridView.AlternatingRowsDefaultCellStyle.BackColor = Color.MintCream; //Цвет четных строк
-                
-                for (int r = 0; r < rowCount; r++)
+
+                /*for (int r = 0; r < rowCount; r++)
                 {
                     var h = dataGridView.Rows[r].Cells[2].Value;
                         
-                }
+                }*/
+                dataGridView.AutoResizeColumns();
             }
             catch (Exception ReadFileError)
             {
                 MessageBox.Show("Ошибка при создании вкладки " + nameTab + ". Подробнее: " + ReadFileError.Message, "Ошибка создания вкладки", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+        public static DataTable ConvertToDataTable<T>(IList<T> data)
+        {
+            DataTable table = new DataTable();
+            using (var reader = ObjectReader.Create(data, "NM", "fileMin", "minValue", "fileMax", "maxValue", "delta", "fileMinP", "minValueP", "fileMaxP", "maxValueP", "deltaP")) // (data, "Id", "Name", "Description")
+            {
+                table.Load(reader);
+            }
+            return table;
         }
     }
 }

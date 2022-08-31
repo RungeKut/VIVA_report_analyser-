@@ -48,8 +48,7 @@ namespace VIVA_report_analyser
                             (
                                 ParseXml.vivaXmlTests[test].Translation,
                                 tabTests,
-                                OpenFiles.dataFile[file].dataFilteredByTests[test].Tests,
-                                ParseXml.vivaXmlTests[test].Mask
+                                OpenFiles.dataFile[file].dataFilteredByTests[test].Tests
                             );
                             
                         }
@@ -57,8 +56,7 @@ namespace VIVA_report_analyser
                             (
                                 ParseXml.Сalculations[0].Translation,
                                 tabTests,
-                                OpenFiles.dataFile[file].dataParse.Test,
-                                ParseXml.Сalculations[0].Mask
+                                OpenFiles.dataFile[file].dataParse.Test
                             );
                         OpenFiles.dataFile[file].visible = true;
                     }
@@ -118,12 +116,12 @@ namespace VIVA_report_analyser
         {
         }
 
-        private void AddNewComponentTab<T>(string nameTab, TabControl tabControl, IList<T> data, ulong ColumnMask)
+        private void AddNewComponentTab<T>(string nameTab, TabControl tabControl, IList<T> data)
         // Создание фкладки с именем компонента во вкладке с файлом
         {
             try
             {
-                DataView view = TestDto.ConvertToDataTable(data).DefaultView;
+                DataView view = ParseXml.ConvertToDataTable(data).DefaultView;
                 int rowCount = view.Count;
                 TabPage page = new TabPage(nameTab + " (" + rowCount + ")");
                 tabControl.Click += ComponentTab_MouseClick;
@@ -142,16 +140,14 @@ namespace VIVA_report_analyser
                 dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
                 
                 dataGridView.DataSource = view;
-                dataGridView.RowHeader
                 dataGridView.VirtualMode = true; //отрисовываются только те ячейки, которые видны в данный момент
                 dataGridView.ColumnHeaderMouseClick += DataGridView_ColumnHeaderMouseClick;
-                TestDto.VisibleColumns(ColumnMask, dataGridView);
                 if (dataGridView.Columns["MP"] != null)
                 dataGridView.Columns["MP"].DefaultCellStyle.Format = "#0.0\\%";
                 dataGridView.TopLeftHeaderCell.Value = "Тест"; // Заголовок столбца названия строк
                 //DataGridView.Columns[0].HeaderText = "название столбца";
                 //dataGridView.Rows[0].HeaderCell.Value = "Название строки";
-                if (view.Count > 0)
+                /*if (view.Count > 0)
                 {
                     int i = 0;
                     foreach (var columnHeader in ParseXml.vivaXmlColumns)
@@ -163,9 +159,9 @@ namespace VIVA_report_analyser
                     {
                         dataGridView.Rows[i - 1].HeaderCell.Value = i.ToString();
                     }
-                }
+                }*/
                 dataGridView.AutoResizeColumns();
-                dataGridView.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
+                //dataGridView.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
             }
             catch (Exception ReadFileError)
             {
@@ -186,29 +182,6 @@ namespace VIVA_report_analyser
                 tabControl2.ContextMenu = m;
             }
         }
-
-        private DataTable ConvertToDataTable<T>(IList<T> data)
-        {
-            PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(typeof(T));
-            DataTable table = new DataTable();
-            //uint i = 0;
-            foreach (PropertyDescriptor prop in properties)
-            {
-                table.Columns.Add(prop.Name, Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType); //prop.Name
-                //table.Columns.
-                //i++;
-            }
-            foreach (T item in data)
-            {
-                DataRow row = table.NewRow();
-                foreach (PropertyDescriptor prop in properties)
-                    row[prop.Name] = prop.GetValue(item) ?? DBNull.Value;
-                table.Rows.Add(row);
-            }
-            return table;
-        }
-
-
         private void page_MouseClick(object sender, MouseEventArgs e)
         {
             MessageBox.Show("Ну", "Зачем");

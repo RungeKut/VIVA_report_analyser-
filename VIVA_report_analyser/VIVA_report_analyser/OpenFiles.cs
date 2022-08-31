@@ -9,6 +9,11 @@ using System.Xml.Linq;
 
 namespace VIVA_report_analyser
 {
+    public class DoubleBufferedDataGridView : DataGridView
+    // Двойная буфферизация для таблиц, ускоряет работу
+    {
+        protected override bool DoubleBuffered { get => true; }
+    }
     public class DataFilesClass
     {
         // Поля класса
