@@ -163,41 +163,41 @@ namespace VIVA_report_analyser
     {
         public static List<VivaXmlColumnsClass> vivaXmlColumns = new List<VivaXmlColumnsClass>
         {
-            new VivaXmlColumnsClass { Name = "F"  , Translation ="Тест"                      }, // 0
-            new VivaXmlColumnsClass { Name = "FT" , Translation ="Функция"                   }, // 1
-            new VivaXmlColumnsClass { Name = "C"  , Translation ="Каналы"                    }, // 2
-            new VivaXmlColumnsClass { Name = "SG1", Translation ="Имя цепи 1"                }, // 3
-            new VivaXmlColumnsClass { Name = "SG2", Translation ="Имя цепи 2"                }, // 4
-            new VivaXmlColumnsClass { Name = "PD1", Translation ="Точка подключения 1"       }, // 5
-            new VivaXmlColumnsClass { Name = "PD2", Translation ="Точка подключения 2"       }, // 6
-            new VivaXmlColumnsClass { Name = "XY1", Translation ="Координаты подключения 1"  }, // 7
-            new VivaXmlColumnsClass { Name = "XY2", Translation ="Координаты подключения 2"  }, // 8
-            new VivaXmlColumnsClass { Name = "CP1", Translation ="CP1"                       }, // 9
-            new VivaXmlColumnsClass { Name = "CP2", Translation ="CP2"                       }, // 10
-            new VivaXmlColumnsClass { Name = "SC" , Translation ="SC"                        }, // 11
-            new VivaXmlColumnsClass { Name = "NM" , Translation ="Имя компонента"            }, // 12
-            new VivaXmlColumnsClass { Name = "DN" , Translation ="DN"                        }, // 13
-            new VivaXmlColumnsClass { Name = "PT" , Translation ="PT"                        }, // 14
-            new VivaXmlColumnsClass { Name = "NT" , Translation ="NT"                        }, // 15
-            new VivaXmlColumnsClass { Name = "IDC", Translation ="IDC"                       }, // 16
-            new VivaXmlColumnsClass { Name = "MK" , Translation ="MK"                        }, // 17
-            new VivaXmlColumnsClass { Name = "IDM", Translation ="IDM"                       }, // 18
-            new VivaXmlColumnsClass { Name = "PW" , Translation ="PW"                        }, // 19
-            new VivaXmlColumnsClass { Name = "LB" , Translation ="LB"                        }, // 20
-            new VivaXmlColumnsClass { Name = "IN" , Translation ="IN"                        }, // 21
-            new VivaXmlColumnsClass { Name = "IDL", Translation ="IDL"                       }, // 22
-            new VivaXmlColumnsClass { Name = "TR" , Translation ="TR"                        }, // 23
-            new VivaXmlColumnsClass { Name = "MU" , Translation ="Единицы измерения"         }, // 24
-            new VivaXmlColumnsClass { Name = "ML" , Translation ="Минимальное"               }, // 25
-            new VivaXmlColumnsClass { Name = "MM" , Translation ="Уставка"                   }, // 26
-            new VivaXmlColumnsClass { Name = "MH" , Translation ="Максимальное"              }, // 27
-            new VivaXmlColumnsClass { Name = "MR" , Translation ="Измеренное"                }, // 28
-            new VivaXmlColumnsClass { Name = "MP" , Translation ="Отклонение, %"             }, // 29
-            new VivaXmlColumnsClass { Name = "TT" , Translation ="TT"                        }, // 30
-            new VivaXmlColumnsClass { Name = "IS" , Translation ="IS"                        }, // 31
-            new VivaXmlColumnsClass { Name = "DG" , Translation ="DG"                        }, // 32
-            new VivaXmlColumnsClass { Name = "FR" , Translation ="FR"                        }, // 32
-            new VivaXmlColumnsClass { Name = "uniqueTestName" , Translation ="Идентификатор" }  // 32
+            new VivaXmlColumnsClass { Name = "F"  ,            Translation ="Тест"                      }, // 0
+            new VivaXmlColumnsClass { Name = "FT" ,            Translation ="Функция"                   }, // 1
+            new VivaXmlColumnsClass { Name = "C"  ,            Translation ="Каналы"                    }, // 2
+            new VivaXmlColumnsClass { Name = "SG1",            Translation ="Имя цепи 1"                }, // 3
+            new VivaXmlColumnsClass { Name = "SG2",            Translation ="Имя цепи 2"                }, // 4
+            new VivaXmlColumnsClass { Name = "PD1",            Translation ="Точка подключения 1"       }, // 5
+            new VivaXmlColumnsClass { Name = "PD2",            Translation ="Точка подключения 2"       }, // 6
+            new VivaXmlColumnsClass { Name = "XY1",            Translation ="Координаты подключения 1"  }, // 7
+            new VivaXmlColumnsClass { Name = "XY2",            Translation ="Координаты подключения 2"  }, // 8
+            new VivaXmlColumnsClass { Name = "CP1",            Translation ="CP1"                       }, // 9
+            new VivaXmlColumnsClass { Name = "CP2",            Translation ="CP2"                       }, // 10
+            new VivaXmlColumnsClass { Name = "SC" ,            Translation ="SC"                        }, // 11
+            new VivaXmlColumnsClass { Name = "NM" ,            Translation ="Имя компонента"            }, // 12
+            new VivaXmlColumnsClass { Name = "DN" ,            Translation ="DN"                        }, // 13
+            new VivaXmlColumnsClass { Name = "PT" ,            Translation ="PT"                        }, // 14
+            new VivaXmlColumnsClass { Name = "NT" ,            Translation ="NT"                        }, // 15
+            new VivaXmlColumnsClass { Name = "IDC",            Translation ="IDC"                       }, // 16
+            new VivaXmlColumnsClass { Name = "MK" ,            Translation ="MK"                        }, // 17
+            new VivaXmlColumnsClass { Name = "IDM",            Translation ="IDM"                       }, // 18
+            new VivaXmlColumnsClass { Name = "PW" ,            Translation ="PW"                        }, // 19
+            new VivaXmlColumnsClass { Name = "LB" ,            Translation ="LB"                        }, // 20
+            new VivaXmlColumnsClass { Name = "IN" ,            Translation ="IN"                        }, // 21
+            new VivaXmlColumnsClass { Name = "IDL",            Translation ="IDL"                       }, // 22
+            new VivaXmlColumnsClass { Name = "TR" ,            Translation ="TR"                        }, // 23
+            new VivaXmlColumnsClass { Name = "MU" ,            Translation ="Единицы измерения"         }, // 24
+            new VivaXmlColumnsClass { Name = "ML" ,            Translation ="Минимальное"               }, // 25
+            new VivaXmlColumnsClass { Name = "MM" ,            Translation ="Уставка"                   }, // 26
+            new VivaXmlColumnsClass { Name = "MH" ,            Translation ="Максимальное"              }, // 27
+            new VivaXmlColumnsClass { Name = "MR" ,            Translation ="Измеренное"                }, // 28
+            new VivaXmlColumnsClass { Name = "MP" ,            Translation ="Отклонение, %"             }, // 29
+            new VivaXmlColumnsClass { Name = "TT" ,            Translation ="TT"                        }, // 30
+            new VivaXmlColumnsClass { Name = "IS" ,            Translation ="IS"                        }, // 31
+            new VivaXmlColumnsClass { Name = "DG" ,            Translation ="DG"                        }, // 32
+            new VivaXmlColumnsClass { Name = "FR" ,            Translation ="Описание ошибки"           }, // 33
+            new VivaXmlColumnsClass { Name = "uniqueTestName", Translation ="Идентификатор"             }  // 34
         };
         public static List<VivaXmlTestsClass> vivaXmlTests = new List<VivaXmlTestsClass>
         // Битовая маска указывает какие столбцы интересны для конкретного теста
@@ -222,121 +222,204 @@ namespace VIVA_report_analyser
         {
             string errorList = null;
             ParsedXml returnData = new ParsedXml();
+
             returnData.Info = new InfoClass();
-            try { returnData.Info.Version = doc.Root.Element("Info").Attribute("Version").Value; } catch (Exception) { errorList += "Info - Version\n"; }
+            if (GetAttribute(GetElement(doc, "Info"), "Version") != null)
+            returnData.Info.Version = GetAttribute(GetElement(doc, "Info"), "Version")?.Value;
+
             returnData.PrgC = new PrgCClass();
-            try { returnData.PrgC.AD = doc.Root.Element("PrgC").Attribute("AD").Value; } catch (Exception) { errorList += "PrgC - AD\n"; }
-            try { returnData.PrgC.SD = doc.Root.Element("PrgC").Attribute("SD").Value; } catch (Exception) { errorList += "PrgC - SD\n"; }
-            try { returnData.PrgC.PN = doc.Root.Element("PrgC").Attribute("PN").Value; } catch (Exception) { errorList += "PrgC - PN\n"; }
-            try { returnData.PrgC.TU = Double.Parse(doc.Root.Element("PrgC").Attribute("TU").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "PrgC - TU\n"; }
-            try { returnData.PrgC.TN = Double.Parse(doc.Root.Element("PrgC").Attribute("TN").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "PrgC - TN\n"; }
-            try { returnData.PrgC.TD = Double.Parse(doc.Root.Element("PrgC").Attribute("TD").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "PrgC - TD\n"; }
-            try { returnData.PrgC.TT = Double.Parse(doc.Root.Element("PrgC").Attribute("TT").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "PrgC - TT\n"; }
-            try { returnData.PrgC.BU = Double.Parse(doc.Root.Element("PrgC").Attribute("BU").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "PrgC - BU\n"; }
-            try { returnData.PrgC.BN = Double.Parse(doc.Root.Element("PrgC").Attribute("BN").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "PrgC - BN\n"; }
-            try { returnData.PrgC.BD = Double.Parse(doc.Root.Element("PrgC").Attribute("BD").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "PrgC - BD\n"; }
-            try { returnData.PrgC.BT = Double.Parse(doc.Root.Element("PrgC").Attribute("BT").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "PrgC - BT\n"; }
-            try { returnData.PrgC.TH = Double.Parse(doc.Root.Element("PrgC").Attribute("TH").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "PrgC - TH\n"; }
-            try { returnData.PrgC.SX = Double.Parse(doc.Root.Element("PrgC").Attribute("SX").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "PrgC - SX\n"; }
-            try { returnData.PrgC.SZ = Double.Parse(doc.Root.Element("PrgC").Attribute("SZ").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "PrgC - SZ\n"; }
-            try { returnData.PrgC.TO = doc.Root.Element("PrgC").Attribute("TO").Value; } catch (Exception) { errorList += "PrgC - TO\n"; }
-            try { returnData.PrgC.TY = doc.Root.Element("PrgC").Attribute("TY").Value; } catch (Exception) { errorList += "PrgC - TY\n"; }
-            try { returnData.PrgC.MR = doc.Root.Element("PrgC").Attribute("MR").Value; } catch (Exception) { errorList += "PrgC - MR\n"; }
-            try { returnData.PrgC.TM = Double.Parse(doc.Root.Element("PrgC").Attribute("TM").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "PrgC - TM\n"; }
-            try { returnData.PrgC.BM = Double.Parse(doc.Root.Element("PrgC").Attribute("BM").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "PrgC - BM\n"; }
-            try { returnData.PrgC.RT = doc.Root.Element("PrgC").Attribute("RT").Value; } catch (Exception) { errorList += "PrgC - RT\n"; }
-            try { returnData.PrgC.NR = Double.Parse(doc.Root.Element("PrgC").Attribute("NR").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "PrgC - NR\n"; }
-            try { returnData.PrgC.MO = Double.Parse(doc.Root.Element("PrgC").Attribute("MO").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "PrgC - MO\n"; }
-            try { returnData.PrgC.RA = doc.Root.Element("PrgC").Attribute("RA").Value; } catch (Exception) { errorList += "PrgC - RA\n"; }
-            try { returnData.PrgC.PV = Double.Parse(doc.Root.Element("PrgC").Attribute("PV").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "PrgC - PV\n"; }
+
+            if (GetAttribute(GetElement(doc, "PrgC"), "AD") != null)
+            returnData.PrgC.AD =              GetAttribute(GetElement(doc, "PrgC"), "AD")?.Value;
+            if (GetAttribute(GetElement(doc, "PrgC"), "SD") != null)
+            returnData.PrgC.SD =              GetAttribute(GetElement(doc, "PrgC"), "SD")?.Value;
+            if (GetAttribute(GetElement(doc, "PrgC"), "PN") != null)
+            returnData.PrgC.PN =              GetAttribute(GetElement(doc, "PrgC"), "PN")?.Value;
+            if (GetAttribute(GetElement(doc, "PrgC"), "TU") != null)
+            returnData.PrgC.TU = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "TU")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "TN") != null)
+            returnData.PrgC.TN = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "TN")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "TD") != null)
+            returnData.PrgC.TD = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "TD")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "TT") != null)
+            returnData.PrgC.TT = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "TT")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "BU") != null)
+            returnData.PrgC.BU = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "BU")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "BN") != null)
+            returnData.PrgC.BN = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "BN")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "BD") != null)
+            returnData.PrgC.BD = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "BD")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "BT") != null)
+            returnData.PrgC.BT = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "BT")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "TH") != null)
+            returnData.PrgC.TH = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "TH")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "SX") != null)
+            returnData.PrgC.SX = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "SX")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "SZ") != null)
+            returnData.PrgC.SZ = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "SZ")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "TO") != null)
+            returnData.PrgC.TO =              GetAttribute(GetElement(doc, "PrgC"), "TO")?.Value;
+            if (GetAttribute(GetElement(doc, "PrgC"), "TY") != null)
+            returnData.PrgC.TY =              GetAttribute(GetElement(doc, "PrgC"), "TY")?.Value;
+            if (GetAttribute(GetElement(doc, "PrgC"), "MR") != null)
+            returnData.PrgC.MR =              GetAttribute(GetElement(doc, "PrgC"), "MR")?.Value;
+            if (GetAttribute(GetElement(doc, "PrgC"), "TM") != null)
+            returnData.PrgC.TM = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "TM")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "BM") != null)
+            returnData.PrgC.BM = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "BM")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "RT") != null)
+            returnData.PrgC.RT =              GetAttribute(GetElement(doc, "PrgC"), "RT")?.Value;
+            if (GetAttribute(GetElement(doc, "PrgC"), "NR") != null)
+            returnData.PrgC.NR = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "NR")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "MO") != null)
+            returnData.PrgC.MO = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "MO")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "RA") != null)
+            returnData.PrgC.RA =              GetAttribute(GetElement(doc, "PrgC"), "RA")?.Value;
+            if (GetAttribute(GetElement(doc, "PrgC"), "PV") != null)
+            returnData.PrgC.PV = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "PV")?.Value, new CultureInfo("en-US"));
+
             returnData.ST = new STClass();
-            try { returnData.ST.TN = doc.Root.Element("ST").Attribute("TN").Value; } catch (Exception) { errorList += "ST - TN\n"; }
-            try { returnData.ST.NMP = doc.Root.Element("ST").Attribute("NM").Value; } catch (Exception) { errorList += "ST - NM\n"; }
-            try { returnData.ST.NM = doc.Root.Element("ST").Attribute("NM").Value; } catch (Exception) { errorList += "ST - NM\n"; }
-            try { returnData.ST.LT = doc.Root.Element("ST").Attribute("LT").Value; } catch (Exception) { errorList += "ST - LT\n"; }
-            try { returnData.ST.BC = doc.Root.Element("ST").Attribute("BC").Value; } catch (Exception) { errorList += "ST - BC\n"; }
-            try { returnData.ST.OP = doc.Root.Element("ST").Attribute("OP").Value; } catch (Exception) { errorList += "ST - OP\n"; }
-            try { returnData.ST.TS = doc.Root.Element("ST").Attribute("TS").Value; } catch (Exception) { errorList += "ST - TS\n"; }
-            try { returnData.ST.WS = doc.Root.Element("ST").Attribute("WS").Value; } catch (Exception) { errorList += "ST - WS\n"; }
-            try { returnData.ST.SD = doc.Root.Element("ST").Attribute("SD").Value; } catch (Exception) { errorList += "ST - SD\n"; }
-            try { returnData.ST.ME = Double.Parse(doc.Root.Element("ST").Attribute("ME").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "ST - ME\n"; }
-            try { returnData.ST.PA = Double.Parse(doc.Root.Element("ST").Attribute("PA").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "ST - PA\n"; }
-            try { returnData.ST.SI = Double.Parse(doc.Root.Element("ST").Attribute("SI").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "ST - SI\n"; }
-            try
-            {
-                returnData.BI = doc.Root.Elements("BI").Select(b => new BIClass
+
+            if (GetAttribute(GetElement(doc, "ST"), "TN") != null)
+            returnData.ST.TN =              GetAttribute(GetElement(doc, "ST"), "TN")?.Value;
+            if (GetAttribute(GetElement(doc, "ST"), "NM") != null)
+            returnData.ST.NMP =             GetAttribute(GetElement(doc, "ST"), "NM")?.Value;
+            if (GetAttribute(GetElement(doc, "ST"), "NM") != null)
+            returnData.ST.NM =              GetAttribute(GetElement(doc, "ST"), "NM")?.Value;
+            if (GetAttribute(GetElement(doc, "ST"), "LT") != null)
+            returnData.ST.LT =              GetAttribute(GetElement(doc, "ST"), "LT")?.Value;
+            if (GetAttribute(GetElement(doc, "ST"), "BC") != null)
+            returnData.ST.BC =              GetAttribute(GetElement(doc, "ST"), "BC")?.Value;
+            if (GetAttribute(GetElement(doc, "ST"), "OP") != null)
+            returnData.ST.OP =              GetAttribute(GetElement(doc, "ST"), "OP")?.Value;
+            if (GetAttribute(GetElement(doc, "ST"), "TS") != null)
+            returnData.ST.TS =              GetAttribute(GetElement(doc, "ST"), "TS")?.Value;
+            if (GetAttribute(GetElement(doc, "ST"), "WS") != null)
+            returnData.ST.WS =              GetAttribute(GetElement(doc, "ST"), "WS")?.Value;
+            if (GetAttribute(GetElement(doc, "ST"), "SD") != null)
+            returnData.ST.SD =              GetAttribute(GetElement(doc, "ST"), "SD")?.Value;
+            if (GetAttribute(GetElement(doc, "ST"), "ME") != null)
+            returnData.ST.ME = Double.Parse(GetAttribute(GetElement(doc, "ST"), "ME")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "ST"), "PA") != null)
+            returnData.ST.PA = Double.Parse(GetAttribute(GetElement(doc, "ST"), "PA")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "ST"), "SI") != null)
+            returnData.ST.SI = Double.Parse(GetAttribute(GetElement(doc, "ST"), "SI")?.Value, new CultureInfo("en-US"));
+            if (GetElement(doc, "BI") != null)
+                returnData.BI = doc.Root.Elements("BI")?.Select(b => new BIClass
                 {
-                    BCP = b.Attribute("BCP").Value,
-                    BC = b.Attribute("BC").Value,
-                    ID = Double.Parse(b.Attribute("ID").Value, new CultureInfo("en-US")),
-                    TR = Double.Parse(b.Attribute("TR").Value, new CultureInfo("en-US")),
-                    AK = Double.Parse(b.Attribute("AK").Value, new CultureInfo("en-US")),
-                    SD = b.Attribute("SD").Value,
-                    TT = Double.Parse(b.Attribute("TT").Value, new CultureInfo("en-US")),
-                    NT = Double.Parse(b.Attribute("NT").Value, new CultureInfo("en-US")),
-                    NF = Double.Parse(b.Attribute("NF").Value, new CultureInfo("en-US")),
+                    BCP =             b.Attribute("BCP")?.Value,
+                    BC =              b.Attribute("BC" )?.Value,
+                    ID = Double.Parse(b.Attribute("ID" )?.Value, new CultureInfo("en-US")),
+                    TR = Double.Parse(b.Attribute("TR" )?.Value, new CultureInfo("en-US")),
+                    AK = Double.Parse(b.Attribute("AK" )?.Value, new CultureInfo("en-US")),
+                    SD =              b.Attribute("SD" )?.Value,
+                    TT = Double.Parse(b.Attribute("TT" )?.Value, new CultureInfo("en-US")),
+                    NT = Double.Parse(b.Attribute("NT" )?.Value, new CultureInfo("en-US")),
+                    NF = Double.Parse(b.Attribute("NF" )?.Value, new CultureInfo("en-US")),
                     Test = b.Elements("TEST").Select(t => new ColumnsClass
                     {
-                        F = t.Attribute("F").Value,
-                        FT = t.Attribute("FT").Value,
-                        C = t.Attribute("C").Value,
-                        SG1 = t.Attribute("SG1").Value,
-                        SG2 = t.Attribute("SG2").Value,
-                        PD1 = t.Attribute("PD1").Value,
-                        PD2 = t.Attribute("PD2").Value,
-                        XY1 = t.Attribute("XY1").Value,
-                        XY2 = t.Attribute("XY2").Value,
-                        CP1 = t.Attribute("CP1").Value,
-                        CP2 = t.Attribute("CP2").Value,
-                        SC = t.Attribute("SC").Value,
-                        NM = t.Attribute("NM").Value,
-                        DN = t.Attribute("DN").Value,
-                        PT = Double.Parse(t.Attribute("PT").Value, new CultureInfo("en-US")),
-                        NT = Double.Parse(t.Attribute("NT").Value, new CultureInfo("en-US")),
-                        IDC = Double.Parse(t.Attribute("IDC").Value, new CultureInfo("en-US")),
-                        MK = t.Attribute("MK").Value,
-                        IDM = Double.Parse(t.Attribute("IDM").Value, new CultureInfo("en-US")),
-                        PW = Double.Parse(t.Attribute("PW").Value, new CultureInfo("en-US")),
-                        LB = t.Attribute("LB").Value,
-                        IN = t.Attribute("IN").Value,
-                        IDL = Double.Parse(t.Attribute("IDL").Value, new CultureInfo("en-US")),
-                        TR = Double.Parse(t.Attribute("TR").Value, new CultureInfo("en-US")),
-                        MU = t.Attribute("MU").Value,
-                        ML = Double.Parse(t.Attribute("ML").Value, new CultureInfo("en-US")),
-                        MM = Double.Parse(t.Attribute("MM").Value, new CultureInfo("en-US")),
-                        MH = Double.Parse(t.Attribute("MH").Value, new CultureInfo("en-US")),
-                        MR = Double.Parse(t.Attribute("MR").Value, new CultureInfo("en-US")),
-                        MP = Double.Parse(t.Attribute("MP").Value.TrimEnd('%'), new CultureInfo("en-US")),
-                        TT = Double.Parse(t.Attribute("TT").Value, new CultureInfo("en-US")),
-                        IS = Double.Parse(t.Attribute("IS").Value, new CultureInfo("en-US")),
-                        DG = Double.Parse(t.Attribute("DG").Value, new CultureInfo("en-US"))
+                        F =                t.Attribute("F"  )?.Value,
+                        FT =               t.Attribute("FT" )?.Value,
+                        C =                t.Attribute("C"  )?.Value,
+                        SG1 =              t.Attribute("SG1")?.Value,
+                        SG2 =              t.Attribute("SG2")?.Value,
+                        PD1 =              t.Attribute("PD1")?.Value,
+                        PD2 =              t.Attribute("PD2")?.Value,
+                        XY1 =              t.Attribute("XY1")?.Value,
+                        XY2 =              t.Attribute("XY2")?.Value,
+                        CP1 =              t.Attribute("CP1")?.Value,
+                        CP2 =              t.Attribute("CP2")?.Value,
+                        SC =               t.Attribute("SC" )?.Value,
+                        NM =               t.Attribute("NM" )?.Value,
+                        DN =               t.Attribute("DN" )?.Value,
+                        PT =  Double.Parse(t.Attribute("PT" )?.Value, new CultureInfo("en-US")),
+                        NT =  Double.Parse(t.Attribute("NT" )?.Value, new CultureInfo("en-US")),
+                        IDC = Double.Parse(t.Attribute("IDC")?.Value, new CultureInfo("en-US")),
+                        MK =               t.Attribute("MK" )?.Value,
+                        IDM = Double.Parse(t.Attribute("IDM")?.Value, new CultureInfo("en-US")),
+                        PW =  Double.Parse(t.Attribute("PW" )?.Value, new CultureInfo("en-US")),
+                        LB =               t.Attribute("LB" )?.Value,
+                        IN =               t.Attribute("IN" )?.Value,
+                        IDL = Double.Parse(t.Attribute("IDL")?.Value, new CultureInfo("en-US")),
+                        TR =  Double.Parse(t.Attribute("TR" )?.Value, new CultureInfo("en-US")),
+                        MU =               t.Attribute("MU" )?.Value,
+                        ML =  Double.Parse(t.Attribute("ML" )?.Value, new CultureInfo("en-US")),
+                        MM =  Double.Parse(t.Attribute("MM" )?.Value, new CultureInfo("en-US")),
+                        MH =  Double.Parse(t.Attribute("MH" )?.Value, new CultureInfo("en-US")),
+                        MR =  Double.Parse(t.Attribute("MR" )?.Value, new CultureInfo("en-US")),
+                        MP =  Double.Parse(t.Attribute("MP" )?.Value.TrimEnd('%'), new CultureInfo("en-US")),
+                        TT =  Double.Parse(t.Attribute("TT" )?.Value, new CultureInfo("en-US")),
+                        IS =  Double.Parse(t.Attribute("IS" )?.Value, new CultureInfo("en-US")),
+                        DG =  Double.Parse(t.Attribute("DG" )?.Value, new CultureInfo("en-US")),
+                        FR =               t.Attribute("FR" )?.Value
                     }).ToList()
                 }).ToList();
-            }
-            catch (Exception)
+            else
             {
-                errorList += "BI - Test\n"; return (null, errorList);
+                return (null, errorList);
             }
+
             returnData.ET = new ETClass();
-            try { returnData.ET.NMP = doc.Root.Element("ET").Attribute("NMP").Value; } catch (Exception) { errorList += "ET - NMP\n"; }
-            try { returnData.ET.NM = doc.Root.Element("ET").Attribute("NM").Value; } catch (Exception) { errorList += "ET - NM\n"; }
-            try { returnData.ET.LT = doc.Root.Element("ET").Attribute("LT").Value; } catch (Exception) { errorList += "ET - LT\n"; }
-            try { returnData.ET.BC = doc.Root.Element("ET").Attribute("BC").Value; } catch (Exception) { errorList += "ET - BC\n"; }
-            try { returnData.ET.OP = doc.Root.Element("ET").Attribute("OP").Value; } catch (Exception) { errorList += "ET - OP\n"; }
-            try { returnData.ET.TR = Double.Parse(doc.Root.Element("ET").Attribute("TR").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "ET - TR\n"; }
-            try { returnData.ET.AK = Double.Parse(doc.Root.Element("ET").Attribute("AK").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "ET - AK\n"; }
-            try { returnData.ET.TT = doc.Root.Element("ET").Attribute("TT").Value; } catch (Exception) { errorList += "ET - TT\n"; }
-            try { returnData.ET.NT = Double.Parse(doc.Root.Element("ET").Attribute("NT").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "ET - NT\n"; }
-            try { returnData.ET.NF = Double.Parse(doc.Root.Element("ET").Attribute("NF").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "ET - NF\n"; }
-            try { returnData.ET.ED = doc.Root.Element("ET").Attribute("ED").Value; } catch (Exception) { errorList += "ET - ED\n"; }
-            try { returnData.ET.DM = Double.Parse(doc.Root.Element("ET").Attribute("DM").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "ET - DM\n"; }
+
+            if (GetAttribute(GetElement(doc, "ET"), "NMP") != null)
+            returnData.ET.NMP =             GetAttribute(GetElement(doc, "ET"), "NMP")?.Value;
+            if (GetAttribute(GetElement(doc, "ET"), "NM" ) != null)
+            returnData.ET.NM =              GetAttribute(GetElement(doc, "ET"), "NM" )?.Value;
+            if (GetAttribute(GetElement(doc, "ET"), "LT" ) != null)
+            returnData.ET.LT =              GetAttribute(GetElement(doc, "ET"), "LT" )?.Value;
+            if (GetAttribute(GetElement(doc, "ET"), "BC" ) != null)
+            returnData.ET.BC =              GetAttribute(GetElement(doc, "ET"), "BC" )?.Value;
+            if (GetAttribute(GetElement(doc, "ET"), "OP" ) != null)
+            returnData.ET.OP =              GetAttribute(GetElement(doc, "ET"), "OP" )?.Value;
+            if (GetAttribute(GetElement(doc, "ET"), "TR" ) != null)
+            returnData.ET.TR = Double.Parse(GetAttribute(GetElement(doc, "ET"), "TR" )?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "ET"), "AK" ) != null)
+            returnData.ET.AK = Double.Parse(GetAttribute(GetElement(doc, "ET"), "AK" )?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "ET"), "TT" ) != null)
+            returnData.ET.TT =              GetAttribute(GetElement(doc, "ET"), "TT" )?.Value;
+            if (GetAttribute(GetElement(doc, "ET"), "NT" ) != null)
+            returnData.ET.NT = Double.Parse(GetAttribute(GetElement(doc, "ET"), "NT" )?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "ET"), "NF" ) != null)
+            returnData.ET.NF = Double.Parse(GetAttribute(GetElement(doc, "ET"), "NF" )?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "ET"), "ED" ) != null)
+            returnData.ET.ED =              GetAttribute(GetElement(doc, "ET"), "ED" )?.Value;
+            if (GetAttribute(GetElement(doc, "ET"), "DM") != null)
+            returnData.ET.DM = Double.Parse(GetAttribute(GetElement(doc, "ET"), "DM" )?.Value, new CultureInfo("en-US"));
             
             return (returnData, errorList); //кортеж
+        }
+        private static XElement GetElement(XDocument doc, string elementName)
+        {
+            if (doc != null)
+            foreach (var node in doc.DescendantNodes())
+            {
+                if (node is XElement)
+                {
+                    XElement element = (XElement)node;
+                    if (element.Name.LocalName.Equals(elementName))
+                        return element;
+                }
+            }
+            return null;
+        }
+        private static XAttribute GetAttribute(XElement docElement, string attributeName)
+        {
+            if (docElement != null)
+            foreach (var node in docElement.Attributes())
+            {
+                if (node is XAttribute)
+                {
+                    XAttribute pr = (XAttribute)node;
+                    if (pr.Name.LocalName.Equals(attributeName))
+                        return pr;
+                }
+            }
+            return null;
         }
         public static DataTable ConvertToDataTable<T>(IList<T> data)
         {
             DataTable table = new DataTable();
-            using (var reader = ObjectReader.Create(data, "NM", "C", "SG1", "SG2", "PD1", "PD2", "MU", "ML", "MM", "MH", "MR", "MP"))
+            using (var reader = ObjectReader.Create(data, "NM", "C", "SG1", "SG2", "PD1", "PD2", "MU", "ML", "MM", "MH", "MR", "MP", "FR"))
             {
                 table.Load(reader);
             }
