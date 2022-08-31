@@ -11,12 +11,12 @@ namespace VIVA_report_analyser
 {
     public class ParsedXml
     {
-        internal InfoClass Info { get; set; }
-        internal FidMrkClass FidMrk { get; set; }
-        internal PrgCClass PrgC { get; set; }
-        internal STClass   ST   { get; set; }
-        internal BIClass   BI   { get; set; }
-        internal ETClass   ET   { get; set; }
+        internal InfoClass     Info   { get; set; }
+        internal FidMrkClass   FidMrk { get; set; }
+        internal PrgCClass     PrgC   { get; set; }
+        internal STClass       ST     { get; set; }
+        internal List<BIClass> BI     { get; set; }
+        internal ETClass       ET     { get; set; }
     }
     internal class InfoClass
     {
@@ -30,15 +30,15 @@ namespace VIVA_report_analyser
     {
         public String NM { get; set; }
         public String MZ { get; set; }
-        public String K { get; set; }
+        public String K  { get; set; }
         public String SD { get; set; }
-        public String M { get; set; }
-        public Double C { get; set; }
-        public Double X { get; set; }
-        public Double Y { get; set; }
+        public String M  { get; set; }
+        public Double C  { get; set; }
+        public Double X  { get; set; }
+        public Double Y  { get; set; }
         public Double XO { get; set; }
         public Double YO { get; set; }
-        public String F { get; set; }
+        public String F  { get; set; }
     }
     internal class PrgCClass
     {
@@ -69,84 +69,85 @@ namespace VIVA_report_analyser
     }
     internal class STClass
     {
-        public String TN  { get; set; }
-        public String NMP { get; set; }
-        public String NM  { get; set; }
-        public String LT  { get; set; }
-        public String BC  { get; set; }
-        public String OP  { get; set; }
-        public String TS  { get; set; }
-        public String WS  { get; set; }
-        public String SD  { get; set; }
-        public Double ME { get; set; }
-        public Double PA  { get; set; }
-        public Double SI  { get; set; }
+        public String TN  { get; set; } //
+        public String NMP { get; set; } //
+        public String NM  { get; set; } // Board Name
+        public String LT  { get; set; } // Batch code Код партии
+        public String BC  { get; set; } // Board code
+        public String OP  { get; set; } // Operator name
+        public String TS  { get; set; } // Test Metod (Normal test)
+        public String WS  { get; set; } //
+        public String SD  { get; set; } // Test start date
+        public Double ME  { get; set; } //
+        public Double PA  { get; set; } //
+        public Double SI  { get; set; } //
     }
-    internal class BIClass
+    public class BIClass
     {
-        public String BCP { get; set; }
-        public String BC  { get; set; }
-        public Double ID  { get; set; }
-        public Double TR  { get; set; }
-        public Double AK  { get; set; }
-        public String SD  { get; set; }
-        public Double TT  { get; set; }
-        public Double NT  { get; set; }
-        public Double NF  { get; set; }
+        public String BCP { get; set; } //
+        public String BC  { get; set; } //
+        public Double ID  { get; set; } //
+        public Double TR  { get; set; } //
+        public Double AK  { get; set; } //
+        public String SD  { get; set; } // Test start date
+        public Double TT  { get; set; } // 
+        public Double NT  { get; set; } // Number of tests
+        public Double NF  { get; set; } // Number of errors
         public List<ColumnsClass> Test { get; set; }
     }
     public class ColumnsClass
     {
         // Поля класса
-        public String F { get; set; }
-        public String FT { get; set; }
-        public String C { get; set; }
-        public String SG1 { get; set; }
-        public String SG2 { get; set; }
-        public String PD1 { get; set; }
-        public String PD2 { get; set; }
-        public String XY1 { get; set; }
-        public String XY2 { get; set; }
-        public String CP1 { get; set; }
-        public String CP2 { get; set; }
-        public String SC { get; set; }
-        public String NM { get; set; }
-        public String DN { get; set; }
-        public Double PT { get; set; }
-        public Double NT { get; set; }
-        public Double IDC { get; set; }
-        public String MK { get; set; }
-        public Double IDM { get; set; }
-        public Double PW { get; set; }
-        public String LB { get; set; }
-        public String IN { get; set; }
-        public Double IDL { get; set; }
-        public Double TR { get; set; }
-        public String MU { get; set; }
-        public Double ML { get; set; }
-        public Double MM { get; set; }
-        public Double MH { get; set; }
-        public Double MR { get; set; }
-        public Double MP { get; set; }
-        public Double TT { get; set; }
-        public Double IS { get; set; }
-        public Double DG { get; set; }
-        public String uniqueTestName { get { return NM + " | " + F + " | " + PD1 + " | " + PD2; } }
+        public String F   { get; set; } //
+        public String FT  { get; set; } //
+        public String C   { get; set; } //
+        public String SG1 { get; set; } // Net name 1
+        public String SG2 { get; set; } // Net name 2
+        public String PD1 { get; set; } // Pad name 1
+        public String PD2 { get; set; } // Pad name 2
+        public String XY1 { get; set; } // Probe coordinates 1
+        public String XY2 { get; set; } // Probe coordinates 1
+        public String CP1 { get; set; } // 
+        public String CP2 { get; set; } // 
+        public String SC  { get; set; } // 
+        public String NM  { get; set; } // Component name
+        public String DN  { get; set; } // Component description
+        public Double PT  { get; set; } // Positive tolerance ?
+        public Double NT  { get; set; } // Negative tolerance ?
+        public Double IDC { get; set; } //
+        public String MK  { get; set; } //
+        public Double IDM { get; set; } //
+        public Double PW  { get; set; } //
+        public String LB  { get; set; } //
+        public String IN  { get; set; } //
+        public Double IDL { get; set; } //
+        public Double TR  { get; set; } //
+        public String MU  { get; set; } // Units of measurement
+        public Double ML  { get; set; } // Minimum value
+        public Double MM  { get; set; } // Set value
+        public Double MH  { get; set; } // Maximum value
+        public Double MR  { get; set; } // Measured value
+        public Double MP  { get; set; } // Measurement deviation %
+        public Double TT  { get; set; } //
+        public Double IS  { get; set; } //
+        public Double DG  { get; set; } //
+        public String FR  { get; set; } // Error description
+        public String uniqueTestName { get { return NM + " | " + F + " | " + PD1 + " | " + PD2; } } // Составной уникальный идентификатор теста
     }
     internal class ETClass
     {
-        public String NMP { get; set; }
-        public String NM  { get; set; }
-        public String LT  { get; set; }
-        public String BC  { get; set; }
-        public String OP  { get; set; }
-        public Double TR  { get; set; }
-        public Double AK  { get; set; }
-        public String TT  { get; set; }
-        public Double NT  { get; set; }
-        public Double NF  { get; set; }
-        public String ED  { get; set; }
-        public Double DM  { get; set; }
+        public String NMP { get; set; } //
+        public String NM  { get; set; } //
+        public String LT  { get; set; } //
+        public String BC  { get; set; } //
+        public String OP  { get; set; } //
+        public Double TR  { get; set; } //
+        public Double AK  { get; set; } //
+        public String TT  { get; set; } //
+        public Double NT  { get; set; } //
+        public Double NF  { get; set; } //
+        public String ED  { get; set; } // Test end date
+        public Double DM  { get; set; } //
     }
     internal class ParseXml
     {
@@ -185,7 +186,8 @@ namespace VIVA_report_analyser
             new VivaXmlColumnsClass { Name = "TT" , Translation ="TT",                       Mask = 0x040000000 }, // 30
             new VivaXmlColumnsClass { Name = "IS" , Translation ="IS",                       Mask = 0x080000000 }, // 31
             new VivaXmlColumnsClass { Name = "DG" , Translation ="DG",                       Mask = 0x100000000 }, // 32
-            new VivaXmlColumnsClass { Name = "uniqueTestName" , Translation ="Идентификатор",Mask = 0x200000000 }  // 32
+            new VivaXmlColumnsClass { Name = "FR" , Translation ="FR",                       Mask = 0x200000000 }, // 32
+            new VivaXmlColumnsClass { Name = "uniqueTestName" , Translation ="Идентификатор",Mask = 0x400000000 }  // 32
         };
         public static List<VivaXmlTestsClass> vivaXmlTests = new List<VivaXmlTestsClass>
         // Битовая маска указывает какие столбцы интересны для конкретного теста
@@ -202,7 +204,7 @@ namespace VIVA_report_analyser
         public static List<СalculationsClass> Сalculations = new List<СalculationsClass>
         // Битовая маска указывает какие столбцы интересны для конкретного вычисления
         {
-            new СalculationsClass { Name = "All", Translation ="Все тесты", Mask = 0x27F00107D }, // 0 
+            new СalculationsClass { Name = "All", Translation ="Все тесты", Mask = 0x47F00107D }, // 0 
             new СalculationsClass { Name = "MaxDeviation",  Translation ="MAX отклонение", Mask = 0xFFFFFFFFF }, // 1
         };
         public static int testCount { get { return ParseXml.vivaXmlTests.Count; } }
@@ -250,52 +252,61 @@ namespace VIVA_report_analyser
             try { returnData.ST.ME = Double.Parse(doc.Root.Element("ST").Attribute("ME").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "ST - ME\n"; }
             try { returnData.ST.PA = Double.Parse(doc.Root.Element("ST").Attribute("PA").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "ST - PA\n"; }
             try { returnData.ST.SI = Double.Parse(doc.Root.Element("ST").Attribute("SI").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "ST - SI\n"; }
-            returnData.BI = new BIClass();
-            try { returnData.BI.BCP = doc.Root.Element("BI").Attribute("BCP").Value; } catch (Exception) { errorList += "BI - BCP\n"; }
-            try { returnData.BI.BC = doc.Root.Element("BI").Attribute("BC").Value; } catch (Exception) { errorList += "BI - BC\n"; }
-            try { returnData.BI.ID = Double.Parse(doc.Root.Element("BI").Attribute("ID").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "BI - ID\n"; }
-            try { returnData.BI.TR = Double.Parse(doc.Root.Element("BI").Attribute("TR").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "BI - TR\n"; }
-            try { returnData.BI.AK = Double.Parse(doc.Root.Element("BI").Attribute("AK").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "BI - AK\n"; }
-            try { returnData.BI.SD = doc.Root.Element("BI").Attribute("SD").Value; } catch (Exception) { errorList += "BI - SD\n"; }
-            try { returnData.BI.TT = Double.Parse(doc.Root.Element("BI").Attribute("TT").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "BI - TT\n"; }
-            try { returnData.BI.NT = Double.Parse(doc.Root.Element("BI").Attribute("NT").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "BI - NT\n"; }
-            try { returnData.BI.NF = Double.Parse(doc.Root.Element("BI").Attribute("NF").Value, new CultureInfo("en-US")); } catch (Exception) { errorList += "BI - NF\n"; }
-            try { returnData.BI.Test = doc.Root.Element("BI").Elements("TEST").Select(t => new ColumnsClass
+            try
             {
-                F = t.Attribute("F").Value,
-                FT = t.Attribute("FT").Value,
-                C = t.Attribute("C").Value,
-                SG1 = t.Attribute("SG1").Value,
-                SG2 = t.Attribute("SG2").Value,
-                PD1 = t.Attribute("PD1").Value,
-                PD2 = t.Attribute("PD2").Value,
-                XY1 = t.Attribute("XY1").Value,
-                XY2 = t.Attribute("XY2").Value,
-                CP1 = t.Attribute("CP1").Value,
-                CP2 = t.Attribute("CP2").Value,
-                SC = t.Attribute("SC").Value,
-                NM = t.Attribute("NM").Value,
-                DN = t.Attribute("DN").Value,
-                PT = Double.Parse(t.Attribute("PT").Value, new CultureInfo("en-US")),
-                NT = Double.Parse(t.Attribute("NT").Value, new CultureInfo("en-US")),
-                IDC = Double.Parse(t.Attribute("IDC").Value, new CultureInfo("en-US")),
-                MK = t.Attribute("MK").Value,
-                IDM = Double.Parse(t.Attribute("IDM").Value, new CultureInfo("en-US")),
-                PW = Double.Parse(t.Attribute("PW").Value, new CultureInfo("en-US")),
-                LB = t.Attribute("LB").Value,
-                IN = t.Attribute("IN").Value,
-                IDL = Double.Parse(t.Attribute("IDL").Value, new CultureInfo("en-US")),
-                TR = Double.Parse(t.Attribute("TR").Value, new CultureInfo("en-US")),
-                MU = t.Attribute("MU").Value,
-                ML = Double.Parse(t.Attribute("ML").Value, new CultureInfo("en-US")),
-                MM = Double.Parse(t.Attribute("MM").Value, new CultureInfo("en-US")),
-                MH = Double.Parse(t.Attribute("MH").Value, new CultureInfo("en-US")),
-                MR = Double.Parse(t.Attribute("MR").Value, new CultureInfo("en-US")),
-                MP = Double.Parse(t.Attribute("MP").Value.TrimEnd('%'), new CultureInfo("en-US")),
-                TT = Double.Parse(t.Attribute("TT").Value, new CultureInfo("en-US")),
-                IS = Double.Parse(t.Attribute("IS").Value, new CultureInfo("en-US")),
-                DG = Double.Parse(t.Attribute("DG").Value, new CultureInfo("en-US"))
-            }).ToList(); } catch (Exception) { errorList += "BI - Test\n"; return (null, errorList); }
+                returnData.BI = doc.Root.Elements("BI").Select(b => new BIClass
+                {
+                    BCP = b.Attribute("BCP").Value,
+                    BC = b.Attribute("BC").Value,
+                    ID = Double.Parse(b.Attribute("ID").Value, new CultureInfo("en-US")),
+                    TR = Double.Parse(b.Attribute("TR").Value, new CultureInfo("en-US")),
+                    AK = Double.Parse(b.Attribute("AK").Value, new CultureInfo("en-US")),
+                    SD = b.Attribute("SD").Value,
+                    TT = Double.Parse(b.Attribute("TT").Value, new CultureInfo("en-US")),
+                    NT = Double.Parse(b.Attribute("NT").Value, new CultureInfo("en-US")),
+                    NF = Double.Parse(b.Attribute("NF").Value, new CultureInfo("en-US")),
+                    Test = b.Elements("TEST").Select(t => new ColumnsClass
+                    {
+                        F = t.Attribute("F").Value,
+                        FT = t.Attribute("FT").Value,
+                        C = t.Attribute("C").Value,
+                        SG1 = t.Attribute("SG1").Value,
+                        SG2 = t.Attribute("SG2").Value,
+                        PD1 = t.Attribute("PD1").Value,
+                        PD2 = t.Attribute("PD2").Value,
+                        XY1 = t.Attribute("XY1").Value,
+                        XY2 = t.Attribute("XY2").Value,
+                        CP1 = t.Attribute("CP1").Value,
+                        CP2 = t.Attribute("CP2").Value,
+                        SC = t.Attribute("SC").Value,
+                        NM = t.Attribute("NM").Value,
+                        DN = t.Attribute("DN").Value,
+                        PT = Double.Parse(t.Attribute("PT").Value, new CultureInfo("en-US")),
+                        NT = Double.Parse(t.Attribute("NT").Value, new CultureInfo("en-US")),
+                        IDC = Double.Parse(t.Attribute("IDC").Value, new CultureInfo("en-US")),
+                        MK = t.Attribute("MK").Value,
+                        IDM = Double.Parse(t.Attribute("IDM").Value, new CultureInfo("en-US")),
+                        PW = Double.Parse(t.Attribute("PW").Value, new CultureInfo("en-US")),
+                        LB = t.Attribute("LB").Value,
+                        IN = t.Attribute("IN").Value,
+                        IDL = Double.Parse(t.Attribute("IDL").Value, new CultureInfo("en-US")),
+                        TR = Double.Parse(t.Attribute("TR").Value, new CultureInfo("en-US")),
+                        MU = t.Attribute("MU").Value,
+                        ML = Double.Parse(t.Attribute("ML").Value, new CultureInfo("en-US")),
+                        MM = Double.Parse(t.Attribute("MM").Value, new CultureInfo("en-US")),
+                        MH = Double.Parse(t.Attribute("MH").Value, new CultureInfo("en-US")),
+                        MR = Double.Parse(t.Attribute("MR").Value, new CultureInfo("en-US")),
+                        MP = Double.Parse(t.Attribute("MP").Value.TrimEnd('%'), new CultureInfo("en-US")),
+                        TT = Double.Parse(t.Attribute("TT").Value, new CultureInfo("en-US")),
+                        IS = Double.Parse(t.Attribute("IS").Value, new CultureInfo("en-US")),
+                        DG = Double.Parse(t.Attribute("DG").Value, new CultureInfo("en-US"))
+                    }).ToList()
+                }).ToList();
+            }
+            catch (Exception)
+            {
+                errorList += "BI - Test\n"; return (null, errorList);
+            }
             returnData.ET = new ETClass();
             try { returnData.ET.NMP = doc.Root.Element("ET").Attribute("NMP").Value; } catch (Exception) { errorList += "ET - NMP\n"; }
             try { returnData.ET.NM = doc.Root.Element("ET").Attribute("NM").Value; } catch (Exception) { errorList += "ET - NM\n"; }

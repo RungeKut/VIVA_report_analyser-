@@ -45,8 +45,9 @@ namespace VIVA_report_analyser
             // tabControl2
             // 
             this.tabControl2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl2.ItemSize = new System.Drawing.Size(0, 24);
+            this.tabControl2.ItemSize = new System.Drawing.Size(0, 20);
             this.tabControl2.Location = new System.Drawing.Point(0, 120);
+            this.tabControl2.Multiline = true;
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
             this.tabControl2.Size = new System.Drawing.Size(1424, 851);
@@ -63,8 +64,7 @@ namespace VIVA_report_analyser
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Инструменты";
             this.tabPage2.UseVisualStyleBackColor = true;
-            //this.tabPage2.ForeColor = Color.Black;
-            //this.tabPage2.BackColor = Color.MediumAquamarine;
+            // 
             // button2
             // 
             this.button2.Location = new System.Drawing.Point(18, 18);
@@ -113,7 +113,6 @@ namespace VIVA_report_analyser
             // 
             // Form1
             // 
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;

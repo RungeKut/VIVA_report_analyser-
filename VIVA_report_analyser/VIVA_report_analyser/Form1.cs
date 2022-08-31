@@ -28,14 +28,12 @@ namespace VIVA_report_analyser
             for (int file = 0; file < OpenFiles.dataFile.Count; file++)
             {
                 if (OpenFiles.dataFile[file].errorOpenFile != true)
-                if (OpenFiles.dataFile[file].visibleFile != true)
+                if (OpenFiles.dataFile[file].visible != true)
                     {
-                        TabPage page = new TabPage(OpenFiles.dataFile[file].fileName);
+                        TabPage page = new TabPage(OpenFiles.dataFile[file].fileName + " | " + OpenFiles.dataFile[file].boardID + " | " + OpenFiles.dataFile[file].boardName);
                         tabControl2.TabPages.Add(page);
-
                         tabControl2.MouseClick += FileTab_MouseClick;
                         page.MouseClick += Page_MouseClick;
-
                         TabControl tabTests = new TabControl();
                         page.Controls.Add(tabTests);
                         tabTests.Dock = DockStyle.Fill;
@@ -59,10 +57,10 @@ namespace VIVA_report_analyser
                             (
                                 ParseXml.Сalculations[0].Translation,
                                 tabTests,
-                                OpenFiles.dataFile[file].dataParse.BI.Test,
+                                OpenFiles.dataFile[file].dataParse.Test,
                                 ParseXml.Сalculations[0].Mask
                             );
-                        OpenFiles.dataFile[file].visibleFile = true;
+                        OpenFiles.dataFile[file].visible = true;
                     }
             }
         }
@@ -141,7 +139,10 @@ namespace VIVA_report_analyser
                 dataGridView.ReadOnly = true;
                 //dataGridView.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
                 //dataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+                dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+                
                 dataGridView.DataSource = view;
+                dataGridView.RowHeader
                 dataGridView.VirtualMode = true; //отрисовываются только те ячейки, которые видны в данный момент
                 dataGridView.ColumnHeaderMouseClick += DataGridView_ColumnHeaderMouseClick;
                 TestDto.VisibleColumns(ColumnMask, dataGridView);
@@ -158,11 +159,13 @@ namespace VIVA_report_analyser
                         dataGridView.Columns[i].HeaderText = columnHeader.Translation;
                         i++;
                     }
-                    //for (i = 1; i <= rowCount; i++)
-                    //{
-                    //    dataGridView.Rows[i - 1].HeaderCell.Value = i.ToString();
-                    //}
+                    for (i = 1; i <= rowCount; i++)
+                    {
+                        dataGridView.Rows[i - 1].HeaderCell.Value = i.ToString();
+                    }
                 }
+                dataGridView.AutoResizeColumns();
+                dataGridView.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
             }
             catch (Exception ReadFileError)
             {
@@ -243,26 +246,13 @@ namespace VIVA_report_analyser
                     );
 
                 }
-
-
-                /*foreach (var test in ParseXml.vivaXmlTests)
-                {
-                    if (deviationCalculate.TryGetValue(test.Translation, out gettedView))
-                        AddNewComponentTab(test.Translation, tabTests, gettedView, test.Mask);
-                    else
-                        MessageBox.Show("Ошибка чтения словаря по ключу " + test.Name, "Ошибка чтения данных словаря", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                if (deviationCalculate.TryGetValue(ParseXml.Сalculations[0].Translation, out gettedView))
-                    AddNewComponentTab(ParseXml.Сalculations[0].Translation, tabTests, gettedView, ParseXml.Сalculations[0].Mask);
-                else
-                    MessageBox.Show("Ошибка чтения словаря по ключу " + ParseXml.Сalculations[0].Name, "Ошибка чтения данных словаря", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                */
             /*}
             catch (Exception CalculateError)
             {
                 MessageBox.Show("Ошибка при создании вкладки вычислений.\nПодробнее:\n" + CalculateError.Message, "Ошибка вычисления максимального отклонения", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }*/
         }
+        
     }
 
     

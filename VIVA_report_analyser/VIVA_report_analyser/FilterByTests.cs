@@ -10,13 +10,13 @@ namespace VIVA_report_analyser
     {
         public string testName { get; set; }
         public List<ColumnsClass> Tests { get; set; }
-        public static List<FilterByTests> FilteringTests(ParsedXml dataParse)
+        public static List<FilterByTests> FilteringTests(BIClass dataParse)
         {
             // Выборка результатов конкретного теста
             List<FilterByTests> filteredTest = new List<FilterByTests>();
             foreach (VivaXmlTestsClass test in ParseXml.vivaXmlTests)
             {
-                List<ColumnsClass> temp = (from ColumnsClass n in dataParse.BI.Test
+                List<ColumnsClass> temp = (from ColumnsClass n in dataParse.Test
                                             where n.F == test.Name
                                              select n).ToList();
                 filteredTest.Add(new FilterByTests()

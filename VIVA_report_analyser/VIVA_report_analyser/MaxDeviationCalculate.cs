@@ -68,14 +68,14 @@ namespace VIVA_report_analyser
         // Битовая маска указывает какие столбцы интересны для конкретного теста
         {
             new MaxDeviationColumnsClass { Name = "NM" ,       Translation ="Имя компонента",    Mask = 0x000001000 },
-            new MaxDeviationColumnsClass { Name = "fileMin",   Translation ="Файл с минимумом",  Mask = 0x000000001 },
+            new MaxDeviationColumnsClass { Name = "fileMin",   Translation ="Файл min",  Mask = 0x000000001 },
             new MaxDeviationColumnsClass { Name = "minValue",  Translation ="Минимум",           Mask = 0x000000002 },
-            new MaxDeviationColumnsClass { Name = "fileMax",   Translation ="Файл с максимумом", Mask = 0x000000004 },
+            new MaxDeviationColumnsClass { Name = "fileMax",   Translation ="Файл max", Mask = 0x000000004 },
             new MaxDeviationColumnsClass { Name = "maxValue",  Translation ="Максимум",          Mask = 0x000000008 },
             new MaxDeviationColumnsClass { Name = "delta",     Translation ="Размах",            Mask = 0x000000010 },
-            new MaxDeviationColumnsClass { Name = "fileMinP",  Translation ="Файл с min %",      Mask = 0x000000020 },
+            new MaxDeviationColumnsClass { Name = "fileMinP",  Translation ="Файл min %",      Mask = 0x000000020 },
             new MaxDeviationColumnsClass { Name = "minValueP", Translation ="min %",             Mask = 0x000000040 },
-            new MaxDeviationColumnsClass { Name = "fileMaxP",  Translation ="Файл с max %",      Mask = 0x000000080 },
+            new MaxDeviationColumnsClass { Name = "fileMaxP",  Translation ="Файл max %",      Mask = 0x000000080 },
             new MaxDeviationColumnsClass { Name = "maxValueP", Translation ="max %",             Mask = 0x000000100 },
             new MaxDeviationColumnsClass { Name = "deltaP",    Translation ="Размах %",          Mask = 0x000000200 }
         };
@@ -177,11 +177,11 @@ namespace VIVA_report_analyser
             {
                 uniqFile.Add(new UniqueFileClass() // Создали раздел с Файлом
                 {
-                    fileName = OpenFiles.dataFile[f].fileName,
+                    fileName = OpenFiles.dataFile[f].fileName + " | " + OpenFiles.dataFile[f].boardID + " | " + OpenFiles.dataFile[f].boardName,
                     tests = new List<UniqueTestsClass>()
                 });
                 if (OpenFiles.dataFile[f].errorOpenFile != true)
-                if (OpenFiles.dataFile[f].visibleFile == true)
+                if (OpenFiles.dataFile[f].visible == true)
                     {
                         for (int filter = 0; filter < OpenFiles.dataFile[f].dataFilteredByTests.Count; filter++)
                         {
@@ -233,7 +233,7 @@ namespace VIVA_report_analyser
             for (int f = 0; f < OpenFiles.dataFile.Count; f++)
             {
                 if (OpenFiles.dataFile[f].errorOpenFile != true)
-                    if (OpenFiles.dataFile[f].visibleFile == true)
+                    if (OpenFiles.dataFile[f].visible == true)
                     {
                         uniqFile[f].tests.Add(new UniqueTestsClass() //Создали раздел с фильтра тестов
                         {
@@ -242,7 +242,7 @@ namespace VIVA_report_analyser
                         });
                         for (int t = 0; t < uniTest[allTestNum].uniqueTests.Count; t++)
                         {
-                            List<ColumnsClass> tempData = (from ColumnsClass n in OpenFiles.dataFile[f].dataParse.BI.Test
+                            List<ColumnsClass> tempData = (from ColumnsClass n in OpenFiles.dataFile[f].dataParse.Test
                                                            where n.uniqueTestName == uniTest[allTestNum].uniqueTests[t]
                                                            select n).ToList();
                             if (tempData.Count != 0)
@@ -287,7 +287,7 @@ namespace VIVA_report_analyser
             for (int f = 0; f < OpenFiles.dataFile.Count; f++)
             {
                 if (OpenFiles.dataFile[f].errorOpenFile != true)
-                    if (OpenFiles.dataFile[f].visibleFile == true)
+                    if (OpenFiles.dataFile[f].visible == true)
                     {
                         firstFile = f;
                         for (int filter = 0; filter < OpenFiles.dataFile[f].dataFilteredByTests.Count; filter++)
@@ -308,7 +308,7 @@ namespace VIVA_report_analyser
             for ( int f = firstFile + 1; f < OpenFiles.dataFile.Count; f++ )
             {
                 if (OpenFiles.dataFile[f].errorOpenFile != true)
-                    if (OpenFiles.dataFile[f].visibleFile == true)
+                    if (OpenFiles.dataFile[f].visible == true)
                     {
                         for (int filter = 0; filter < OpenFiles.dataFile[f].dataFilteredByTests.Count; filter++)
                         {
@@ -333,10 +333,10 @@ namespace VIVA_report_analyser
             for (int i = 0; i < OpenFiles.dataFile.Count; i++)
             {
                 if (OpenFiles.dataFile[i].errorOpenFile != true)
-                    if (OpenFiles.dataFile[i].visibleFile == true)
+                    if (OpenFiles.dataFile[i].visible == true)
                     {
                         firstFile = i;
-                        foreach (var test in OpenFiles.dataFile[i].dataParse.BI.Test)
+                        foreach (var test in OpenFiles.dataFile[i].dataParse.Test)
                         {
                             returnFile[lastTest].uniqueTests.Add(test.uniqueTestName);
                         }
@@ -346,10 +346,10 @@ namespace VIVA_report_analyser
             for (int i = firstFile + 1; i < OpenFiles.dataFile.Count; i++)
             {
                 if (OpenFiles.dataFile[i].errorOpenFile != true)
-                    if (OpenFiles.dataFile[i].visibleFile == true)
+                    if (OpenFiles.dataFile[i].visible == true)
                     {
                         List<string> tempFile = new List<string>();
-                        foreach (var test in OpenFiles.dataFile[i].dataParse.BI.Test)
+                        foreach (var test in OpenFiles.dataFile[i].dataParse.Test)
                         {
                             tempFile.Add(test.uniqueTestName);
                         }
