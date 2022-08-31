@@ -188,8 +188,8 @@ namespace VIVA_report_analyser
         }
         private void button2_Click(object sender, EventArgs e)
         {
-            /*try
-            {*/
+            try
+            {
                 if (OpenFiles.openCount == 0) throw new ArgumentException("Нет открытых файлов");
                 if (OpenFiles.openCount == 1) throw new ArgumentException("Необходимо хотя бы ДВА открытых файла для выборки значений");
                 List<MaxDeviationCalculateFilteredTests> data = MaxDeviationCalculate.DeviationCalculate();
@@ -219,13 +219,17 @@ namespace VIVA_report_analyser
                     );
 
                 }
-            /*}
+            }
             catch (Exception CalculateError)
             {
                 MessageBox.Show("Ошибка при создании вкладки вычислений.\nПодробнее:\n" + CalculateError.Message, "Ошибка вычисления максимального отклонения", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }*/
+            }
         }
-        
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 
     

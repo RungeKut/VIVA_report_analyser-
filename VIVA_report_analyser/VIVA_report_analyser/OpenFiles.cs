@@ -22,7 +22,6 @@ namespace VIVA_report_analyser
         public string boardName { get; set; }
         public double boardID { get; set; }
         public bool errorOpenFile { get; set; }
-        public XDocument dataDoc { get; set; }
         public BIClass dataParse { get; set; }
         public List<FilterByTests> dataFilteredByTests { get; set; }
         public bool visible { get; set; }
@@ -69,7 +68,7 @@ namespace VIVA_report_analyser
                 Title = "Выберите файлы .xml"
                 //InitialDirectory = @"C:\"
             };
-            if (openFileDialog.ShowDialog() != DialogResult.OK) errorList += "Что-то не так в диалоге выбора файлов.\n";
+            if (openFileDialog.ShowDialog() != DialogResult.OK) { } //errorList += "Что-то не так в диалоге выбора файлов.\n";
             else
             {
                 List<DataFilesClass> findFile = new List<DataFilesClass>();
@@ -79,8 +78,8 @@ namespace VIVA_report_analyser
                     string Path = openFileDialog.FileNames[file];
                     string Name = openFileDialog.SafeFileNames[file];
                     findFile = (from DataFilesClass n in dataFile
-                                                   where n.fileName == Name
-                                                   select n).ToList();
+                                where n.fileName == Name
+                                select n).ToList();
                     if (findFile.Count == 0)
                     {
                         XDocument doc = new XDocument(); // создаем пустой XML документ
@@ -101,7 +100,6 @@ namespace VIVA_report_analyser
                                     boardName = Ptest.BC,
                                     boardID = Ptest.ID,
                                     errorOpenFile = false,
-                                    dataDoc = doc,
                                     dataParse = Ptest,
                                     dataFilteredByTests = FilterByTests.FilteringTests(Ptest),
                                     visible = false
@@ -118,8 +116,7 @@ namespace VIVA_report_analyser
                             {
                                 fileName = Name,
                                 filePath = Path,
-                                errorOpenFile = true,
-                                dataDoc = doc
+                                errorOpenFile = true
                             });
                             errorList += "Неверный формат файла " + Name + "\n";
                         }

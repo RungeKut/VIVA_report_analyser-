@@ -18,7 +18,6 @@ namespace VIVA_report_analyser
         // Поля класса
         public string Name { get; set; }
         public string Translation { get; set; }
-        public ulong Mask { get; set; }
     }
     internal class FilterTestClass
     {
@@ -54,31 +53,33 @@ namespace VIVA_report_analyser
     }
     internal class MaxDeviationCalculate
     {
-        public string NM { get; set; }
-        public string fileMin { get; set; }
-        public double minValue { get; set; }
-        public string fileMax { get; set; }
-        public double maxValue { get; set; }
-        public double delta { get; set; }
-        public string fileMinP { get; set; }
-        public double minValueP { get; set; }
-        public string fileMaxP { get; set; }
-        public double maxValueP { get; set; }
-        public double deltaP { get; set; }
+        public string NM             { get; set; }
+        public string fileMin        { get; set; }
+        public double minValue       { get; set; }
+        public string fileMax        { get; set; }
+        public double maxValue       { get; set; }
+        public double delta          { get; set; }
+        public string fileMinP       { get; set; }
+        public double minValueP      { get; set; }
+        public string fileMaxP       { get; set; }
+        public double maxValueP      { get; set; }
+        public double deltaP         { get; set; }
+        public string missingInFiles { get; set; }
         public static List<MaxDeviationColumnsClass> MaxDeviationColumns = new List<MaxDeviationColumnsClass>
         // Битовая маска указывает какие столбцы интересны для конкретного теста
         {
-            new MaxDeviationColumnsClass { Name = "NM" ,       Translation ="Имя компонента",    Mask = 0x000001000 },
-            new MaxDeviationColumnsClass { Name = "fileMin",   Translation ="Файл min",  Mask = 0x000000001 },
-            new MaxDeviationColumnsClass { Name = "minValue",  Translation ="Минимум",           Mask = 0x000000002 },
-            new MaxDeviationColumnsClass { Name = "fileMax",   Translation ="Файл max", Mask = 0x000000004 },
-            new MaxDeviationColumnsClass { Name = "maxValue",  Translation ="Максимум",          Mask = 0x000000008 },
-            new MaxDeviationColumnsClass { Name = "delta",     Translation ="Размах",            Mask = 0x000000010 },
-            new MaxDeviationColumnsClass { Name = "fileMinP",  Translation ="Файл min %",      Mask = 0x000000020 },
-            new MaxDeviationColumnsClass { Name = "minValueP", Translation ="min %",             Mask = 0x000000040 },
-            new MaxDeviationColumnsClass { Name = "fileMaxP",  Translation ="Файл max %",      Mask = 0x000000080 },
-            new MaxDeviationColumnsClass { Name = "maxValueP", Translation ="max %",             Mask = 0x000000100 },
-            new MaxDeviationColumnsClass { Name = "deltaP",    Translation ="Размах %",          Mask = 0x000000200 }
+            new MaxDeviationColumnsClass { Name = "NM" ,            Translation ="Имя компонента"       },
+            new MaxDeviationColumnsClass { Name = "fileMin",        Translation ="Файл min"             },
+            new MaxDeviationColumnsClass { Name = "minValue",       Translation ="Минимум"              },
+            new MaxDeviationColumnsClass { Name = "fileMax",        Translation ="Файл max"             },
+            new MaxDeviationColumnsClass { Name = "maxValue",       Translation ="Максимум"             },
+            new MaxDeviationColumnsClass { Name = "delta",          Translation ="Размах"               },
+            new MaxDeviationColumnsClass { Name = "fileMinP",       Translation ="Файл min %"           },
+            new MaxDeviationColumnsClass { Name = "minValueP",      Translation ="min %"                },
+            new MaxDeviationColumnsClass { Name = "fileMaxP",       Translation ="Файл max %"           },
+            new MaxDeviationColumnsClass { Name = "maxValueP",      Translation ="max %"                },
+            new MaxDeviationColumnsClass { Name = "deltaP",         Translation ="Размах %"             },
+            new MaxDeviationColumnsClass { Name = "missingInFiles", Translation ="Отсутствует в файлах" }
         };
         public static List<MaxDeviationCalculateFilteredTests> DeviationCalculate()
         // Выборка результатов конкретного теста
@@ -164,6 +165,10 @@ namespace VIVA_report_analyser
                                 maxDeviationCalculate[fltr].data[t].fileMaxP = data[f].fileName;
                             }
                             maxDeviationCalculate[fltr].data[t].deltaP = Math.Round(maxDeviationCalculate[fltr].data[t].maxValueP - maxDeviationCalculate[fltr].data[t].minValueP, 1);
+                        }
+                        else
+                        {
+                            maxDeviationCalculate[fltr].data[t].missingInFiles += data[f].fileName + ";";
                         }
                     }
                 }
@@ -418,7 +423,7 @@ namespace VIVA_report_analyser
         public static DataTable ConvertToDataTable<T>(IList<T> data)
         {
             DataTable table = new DataTable();
-            using (var reader = ObjectReader.Create(data, "NM", "fileMin", "minValue", "fileMax", "maxValue", "delta", "fileMinP", "minValueP", "fileMaxP", "maxValueP", "deltaP")) // (data, "Id", "Name", "Description")
+            using (var reader = ObjectReader.Create(data, "NM", "fileMin", "minValue", "fileMax", "maxValue", "delta", "fileMinP", "minValueP", "fileMaxP", "maxValueP", "deltaP", "missingInFiles"))
             {
                 table.Load(reader);
             }

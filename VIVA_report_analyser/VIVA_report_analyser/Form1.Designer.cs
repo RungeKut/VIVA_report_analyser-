@@ -37,6 +37,7 @@ namespace VIVA_report_analyser
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.button1 = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.button3 = new System.Windows.Forms.Button();
             this.tabPage2.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -56,6 +57,7 @@ namespace VIVA_report_analyser
             // tabPage2
             // 
             this.tabPage2.CausesValidation = false;
+            this.tabPage2.Controls.Add(this.button3);
             this.tabPage2.Controls.Add(this.button2);
             this.tabPage2.Location = new System.Drawing.Point(4, 28);
             this.tabPage2.Margin = new System.Windows.Forms.Padding(0);
@@ -111,6 +113,16 @@ namespace VIVA_report_analyser
             this.tabControl1.Size = new System.Drawing.Size(1424, 120);
             this.tabControl1.TabIndex = 0;
             // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(120, 18);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(96, 52);
+            this.button3.TabIndex = 4;
+            this.button3.Text = "Подсветить отсутствующие тесты";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -140,6 +152,7 @@ namespace VIVA_report_analyser
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.Button button3;
     }
 }
 
