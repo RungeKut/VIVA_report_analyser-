@@ -154,8 +154,8 @@ namespace VIVA_report_analyser
     internal class VivaXmlColumnsClass
     {
         // Поля класса
-        public string Name { get; set; }
-        public string Translation { get; set; }
+        public string name { get; set; }
+        public string translation { get; set; }
     }
     internal class VivaXmlTestsClass : VivaXmlColumnsClass { }
     internal class СalculationsClass : VivaXmlColumnsClass { }
@@ -163,59 +163,59 @@ namespace VIVA_report_analyser
     {
         public static List<VivaXmlColumnsClass> vivaXmlColumns = new List<VivaXmlColumnsClass>
         {
-            new VivaXmlColumnsClass { Name = "F"  ,            Translation ="Тест"                      }, // 0
-            new VivaXmlColumnsClass { Name = "FT" ,            Translation ="Функция"                   }, // 1
-            new VivaXmlColumnsClass { Name = "C"  ,            Translation ="Каналы"                    }, // 2
-            new VivaXmlColumnsClass { Name = "SG1",            Translation ="Имя цепи 1"                }, // 3
-            new VivaXmlColumnsClass { Name = "SG2",            Translation ="Имя цепи 2"                }, // 4
-            new VivaXmlColumnsClass { Name = "PD1",            Translation ="Точка подключения 1"       }, // 5
-            new VivaXmlColumnsClass { Name = "PD2",            Translation ="Точка подключения 2"       }, // 6
-            new VivaXmlColumnsClass { Name = "XY1",            Translation ="Координаты подключения 1"  }, // 7
-            new VivaXmlColumnsClass { Name = "XY2",            Translation ="Координаты подключения 2"  }, // 8
-            new VivaXmlColumnsClass { Name = "CP1",            Translation ="CP1"                       }, // 9
-            new VivaXmlColumnsClass { Name = "CP2",            Translation ="CP2"                       }, // 10
-            new VivaXmlColumnsClass { Name = "SC" ,            Translation ="SC"                        }, // 11
-            new VivaXmlColumnsClass { Name = "NM" ,            Translation ="Имя компонента"            }, // 12
-            new VivaXmlColumnsClass { Name = "DN" ,            Translation ="DN"                        }, // 13
-            new VivaXmlColumnsClass { Name = "PT" ,            Translation ="PT"                        }, // 14
-            new VivaXmlColumnsClass { Name = "NT" ,            Translation ="NT"                        }, // 15
-            new VivaXmlColumnsClass { Name = "IDC",            Translation ="IDC"                       }, // 16
-            new VivaXmlColumnsClass { Name = "MK" ,            Translation ="MK"                        }, // 17
-            new VivaXmlColumnsClass { Name = "IDM",            Translation ="IDM"                       }, // 18
-            new VivaXmlColumnsClass { Name = "PW" ,            Translation ="PW"                        }, // 19
-            new VivaXmlColumnsClass { Name = "LB" ,            Translation ="LB"                        }, // 20
-            new VivaXmlColumnsClass { Name = "IN" ,            Translation ="IN"                        }, // 21
-            new VivaXmlColumnsClass { Name = "IDL",            Translation ="IDL"                       }, // 22
-            new VivaXmlColumnsClass { Name = "TR" ,            Translation ="TR"                        }, // 23
-            new VivaXmlColumnsClass { Name = "MU" ,            Translation ="Единицы измерения"         }, // 24
-            new VivaXmlColumnsClass { Name = "ML" ,            Translation ="Минимальное"               }, // 25
-            new VivaXmlColumnsClass { Name = "MM" ,            Translation ="Уставка"                   }, // 26
-            new VivaXmlColumnsClass { Name = "MH" ,            Translation ="Максимальное"              }, // 27
-            new VivaXmlColumnsClass { Name = "MR" ,            Translation ="Измеренное"                }, // 28
-            new VivaXmlColumnsClass { Name = "MP" ,            Translation ="Отклонение, %"             }, // 29
-            new VivaXmlColumnsClass { Name = "TT" ,            Translation ="TT"                        }, // 30
-            new VivaXmlColumnsClass { Name = "IS" ,            Translation ="IS"                        }, // 31
-            new VivaXmlColumnsClass { Name = "DG" ,            Translation ="DG"                        }, // 32
-            new VivaXmlColumnsClass { Name = "FR" ,            Translation ="Описание ошибки"           }, // 33
-            new VivaXmlColumnsClass { Name = "uniqueTestName", Translation ="Идентификатор"             }  // 34
+            new VivaXmlColumnsClass { name = "F"  ,            translation ="Тест"                      }, // 0
+            new VivaXmlColumnsClass { name = "FT" ,            translation ="Функция"                   }, // 1
+            new VivaXmlColumnsClass { name = "C"  ,            translation ="Каналы"                    }, // 2
+            new VivaXmlColumnsClass { name = "SG1",            translation ="Имя цепи 1"                }, // 3
+            new VivaXmlColumnsClass { name = "SG2",            translation ="Имя цепи 2"                }, // 4
+            new VivaXmlColumnsClass { name = "PD1",            translation ="Точка подключения 1"       }, // 5
+            new VivaXmlColumnsClass { name = "PD2",            translation ="Точка подключения 2"       }, // 6
+            new VivaXmlColumnsClass { name = "XY1",            translation ="Координаты подключения 1"  }, // 7
+            new VivaXmlColumnsClass { name = "XY2",            translation ="Координаты подключения 2"  }, // 8
+            new VivaXmlColumnsClass { name = "CP1",            translation ="CP1"                       }, // 9
+            new VivaXmlColumnsClass { name = "CP2",            translation ="CP2"                       }, // 10
+            new VivaXmlColumnsClass { name = "SC" ,            translation ="SC"                        }, // 11
+            new VivaXmlColumnsClass { name = "NM" ,            translation ="Имя компонента"            }, // 12
+            new VivaXmlColumnsClass { name = "DN" ,            translation ="DN"                        }, // 13
+            new VivaXmlColumnsClass { name = "PT" ,            translation ="PT"                        }, // 14
+            new VivaXmlColumnsClass { name = "NT" ,            translation ="NT"                        }, // 15
+            new VivaXmlColumnsClass { name = "IDC",            translation ="IDC"                       }, // 16
+            new VivaXmlColumnsClass { name = "MK" ,            translation ="MK"                        }, // 17
+            new VivaXmlColumnsClass { name = "IDM",            translation ="IDM"                       }, // 18
+            new VivaXmlColumnsClass { name = "PW" ,            translation ="PW"                        }, // 19
+            new VivaXmlColumnsClass { name = "LB" ,            translation ="LB"                        }, // 20
+            new VivaXmlColumnsClass { name = "IN" ,            translation ="IN"                        }, // 21
+            new VivaXmlColumnsClass { name = "IDL",            translation ="IDL"                       }, // 22
+            new VivaXmlColumnsClass { name = "TR" ,            translation ="TR"                        }, // 23
+            new VivaXmlColumnsClass { name = "MU" ,            translation ="Единицы измерения"         }, // 24
+            new VivaXmlColumnsClass { name = "ML" ,            translation ="Минимальное"               }, // 25
+            new VivaXmlColumnsClass { name = "MM" ,            translation ="Уставка"                   }, // 26
+            new VivaXmlColumnsClass { name = "MH" ,            translation ="Максимальное"              }, // 27
+            new VivaXmlColumnsClass { name = "MR" ,            translation ="Измеренное"                }, // 28
+            new VivaXmlColumnsClass { name = "MP" ,            translation ="Отклонение, %"             }, // 29
+            new VivaXmlColumnsClass { name = "TT" ,            translation ="TT"                        }, // 30
+            new VivaXmlColumnsClass { name = "IS" ,            translation ="IS"                        }, // 31
+            new VivaXmlColumnsClass { name = "DG" ,            translation ="DG"                        }, // 32
+            new VivaXmlColumnsClass { name = "FR" ,            translation ="Описание ошибки"           }, // 33
+            new VivaXmlColumnsClass { name = "uniqueTestName", translation ="Идентификатор"             }  // 34
         };
         public static List<VivaXmlTestsClass> vivaXmlTests = new List<VivaXmlTestsClass>
         // Битовая маска указывает какие столбцы интересны для конкретного теста
         {
-            new VivaXmlTestsClass { Name = "CONTINUITY", Translation ="Тест на обрыв" }, 
-            new VivaXmlTestsClass { Name = "ISOLATION",  Translation ="Тест изоляции" },
-            new VivaXmlTestsClass { Name = "RESISTOR",   Translation ="Резисторы"     },
-            new VivaXmlTestsClass { Name = "CAPACITOR",  Translation ="Конденсаторы"  },
-            new VivaXmlTestsClass { Name = "INDUCTANCE", Translation ="Индуктивности" },
-            new VivaXmlTestsClass { Name = "DIODE",      Translation ="Диоды"         },
-            new VivaXmlTestsClass { Name = "TRANSISTOR", Translation ="Транзисторы"   },
-            new VivaXmlTestsClass { Name = "AUTIC",      Translation ="Чип"           }
+            new VivaXmlTestsClass { name = "CONTINUITY", translation ="Тест на обрыв" }, 
+            new VivaXmlTestsClass { name = "ISOLATION",  translation ="Тест изоляции" },
+            new VivaXmlTestsClass { name = "RESISTOR",   translation ="Резисторы"     },
+            new VivaXmlTestsClass { name = "CAPACITOR",  translation ="Конденсаторы"  },
+            new VivaXmlTestsClass { name = "INDUCTANCE", translation ="Индуктивности" },
+            new VivaXmlTestsClass { name = "DIODE",      translation ="Диоды"         },
+            new VivaXmlTestsClass { name = "TRANSISTOR", translation ="Транзисторы"   },
+            new VivaXmlTestsClass { name = "AUTIC",      translation ="Чип"           }
         };
         public static List<СalculationsClass> Сalculations = new List<СalculationsClass>
         // Битовая маска указывает какие столбцы интересны для конкретного вычисления
         {
-            new СalculationsClass { Name = "All",          Translation ="Все тесты"      }, 
-            new СalculationsClass { Name = "MaxDeviation", Translation ="MAX отклонение" }
+            new СalculationsClass { name = "All",          translation ="Все тесты"      }, 
+            new СalculationsClass { name = "MaxDeviation", translation ="MAX отклонение" }
         };
         public static int testCount { get { return ParseXml.vivaXmlTests.Count; } }
         internal static (ParsedXml, string) Parse(XDocument doc)

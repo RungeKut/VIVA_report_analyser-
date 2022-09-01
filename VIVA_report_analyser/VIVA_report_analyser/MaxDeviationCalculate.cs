@@ -16,8 +16,8 @@ namespace VIVA_report_analyser
     internal class MaxDeviationColumnsClass
     {
         // Поля класса
-        public string Name { get; set; }
-        public string Translation { get; set; }
+        public string name { get; set; }
+        public string translation { get; set; }
     }
     internal class FilterTestClass
     {
@@ -68,18 +68,18 @@ namespace VIVA_report_analyser
         public static List<MaxDeviationColumnsClass> MaxDeviationColumns = new List<MaxDeviationColumnsClass>
         // Битовая маска указывает какие столбцы интересны для конкретного теста
         {
-            new MaxDeviationColumnsClass { Name = "NM" ,            Translation ="Имя компонента"       },
-            new MaxDeviationColumnsClass { Name = "fileMin",        Translation ="Файл min"             },
-            new MaxDeviationColumnsClass { Name = "minValue",       Translation ="Минимум"              },
-            new MaxDeviationColumnsClass { Name = "fileMax",        Translation ="Файл max"             },
-            new MaxDeviationColumnsClass { Name = "maxValue",       Translation ="Максимум"             },
-            new MaxDeviationColumnsClass { Name = "delta",          Translation ="Размах"               },
-            new MaxDeviationColumnsClass { Name = "fileMinP",       Translation ="Файл min %"           },
-            new MaxDeviationColumnsClass { Name = "minValueP",      Translation ="min %"                },
-            new MaxDeviationColumnsClass { Name = "fileMaxP",       Translation ="Файл max %"           },
-            new MaxDeviationColumnsClass { Name = "maxValueP",      Translation ="max %"                },
-            new MaxDeviationColumnsClass { Name = "deltaP",         Translation ="Размах %"             },
-            new MaxDeviationColumnsClass { Name = "missingInFiles", Translation ="Отсутствует в файлах" }
+            new MaxDeviationColumnsClass { name = "NM" ,            translation ="Имя компонента"       },
+            new MaxDeviationColumnsClass { name = "fileMin",        translation ="Файл min"             },
+            new MaxDeviationColumnsClass { name = "minValue",       translation ="Минимум"              },
+            new MaxDeviationColumnsClass { name = "fileMax",        translation ="Файл max"             },
+            new MaxDeviationColumnsClass { name = "maxValue",       translation ="Максимум"             },
+            new MaxDeviationColumnsClass { name = "delta",          translation ="Размах"               },
+            new MaxDeviationColumnsClass { name = "fileMinP",       translation ="Файл min %"           },
+            new MaxDeviationColumnsClass { name = "minValueP",      translation ="min %"                },
+            new MaxDeviationColumnsClass { name = "fileMaxP",       translation ="Файл max %"           },
+            new MaxDeviationColumnsClass { name = "maxValueP",      translation ="max %"                },
+            new MaxDeviationColumnsClass { name = "deltaP",         translation ="Размах %"             },
+            new MaxDeviationColumnsClass { name = "missingInFiles", translation ="Тест отсутствует в файлах" }
         };
         public static List<MaxDeviationCalculateFilteredTests> DeviationCalculate()
         // Выборка результатов конкретного теста
@@ -243,7 +243,7 @@ namespace VIVA_report_analyser
                     {
                         uniqFile[f].tests.Add(new UniqueTestsClass() //Создали раздел с фильтра тестов
                         {
-                            testName = ParseXml.Сalculations[0].Translation,
+                            testName = ParseXml.Сalculations[0].translation,
                             uniqueTests = new List<UniqueTestClass>()
                         });
                         for (int t = 0; t < uniTest[allTestNum].uniqueTests.Count; t++)
@@ -331,7 +331,7 @@ namespace VIVA_report_analyser
             //Составляем выборку уникальных тестов из всего списка тестов
             returnFile.Add(new FilterTestClass()
             {
-                testName = ParseXml.Сalculations[0].Translation,
+                testName = ParseXml.Сalculations[0].translation,
                 uniqueTests = new List<string>()
             });
             firstFile = 0;
@@ -390,9 +390,9 @@ namespace VIVA_report_analyser
                 dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
                 dataGridView.VirtualMode = true; //отрисовываются только те ячейки, которые видны в данный момент
 
-                dataGridView.Columns["minValueP"].DefaultCellStyle.Format = "#0.0\\%";
-                dataGridView.Columns["maxValueP"].DefaultCellStyle.Format = "#0.0\\%";
-                dataGridView.Columns["deltaP"].DefaultCellStyle.Format = "#0.0\\%";
+                dataGridView.Columns["min %"].DefaultCellStyle.Format = "#0.0\\%";
+                dataGridView.Columns["max %"].DefaultCellStyle.Format = "#0.0\\%";
+                dataGridView.Columns["Размах %"].DefaultCellStyle.Format = "#0.0\\%";
 
                 dataGridView.TopLeftHeaderCell.Value = "Тест"; // Заголовок столбца названия строк
                 /*if (view.Count > 0)
@@ -426,6 +426,10 @@ namespace VIVA_report_analyser
             using (var reader = ObjectReader.Create(data, "NM", "fileMin", "minValue", "fileMax", "maxValue", "delta", "fileMinP", "minValueP", "fileMaxP", "maxValueP", "deltaP", "missingInFiles"))
             {
                 table.Load(reader);
+            }
+            foreach (var columns in MaxDeviationColumns)
+            {
+                table.Columns[columns.name].ColumnName = columns.translation;
             }
             return table;
         }

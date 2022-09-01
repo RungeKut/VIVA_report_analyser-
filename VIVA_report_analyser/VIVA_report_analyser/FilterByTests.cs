@@ -17,11 +17,11 @@ namespace VIVA_report_analyser
             foreach (VivaXmlTestsClass test in ParseXml.vivaXmlTests)
             {
                 List<ColumnsClass> temp = (from ColumnsClass n in dataParse.Test
-                                            where n.F == test.Name
+                                            where n.F == test.name
                                              select n).ToList();
                 filteredTest.Add(new FilterByTests()
                 {
-                    testName = test.Translation,
+                    testName = test.translation,
                     Tests = temp
                 });
             }

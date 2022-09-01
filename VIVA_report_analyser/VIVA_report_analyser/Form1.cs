@@ -15,24 +15,27 @@ namespace VIVA_report_analyser
 {
     public partial class Form1 : Form
     {
+        
         public Form1()
         {
             InitializeComponent();
+            RightMouseClickFileTab.rightMouseClickFileTabContextMenuStrip = RightMouseClickFileTab.InitializeRightMouseClickFileTab(tabControl2);
         }
         public static Dictionary<string, Dictionary<string, DataTable>> filteredTestOnFile = new Dictionary<string, Dictionary<string, DataTable>>();
         
         private void button1_Click_1(object sender, EventArgs e)
         {
-            OpenFiles.dataFile = OpenFiles.LoadXmlDocument();
+            OpenFiles.dataFile = OpenFiles.LoadXmlDocument() ?? OpenFiles.dataFile;
             if (OpenFiles.dataFile == null) return;
             for (int file = 0; file < OpenFiles.dataFile.Count; file++)
             {
                 if (OpenFiles.dataFile[file].errorOpenFile != true)
                 if (OpenFiles.dataFile[file].visible != true)
                     {
-                        TabPage page = new TabPage(OpenFiles.dataFile[file].fileName + " | " + OpenFiles.dataFile[file].boardID + " | " + OpenFiles.dataFile[file].boardName);
+                        string tabName = OpenFiles.dataFile[file].fileName + " | " + OpenFiles.dataFile[file].boardID + " | " + OpenFiles.dataFile[file].boardName;
+                        TabPage page = new TabPage(tabName);
+                        page.Name = tabName;
                         tabControl2.TabPages.Add(page);
-                        tabControl2.MouseClick += FileTab_MouseClick;
                         page.MouseClick += Page_MouseClick;
                         TabControl tabTests = new TabControl();
                         page.Controls.Add(tabTests);
@@ -46,7 +49,7 @@ namespace VIVA_report_analyser
                         {
                             AddNewComponentTab
                             (
-                                ParseXml.vivaXmlTests[test].Translation,
+                                ParseXml.vivaXmlTests[test].translation,
                                 tabTests,
                                 OpenFiles.dataFile[file].dataFilteredByTests[test].Tests
                             );
@@ -54,7 +57,7 @@ namespace VIVA_report_analyser
                         }
                         AddNewComponentTab
                             (
-                                ParseXml.Сalculations[0].Translation,
+                                ParseXml.Сalculations[0].translation,
                                 tabTests,
                                 OpenFiles.dataFile[file].dataParse.Test
                             );
@@ -62,50 +65,10 @@ namespace VIVA_report_analyser
                     }
             }
         }
-
-        public int nowMouseClickFileTab = 0;
-        private void FileTab_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                ContextMenuStrip fileTabMenu = new ContextMenuStrip();
-                ToolStripMenuItem CloseTab_MenuItem = new ToolStripMenuItem("Закрыть вкладку");
-                ToolStripMenuItem CloseTabs_MenuItem = new ToolStripMenuItem("Закрыть все вкладки");
-                ToolStripMenuItem RecoverTab_MenuItem = new ToolStripMenuItem("Открыть закрытую вкладку");
-
-                fileTabMenu.Items.AddRange(new[]
-                {
-                    CloseTab_MenuItem,
-                    CloseTabs_MenuItem,
-                    RecoverTab_MenuItem
-                });
-                tabControl2.ContextMenuStrip = fileTabMenu;
-
-                //FileTabMenu.Tag = FileTabMenu.AccessibilityObject;
-                CloseTab_MenuItem.Click += CloseTab_MenuItem_Click;
-                fileTabMenu.Show(tabControl2, e.Location);
-
-                for (int i = 0; i < tabControl2.TabPages.Count; i++)
-                {
-                    if (tabControl2.GetTabRect(i).Contains(e.Location))
-                    {
-                        nowMouseClickFileTab = i;
-                        return;
-                    }
-                }
-
-            }
-        }
-
-        private void CloseTab_MenuItem_Click(object sender, EventArgs e)
-        {
-            //tabControl1.TabPages.Remove(((sender as ToolStripMenuItem).Owner as ContextMenuStrip).SourceControl as );
-            //var sourceControl = ((ContextMenuStrip)((ToolStripMenuItem)sender).GetCurrentParent()).SourceControl;
-            tabControl2.TabPages.Remove(tabControl2.TabPages[nowMouseClickFileTab] as TabPage);
-        }
-
         private void Page_MouseClick(object sender, MouseEventArgs e)
         {
+            if (e.Button == MouseButtons.Right)
+                MessageBox.Show("Ошибка", "Ошибка созкладки", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         private void ComponentTab_MouseClick(object sender, EventArgs e)
@@ -116,7 +79,7 @@ namespace VIVA_report_analyser
         {
         }
 
-        private void AddNewComponentTab<T>(string nameTab, TabControl tabControl, IList<T> data)
+        public static void AddNewComponentTab<T>(string nameTab, TabControl tabControl, IList<T> data)
         // Создание фкладки с именем компонента во вкладке с файлом
         {
             try
@@ -124,7 +87,7 @@ namespace VIVA_report_analyser
                 DataView view = ParseXml.ConvertToDataTable(data).DefaultView;
                 int rowCount = view.Count;
                 TabPage page = new TabPage(nameTab + " (" + rowCount + ")");
-                tabControl.Click += ComponentTab_MouseClick;
+                //tabControl.Click += ComponentTab_MouseClick;
                 tabControl.TabPages.Add(page);
                 //page.Tag = "";
                 //page.MouseClick += page_MouseClick;
@@ -141,7 +104,7 @@ namespace VIVA_report_analyser
                 
                 dataGridView.DataSource = view;
                 dataGridView.VirtualMode = true; //отрисовываются только те ячейки, которые видны в данный момент
-                dataGridView.ColumnHeaderMouseClick += DataGridView_ColumnHeaderMouseClick;
+                //dataGridView.ColumnHeaderMouseClick += DataGridView_ColumnHeaderMouseClick;
                 if (dataGridView.Columns["MP"] != null)
                 dataGridView.Columns["MP"].DefaultCellStyle.Format = "#0.0\\%";
                 dataGridView.TopLeftHeaderCell.Value = "Тест"; // Заголовок столбца названия строк
@@ -182,18 +145,21 @@ namespace VIVA_report_analyser
                 tabControl2.ContextMenu = m;
             }
         }
-        private void page_MouseClick(object sender, MouseEventArgs e)
-        {
-            MessageBox.Show("Ну", "Зачем");
-        }
         private void button2_Click(object sender, EventArgs e)
         {
             try
             {
-                if (OpenFiles.openCount == 0) throw new ArgumentException("Нет открытых файлов");
-                if (OpenFiles.openCount == 1) throw new ArgumentException("Необходимо хотя бы ДВА открытых файла для выборки значений");
+                int tabOpenCount = 0;
+                foreach (var d in OpenFiles.dataFile)
+                {
+                    if (d.visible)
+                        tabOpenCount++;
+                }
+                if (tabOpenCount == 0) throw new ArgumentException("Нет открытых файлов");
+                if (tabOpenCount == 1) throw new ArgumentException("Необходимо хотя бы ДВА открытых файла для выборки значений");
                 List<MaxDeviationCalculateFilteredTests> data = MaxDeviationCalculate.DeviationCalculate();
-                TabPage page = new TabPage(ParseXml.Сalculations[1].Translation);
+                TabPage page = new TabPage(ParseXml.Сalculations[1].translation);
+                page.Name = ParseXml.Сalculations[1].translation;
                 tabControl2.TabPages.Add(page);
                 page.Visible = true;
                 page.Select();
@@ -203,7 +169,7 @@ namespace VIVA_report_analyser
                 tabTests.ItemSize = new System.Drawing.Size(0, 24);
                 tabTests.SelectedIndex = 0;
                 tabTests.TabIndex = 1;
-                tabTests.Name = ParseXml.Сalculations[1].Translation;
+                tabTests.Name = ParseXml.Сalculations[1].translation;
                 tabTests.Visible = true;
                 //int tabCount = tabControl2.TabCount;
                 tabControl2.SelectTab(tabControl2.TabCount - 1);
@@ -228,7 +194,7 @@ namespace VIVA_report_analyser
 
         private void button3_Click(object sender, EventArgs e)
         {
-
+            MessageBox.Show("т.к. это хорошо заметно в последнем столбце расчетов МАХ отклонения", "Нереализованная функциональность", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
     }
 

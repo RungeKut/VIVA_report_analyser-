@@ -146,7 +146,7 @@ namespace VIVA_report_analyser
         }
 
         #endregion
-        private System.Windows.Forms.TabControl tabControl2;
+        public System.Windows.Forms.TabControl tabControl2;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.TabPage tabPage1;

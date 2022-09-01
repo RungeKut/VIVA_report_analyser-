@@ -25,6 +25,7 @@ namespace VIVA_report_analyser
         public BIClass dataParse { get; set; }
         public List<FilterByTests> dataFilteredByTests { get; set; }
         public bool visible { get; set; }
+        public int closeNumber { get; set; }
     }
     internal class OpenFiles
     {
@@ -68,7 +69,7 @@ namespace VIVA_report_analyser
                 Title = "Выберите файлы .xml"
                 //InitialDirectory = @"C:\"
             };
-            if (openFileDialog.ShowDialog() != DialogResult.OK) { } //errorList += "Что-то не так в диалоге выбора файлов.\n";
+            if (openFileDialog.ShowDialog() != DialogResult.OK) { return null; } //errorList += "Что-то не так в диалоге выбора файлов.\n";
             else
             {
                 List<DataFilesClass> findFile = new List<DataFilesClass>();
