@@ -11,20 +11,9 @@ namespace VIVA_report_analyser
     public class DataModel
     {
         private static Logger log = LogManager.GetCurrentClassLogger();
-        public DataFiles dataFiles
-        {
-            set
-            {
-                if (value == null) log.Warn("Попытка присвоить dataFiles значение null");
-                else dataFiles = value;
-            }
-            get
-            {
-                return dataFiles;
-            }
-        }
-        public class DataFiles: List<DataFile> { }
-        public class DataFile
+        public static DataFiles dataFiles = new DataFiles();
+        public class DataFiles : List<DataFile> { }
+        public class DataFile : XmlData
         {
             public String Name
             {
@@ -63,6 +52,9 @@ namespace VIVA_report_analyser
                     return doc;
                 }
             }
+        }
+        public class XmlData
+        {
             public InfoClass Info
             {
                 set

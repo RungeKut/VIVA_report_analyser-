@@ -1,6 +1,6 @@
 # git ignore file
 *.obj
-#*.exe
+*.exe
 *.pdb
 *.user
 *.aps
@@ -16,8 +16,9 @@
 *.cache
 *.ilk
 *.log
-#[Bb]in
-#[Dd]ebug*/
+[Bb]in
+[Dd]ebug*/
+[Ll]og*/
 *.lib
 *.sbr
 obj/
