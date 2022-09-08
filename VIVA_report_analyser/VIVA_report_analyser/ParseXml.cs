@@ -1,4 +1,5 @@
 ﻿using FastMember;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -86,8 +87,31 @@ namespace VIVA_report_analyser
     }
     public class BIClass
     {
-        public String BCP { get; set; } //
-        public String BC  { get; set; } //
+        private static Logger log = LogManager.GetCurrentClassLogger();
+        public String BCP //
+        {
+            set
+            {
+                if (value == null) log.Warn("Попытка присвоить BCP значение null");
+                else BCP = value;
+            }
+            get
+            {
+                return BCP;
+            }
+        }
+        public String BC
+        {
+            set
+            {
+                if (value == null) log.Warn("Попытка присвоить BC значение null");
+                else BC = value;
+            }
+            get
+            {
+                return BC;
+            }
+        }
         public Double ID  { get; set; } //
         public Double TR  { get; set; } //
         public Double AK  { get; set; } //
@@ -161,6 +185,7 @@ namespace VIVA_report_analyser
     internal class СalculationsClass : VivaXmlColumnsClass { }
     internal class ParseXml
     {
+        private static Logger log = LogManager.GetCurrentClassLogger();
         public static List<VivaXmlColumnsClass> vivaXmlColumns = new List<VivaXmlColumnsClass>
         {
             new VivaXmlColumnsClass { name = "F"  ,            translation ="Тест"                      }, // 0
@@ -218,173 +243,189 @@ namespace VIVA_report_analyser
             new СalculationsClass { name = "MaxDeviation", translation ="MAX отклонение" }
         };
         public static int testCount { get { return ParseXml.vivaXmlTests.Count; } }
+        private static dynamic DocToData(object type, XDocument doc, String element, String attribute)
+        {
+            string temp = null;
+            temp = GetAttribute(GetElement(doc, element), attribute)?.Value;
+            if (temp == null)
+            {
+                log.Warn("Отсутствует атрибут " + element + "-" + attribute);
+                return ;
+            }
+            else
+            {
+                if (type is Double)
+                    return Double.Parse(temp.TrimEnd('%'), new CultureInfo("en-US"));
+                else
+                    return temp;
+            }
+        }
         internal static (ParsedXml, string) Parse(XDocument doc)
         {
             string errorList = null;
             ParsedXml returnData = new ParsedXml();
 
             returnData.Info = new InfoClass();
-            if (GetAttribute(GetElement(doc, "Info"), "Version") != null)
-            returnData.Info.Version = GetAttribute(GetElement(doc, "Info"), "Version")?.Value;
+            DocToData(returnData.Info.Version, doc, "Info", "Version");
 
             returnData.PrgC = new PrgCClass();
 
-            if (GetAttribute(GetElement(doc, "PrgC"), "AD") != null)
-            returnData.PrgC.AD =              GetAttribute(GetElement(doc, "PrgC"), "AD")?.Value;
-            if (GetAttribute(GetElement(doc, "PrgC"), "SD") != null)
-            returnData.PrgC.SD =              GetAttribute(GetElement(doc, "PrgC"), "SD")?.Value;
-            if (GetAttribute(GetElement(doc, "PrgC"), "PN") != null)
-            returnData.PrgC.PN =              GetAttribute(GetElement(doc, "PrgC"), "PN")?.Value;
-            if (GetAttribute(GetElement(doc, "PrgC"), "TU") != null)
-            returnData.PrgC.TU = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "TU")?.Value, new CultureInfo("en-US"));
-            if (GetAttribute(GetElement(doc, "PrgC"), "TN") != null)
-            returnData.PrgC.TN = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "TN")?.Value, new CultureInfo("en-US"));
-            if (GetAttribute(GetElement(doc, "PrgC"), "TD") != null)
-            returnData.PrgC.TD = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "TD")?.Value, new CultureInfo("en-US"));
-            if (GetAttribute(GetElement(doc, "PrgC"), "TT") != null)
-            returnData.PrgC.TT = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "TT")?.Value, new CultureInfo("en-US"));
-            if (GetAttribute(GetElement(doc, "PrgC"), "BU") != null)
-            returnData.PrgC.BU = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "BU")?.Value, new CultureInfo("en-US"));
-            if (GetAttribute(GetElement(doc, "PrgC"), "BN") != null)
-            returnData.PrgC.BN = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "BN")?.Value, new CultureInfo("en-US"));
-            if (GetAttribute(GetElement(doc, "PrgC"), "BD") != null)
-            returnData.PrgC.BD = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "BD")?.Value, new CultureInfo("en-US"));
-            if (GetAttribute(GetElement(doc, "PrgC"), "BT") != null)
-            returnData.PrgC.BT = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "BT")?.Value, new CultureInfo("en-US"));
-            if (GetAttribute(GetElement(doc, "PrgC"), "TH") != null)
-            returnData.PrgC.TH = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "TH")?.Value, new CultureInfo("en-US"));
-            if (GetAttribute(GetElement(doc, "PrgC"), "SX") != null)
-            returnData.PrgC.SX = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "SX")?.Value, new CultureInfo("en-US"));
-            if (GetAttribute(GetElement(doc, "PrgC"), "SZ") != null)
-            returnData.PrgC.SZ = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "SZ")?.Value, new CultureInfo("en-US"));
-            if (GetAttribute(GetElement(doc, "PrgC"), "TO") != null)
-            returnData.PrgC.TO =              GetAttribute(GetElement(doc, "PrgC"), "TO")?.Value;
-            if (GetAttribute(GetElement(doc, "PrgC"), "TY") != null)
-            returnData.PrgC.TY =              GetAttribute(GetElement(doc, "PrgC"), "TY")?.Value;
-            if (GetAttribute(GetElement(doc, "PrgC"), "MR") != null)
-            returnData.PrgC.MR =              GetAttribute(GetElement(doc, "PrgC"), "MR")?.Value;
-            if (GetAttribute(GetElement(doc, "PrgC"), "TM") != null)
-            returnData.PrgC.TM = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "TM")?.Value, new CultureInfo("en-US"));
-            if (GetAttribute(GetElement(doc, "PrgC"), "BM") != null)
-            returnData.PrgC.BM = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "BM")?.Value, new CultureInfo("en-US"));
-            if (GetAttribute(GetElement(doc, "PrgC"), "RT") != null)
-            returnData.PrgC.RT =              GetAttribute(GetElement(doc, "PrgC"), "RT")?.Value;
-            if (GetAttribute(GetElement(doc, "PrgC"), "NR") != null)
-            returnData.PrgC.NR = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "NR")?.Value, new CultureInfo("en-US"));
-            if (GetAttribute(GetElement(doc, "PrgC"), "MO") != null)
-            returnData.PrgC.MO = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "MO")?.Value, new CultureInfo("en-US"));
-            if (GetAttribute(GetElement(doc, "PrgC"), "RA") != null)
-            returnData.PrgC.RA =              GetAttribute(GetElement(doc, "PrgC"), "RA")?.Value;
-            if (GetAttribute(GetElement(doc, "PrgC"), "PV") != null)
-            returnData.PrgC.PV = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "PV")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "AD") == null) log.Warn("Отсутствует атрибут PrgC-AD");
+            else returnData.PrgC.AD = GetAttribute(GetElement(doc, "PrgC"), "AD")?.Value;
+            if (GetAttribute(GetElement(doc, "PrgC"), "SD") == null) log.Warn("Отсутствует атрибут PrgC-SD");
+            else returnData.PrgC.SD =              GetAttribute(GetElement(doc, "PrgC"), "SD")?.Value;
+            if (GetAttribute(GetElement(doc, "PrgC"), "PN") == null) log.Warn("Отсутствует атрибут PrgC-PN");
+            else returnData.PrgC.PN =              GetAttribute(GetElement(doc, "PrgC"), "PN")?.Value;
+            if (GetAttribute(GetElement(doc, "PrgC"), "TU") == null) log.Warn("Отсутствует атрибут PrgC-TU");
+            else returnData.PrgC.TU = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "TU")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "TN") == null) log.Warn("Отсутствует атрибут PrgC-TN");
+            else returnData.PrgC.TN = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "TN")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "TD") == null) log.Warn("Отсутствует атрибут PrgC-TD");
+            else returnData.PrgC.TD = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "TD")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "TT") == null) log.Warn("Отсутствует атрибут PrgC-TT");
+            else returnData.PrgC.TT = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "TT")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "BU") == null) log.Warn("Отсутствует атрибут PrgC-BU");
+            else returnData.PrgC.BU = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "BU")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "BN") == null) log.Warn("Отсутствует атрибут PrgC-BN");
+            else returnData.PrgC.BN = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "BN")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "BD") == null) log.Warn("Отсутствует атрибут PrgC-BD");
+            else returnData.PrgC.BD = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "BD")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "BT") == null) log.Warn("Отсутствует атрибут PrgC-BT");
+            else returnData.PrgC.BT = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "BT")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "TH") == null) log.Warn("Отсутствует атрибут PrgC-TH");
+            else returnData.PrgC.TH = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "TH")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "SX") == null) log.Warn("Отсутствует атрибут PrgC-SX");
+            else returnData.PrgC.SX = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "SX")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "SZ") == null) log.Warn("Отсутствует атрибут PrgC-SZ");
+            else returnData.PrgC.SZ = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "SZ")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "TO") == null) log.Warn("Отсутствует атрибут PrgC-TO");
+            else returnData.PrgC.TO =              GetAttribute(GetElement(doc, "PrgC"), "TO")?.Value;
+            if (GetAttribute(GetElement(doc, "PrgC"), "TY") == null) log.Warn("Отсутствует атрибут PrgC-TY");
+            else returnData.PrgC.TY =              GetAttribute(GetElement(doc, "PrgC"), "TY")?.Value;
+            if (GetAttribute(GetElement(doc, "PrgC"), "MR") == null) log.Warn("Отсутствует атрибут PrgC-MR");
+            else returnData.PrgC.MR =              GetAttribute(GetElement(doc, "PrgC"), "MR")?.Value;
+            if (GetAttribute(GetElement(doc, "PrgC"), "TM") == null) log.Warn("Отсутствует атрибут PrgC-TM");
+            else returnData.PrgC.TM = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "TM")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "BM") == null) log.Warn("Отсутствует атрибут PrgC-BM");
+            else returnData.PrgC.BM = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "BM")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "RT") == null) log.Warn("Отсутствует атрибут PrgC-RT");
+            else returnData.PrgC.RT =              GetAttribute(GetElement(doc, "PrgC"), "RT")?.Value;
+            if (GetAttribute(GetElement(doc, "PrgC"), "NR") == null) log.Warn("Отсутствует атрибут PrgC-NR");
+            else returnData.PrgC.NR = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "NR")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "MO") == null) log.Warn("Отсутствует атрибут PrgC-MO");
+            else returnData.PrgC.MO = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "MO")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "PrgC"), "RA") == null) log.Warn("Отсутствует атрибут PrgC-RA");
+            else returnData.PrgC.RA =              GetAttribute(GetElement(doc, "PrgC"), "RA")?.Value;
+            if (GetAttribute(GetElement(doc, "PrgC"), "PV") == null) log.Warn("Отсутствует атрибут PrgC-PV");
+            else returnData.PrgC.PV = Double.Parse(GetAttribute(GetElement(doc, "PrgC"), "PV")?.Value, new CultureInfo("en-US"));
 
             returnData.ST = new STClass();
 
-            if (GetAttribute(GetElement(doc, "ST"), "TN") != null)
-            returnData.ST.TN =              GetAttribute(GetElement(doc, "ST"), "TN")?.Value;
-            if (GetAttribute(GetElement(doc, "ST"), "NM") != null)
-            returnData.ST.NMP =             GetAttribute(GetElement(doc, "ST"), "NM")?.Value;
-            if (GetAttribute(GetElement(doc, "ST"), "NM") != null)
-            returnData.ST.NM =              GetAttribute(GetElement(doc, "ST"), "NM")?.Value;
-            if (GetAttribute(GetElement(doc, "ST"), "LT") != null)
-            returnData.ST.LT =              GetAttribute(GetElement(doc, "ST"), "LT")?.Value;
-            if (GetAttribute(GetElement(doc, "ST"), "BC") != null)
-            returnData.ST.BC =              GetAttribute(GetElement(doc, "ST"), "BC")?.Value;
-            if (GetAttribute(GetElement(doc, "ST"), "OP") != null)
-            returnData.ST.OP =              GetAttribute(GetElement(doc, "ST"), "OP")?.Value;
-            if (GetAttribute(GetElement(doc, "ST"), "TS") != null)
-            returnData.ST.TS =              GetAttribute(GetElement(doc, "ST"), "TS")?.Value;
-            if (GetAttribute(GetElement(doc, "ST"), "WS") != null)
-            returnData.ST.WS =              GetAttribute(GetElement(doc, "ST"), "WS")?.Value;
-            if (GetAttribute(GetElement(doc, "ST"), "SD") != null)
-            returnData.ST.SD =              GetAttribute(GetElement(doc, "ST"), "SD")?.Value;
-            if (GetAttribute(GetElement(doc, "ST"), "ME") != null)
-            returnData.ST.ME = Double.Parse(GetAttribute(GetElement(doc, "ST"), "ME")?.Value, new CultureInfo("en-US"));
-            if (GetAttribute(GetElement(doc, "ST"), "PA") != null)
-            returnData.ST.PA = Double.Parse(GetAttribute(GetElement(doc, "ST"), "PA")?.Value, new CultureInfo("en-US"));
-            if (GetAttribute(GetElement(doc, "ST"), "SI") != null)
-            returnData.ST.SI = Double.Parse(GetAttribute(GetElement(doc, "ST"), "SI")?.Value, new CultureInfo("en-US"));
-            if (GetElement(doc, "BI") != null)
-                returnData.BI = doc.Root.Elements("BI")?.Select(b => new BIClass
-                {
-                    BCP =             b.Attribute("BCP")?.Value,
-                    BC =              b.Attribute("BC" )?.Value,
-                    ID = Double.Parse(b.Attribute("ID" )?.Value, new CultureInfo("en-US")),
-                    TR = Double.Parse(b.Attribute("TR" )?.Value, new CultureInfo("en-US")),
-                    AK = Double.Parse(b.Attribute("AK" )?.Value, new CultureInfo("en-US")),
-                    SD =              b.Attribute("SD" )?.Value,
-                    TT = Double.Parse(b.Attribute("TT" )?.Value, new CultureInfo("en-US")),
-                    NT = Double.Parse(b.Attribute("NT" )?.Value, new CultureInfo("en-US")),
-                    NF = Double.Parse(b.Attribute("NF" )?.Value, new CultureInfo("en-US")),
-                    Test = b.Elements("TEST").Select(t => new ColumnsClass
-                    {
-                        F =                t.Attribute("F"  )?.Value,
-                        FT =               t.Attribute("FT" )?.Value,
-                        C =                t.Attribute("C"  )?.Value,
-                        SG1 =              t.Attribute("SG1")?.Value,
-                        SG2 =              t.Attribute("SG2")?.Value,
-                        PD1 =              t.Attribute("PD1")?.Value,
-                        PD2 =              t.Attribute("PD2")?.Value,
-                        XY1 =              t.Attribute("XY1")?.Value,
-                        XY2 =              t.Attribute("XY2")?.Value,
-                        CP1 =              t.Attribute("CP1")?.Value,
-                        CP2 =              t.Attribute("CP2")?.Value,
-                        SC =               t.Attribute("SC" )?.Value,
-                        NM =               t.Attribute("NM" )?.Value,
-                        DN =               t.Attribute("DN" )?.Value,
-                        PT =  Double.Parse(t.Attribute("PT" )?.Value, new CultureInfo("en-US")),
-                        NT =  Double.Parse(t.Attribute("NT" )?.Value, new CultureInfo("en-US")),
-                        IDC = Double.Parse(t.Attribute("IDC")?.Value, new CultureInfo("en-US")),
-                        MK =               t.Attribute("MK" )?.Value,
-                        IDM = Double.Parse(t.Attribute("IDM")?.Value, new CultureInfo("en-US")),
-                        PW =  Double.Parse(t.Attribute("PW" )?.Value, new CultureInfo("en-US")),
-                        LB =               t.Attribute("LB" )?.Value,
-                        IN =               t.Attribute("IN" )?.Value,
-                        IDL = Double.Parse(t.Attribute("IDL")?.Value, new CultureInfo("en-US")),
-                        TR =  Double.Parse(t.Attribute("TR" )?.Value, new CultureInfo("en-US")),
-                        MU =               t.Attribute("MU" )?.Value,
-                        ML =  Double.Parse(t.Attribute("ML" )?.Value, new CultureInfo("en-US")),
-                        MM =  Double.Parse(t.Attribute("MM" )?.Value, new CultureInfo("en-US")),
-                        MH =  Double.Parse(t.Attribute("MH" )?.Value, new CultureInfo("en-US")),
-                        MR =  Double.Parse(t.Attribute("MR" )?.Value, new CultureInfo("en-US")),
-                        MP =  Double.Parse(t.Attribute("MP" )?.Value.TrimEnd('%'), new CultureInfo("en-US")),
-                        TT =  Double.Parse(t.Attribute("TT" )?.Value, new CultureInfo("en-US")),
-                        IS =  Double.Parse(t.Attribute("IS" )?.Value, new CultureInfo("en-US")),
-                        DG =  Double.Parse(t.Attribute("DG" )?.Value, new CultureInfo("en-US")),
-                        FR =               t.Attribute("FR" )?.Value
-                    }).ToList()
-                }).ToList();
-            else
+            if (GetAttribute(GetElement(doc, "ST"), "TN") == null) log.Warn("Отсутствует атрибут ST-TN");
+            else returnData.ST.TN =              GetAttribute(GetElement(doc, "ST"), "TN")?.Value;
+            if (GetAttribute(GetElement(doc, "ST"), "NM") == null) log.Warn("Отсутствует атрибут ST-NM");
+            else returnData.ST.NMP =             GetAttribute(GetElement(doc, "ST"), "NM")?.Value;
+            if (GetAttribute(GetElement(doc, "ST"), "NM") == null) log.Warn("Отсутствует атрибут ST-NM");
+            else returnData.ST.NM =              GetAttribute(GetElement(doc, "ST"), "NM")?.Value;
+            if (GetAttribute(GetElement(doc, "ST"), "LT") == null) log.Warn("Отсутствует атрибут ST-LT");
+            else returnData.ST.LT =              GetAttribute(GetElement(doc, "ST"), "LT")?.Value;
+            if (GetAttribute(GetElement(doc, "ST"), "BC") == null) log.Warn("Отсутствует атрибут ST-BC");
+            else returnData.ST.BC =              GetAttribute(GetElement(doc, "ST"), "BC")?.Value;
+            if (GetAttribute(GetElement(doc, "ST"), "OP") == null) log.Warn("Отсутствует атрибут ST-OP");
+            else returnData.ST.OP =              GetAttribute(GetElement(doc, "ST"), "OP")?.Value;
+            if (GetAttribute(GetElement(doc, "ST"), "TS") == null) log.Warn("Отсутствует атрибут ST-TS");
+            else returnData.ST.TS =              GetAttribute(GetElement(doc, "ST"), "TS")?.Value;
+            if (GetAttribute(GetElement(doc, "ST"), "WS") == null) log.Warn("Отсутствует атрибут ST-WS");
+            else returnData.ST.WS =              GetAttribute(GetElement(doc, "ST"), "WS")?.Value;
+            if (GetAttribute(GetElement(doc, "ST"), "SD") == null) log.Warn("Отсутствует атрибут ST-SD");
+            else returnData.ST.SD =              GetAttribute(GetElement(doc, "ST"), "SD")?.Value;
+            if (GetAttribute(GetElement(doc, "ST"), "ME") == null) log.Warn("Отсутствует атрибут ST-ME");
+            else returnData.ST.ME = Double.Parse(GetAttribute(GetElement(doc, "ST"), "ME")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "ST"), "PA") == null) log.Warn("Отсутствует атрибут ST-PA");
+            else returnData.ST.PA = Double.Parse(GetAttribute(GetElement(doc, "ST"), "PA")?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "ST"), "SI") == null) log.Warn("Отсутствует атрибут ST-SI");
+            else returnData.ST.SI = Double.Parse(GetAttribute(GetElement(doc, "ST"), "SI")?.Value, new CultureInfo("en-US"));
+            if (GetElement(doc, "BI") == null)
             {
+                log.Warn("Отсутствует секция BI");
                 return (null, errorList);
             }
+            else returnData.BI = doc.Root.Elements("BI")?.Select(b => new BIClass
+            {
+                BCP = b.Attribute("BCP")?.Value,
+                BC = b.Attribute("BC")?.Value,
+                ID = Double.Parse(b.Attribute("ID")?.Value, new CultureInfo("en-US")),
+                TR = Double.Parse(b.Attribute("TR")?.Value, new CultureInfo("en-US")),
+                AK = Double.Parse(b.Attribute("AK")?.Value, new CultureInfo("en-US")),
+                SD = b.Attribute("SD")?.Value,
+                TT = Double.Parse(b.Attribute("TT")?.Value, new CultureInfo("en-US")),
+                NT = Double.Parse(b.Attribute("NT")?.Value, new CultureInfo("en-US")),
+                NF = Double.Parse(b.Attribute("NF")?.Value, new CultureInfo("en-US")),
+                Test = b.Elements("TEST").Select(t => new ColumnsClass
+                {
+                    F = t.Attribute("F")?.Value,
+                    FT = t.Attribute("FT")?.Value,
+                    C = t.Attribute("C")?.Value,
+                    SG1 = t.Attribute("SG1")?.Value,
+                    SG2 = t.Attribute("SG2")?.Value,
+                    PD1 = t.Attribute("PD1")?.Value,
+                    PD2 = t.Attribute("PD2")?.Value,
+                    XY1 = t.Attribute("XY1")?.Value,
+                    XY2 = t.Attribute("XY2")?.Value,
+                    CP1 = t.Attribute("CP1")?.Value,
+                    CP2 = t.Attribute("CP2")?.Value,
+                    SC = t.Attribute("SC")?.Value,
+                    NM = t.Attribute("NM")?.Value,
+                    DN = t.Attribute("DN")?.Value,
+                    PT = Double.Parse(t.Attribute("PT")?.Value, new CultureInfo("en-US")),
+                    NT = Double.Parse(t.Attribute("NT")?.Value, new CultureInfo("en-US")),
+                    IDC = Double.Parse(t.Attribute("IDC")?.Value, new CultureInfo("en-US")),
+                    MK = t.Attribute("MK")?.Value,
+                    IDM = Double.Parse(t.Attribute("IDM")?.Value, new CultureInfo("en-US")),
+                    PW = Double.Parse(t.Attribute("PW")?.Value, new CultureInfo("en-US")),
+                    LB = t.Attribute("LB")?.Value,
+                    IN = t.Attribute("IN")?.Value,
+                    IDL = Double.Parse(t.Attribute("IDL")?.Value, new CultureInfo("en-US")),
+                    TR = Double.Parse(t.Attribute("TR")?.Value, new CultureInfo("en-US")),
+                    MU = t.Attribute("MU")?.Value,
+                    ML = Double.Parse(t.Attribute("ML")?.Value, new CultureInfo("en-US")),
+                    MM = Double.Parse(t.Attribute("MM")?.Value, new CultureInfo("en-US")),
+                    MH = Double.Parse(t.Attribute("MH")?.Value, new CultureInfo("en-US")),
+                    MR = Double.Parse(t.Attribute("MR")?.Value, new CultureInfo("en-US")),
+                    MP = Double.Parse(t.Attribute("MP")?.Value.TrimEnd('%'), new CultureInfo("en-US")),
+                    TT = Double.Parse(t.Attribute("TT")?.Value, new CultureInfo("en-US")),
+                    IS = Double.Parse(t.Attribute("IS")?.Value, new CultureInfo("en-US")),
+                    DG = Double.Parse(t.Attribute("DG")?.Value, new CultureInfo("en-US")),
+                    FR = t.Attribute("FR")?.Value
+                }).ToList()
+            }).ToList();
 
             returnData.ET = new ETClass();
 
-            if (GetAttribute(GetElement(doc, "ET"), "NMP") != null)
-            returnData.ET.NMP =             GetAttribute(GetElement(doc, "ET"), "NMP")?.Value;
-            if (GetAttribute(GetElement(doc, "ET"), "NM" ) != null)
-            returnData.ET.NM =              GetAttribute(GetElement(doc, "ET"), "NM" )?.Value;
-            if (GetAttribute(GetElement(doc, "ET"), "LT" ) != null)
-            returnData.ET.LT =              GetAttribute(GetElement(doc, "ET"), "LT" )?.Value;
-            if (GetAttribute(GetElement(doc, "ET"), "BC" ) != null)
-            returnData.ET.BC =              GetAttribute(GetElement(doc, "ET"), "BC" )?.Value;
-            if (GetAttribute(GetElement(doc, "ET"), "OP" ) != null)
-            returnData.ET.OP =              GetAttribute(GetElement(doc, "ET"), "OP" )?.Value;
-            if (GetAttribute(GetElement(doc, "ET"), "TR" ) != null)
-            returnData.ET.TR = Double.Parse(GetAttribute(GetElement(doc, "ET"), "TR" )?.Value, new CultureInfo("en-US"));
-            if (GetAttribute(GetElement(doc, "ET"), "AK" ) != null)
-            returnData.ET.AK = Double.Parse(GetAttribute(GetElement(doc, "ET"), "AK" )?.Value, new CultureInfo("en-US"));
-            if (GetAttribute(GetElement(doc, "ET"), "TT" ) != null)
-            returnData.ET.TT =              GetAttribute(GetElement(doc, "ET"), "TT" )?.Value;
-            if (GetAttribute(GetElement(doc, "ET"), "NT" ) != null)
-            returnData.ET.NT = Double.Parse(GetAttribute(GetElement(doc, "ET"), "NT" )?.Value, new CultureInfo("en-US"));
-            if (GetAttribute(GetElement(doc, "ET"), "NF" ) != null)
-            returnData.ET.NF = Double.Parse(GetAttribute(GetElement(doc, "ET"), "NF" )?.Value, new CultureInfo("en-US"));
-            if (GetAttribute(GetElement(doc, "ET"), "ED" ) != null)
-            returnData.ET.ED =              GetAttribute(GetElement(doc, "ET"), "ED" )?.Value;
-            if (GetAttribute(GetElement(doc, "ET"), "DM") != null)
-            returnData.ET.DM = Double.Parse(GetAttribute(GetElement(doc, "ET"), "DM" )?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "ET"), "NMP") == null) log.Warn("Отсутствует атрибут ET-NMP");
+            else returnData.ET.NMP = GetAttribute(GetElement(doc, "ET"), "NMP")?.Value;
+            if (GetAttribute(GetElement(doc, "ET"), "NM" ) == null) log.Warn("Отсутствует атрибут ET-NM");
+            else returnData.ET.NM =              GetAttribute(GetElement(doc, "ET"), "NM" )?.Value;
+            if (GetAttribute(GetElement(doc, "ET"), "LT" ) == null) log.Warn("Отсутствует атрибут ET-LT");
+            else returnData.ET.LT =              GetAttribute(GetElement(doc, "ET"), "LT" )?.Value;
+            if (GetAttribute(GetElement(doc, "ET"), "BC" ) == null) log.Warn("Отсутствует атрибут ET-BC");
+            else returnData.ET.BC =              GetAttribute(GetElement(doc, "ET"), "BC" )?.Value;
+            if (GetAttribute(GetElement(doc, "ET"), "OP" ) == null) log.Warn("Отсутствует атрибут ET-OP");
+            else returnData.ET.OP =              GetAttribute(GetElement(doc, "ET"), "OP" )?.Value;
+            if (GetAttribute(GetElement(doc, "ET"), "TR" ) == null) log.Warn("Отсутствует атрибут ET-TR");
+            else returnData.ET.TR = Double.Parse(GetAttribute(GetElement(doc, "ET"), "TR" )?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "ET"), "AK" ) == null) log.Warn("Отсутствует атрибут ET-AK");
+            else returnData.ET.AK = Double.Parse(GetAttribute(GetElement(doc, "ET"), "AK" )?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "ET"), "TT" ) == null) log.Warn("Отсутствует атрибут ET-TT");
+            else returnData.ET.TT =              GetAttribute(GetElement(doc, "ET"), "TT" )?.Value;
+            if (GetAttribute(GetElement(doc, "ET"), "NT" ) == null) log.Warn("Отсутствует атрибут ET-NT");
+            else returnData.ET.NT = Double.Parse(GetAttribute(GetElement(doc, "ET"), "NT" )?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "ET"), "NF" ) == null) log.Warn("Отсутствует атрибут ET-NF");
+            else returnData.ET.NF = Double.Parse(GetAttribute(GetElement(doc, "ET"), "NF" )?.Value, new CultureInfo("en-US"));
+            if (GetAttribute(GetElement(doc, "ET"), "ED" ) == null) log.Warn("Отсутствует атрибут ET-ED");
+            else returnData.ET.ED =              GetAttribute(GetElement(doc, "ET"), "ED" )?.Value;
+            if (GetAttribute(GetElement(doc, "ET"), "DM" ) == null) log.Warn("Отсутствует атрибут ET-DM");
+            else returnData.ET.DM = Double.Parse(GetAttribute(GetElement(doc, "ET"), "DM" )?.Value, new CultureInfo("en-US"));
             
             return (returnData, errorList); //кортеж
         }

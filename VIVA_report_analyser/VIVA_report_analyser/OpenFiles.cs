@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -29,6 +30,7 @@ namespace VIVA_report_analyser
     }
     internal class OpenFiles
     {
+        private static Logger log = LogManager.GetCurrentClassLogger();
         public static List<DataFilesClass> dataFile { get; set; } = new List<DataFilesClass>();
         public static List<string> openFilesNames
         {
@@ -89,7 +91,9 @@ namespace VIVA_report_analyser
                             doc = XDocument.Load(Reader);
                             Reader.Close();
                         }
+                        log.Trace("Parse start " + Name);
                         var tuple = ParseXml.Parse(doc);
+                        log.Trace("Parse finish " + Name);
                         if (tuple.Item1 != null)
                         {
                             foreach (var Ptest in tuple.Item1.BI)

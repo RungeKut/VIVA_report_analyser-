@@ -10,14 +10,16 @@ using System.Windows.Forms;
 using System.IO;
 using System.Xml.Linq;
 using System.Globalization;
+using NLog;
 
 namespace VIVA_report_analyser
 {
     public partial class Form1 : Form
     {
-        
+        private static Logger log = LogManager.GetCurrentClassLogger();
         public Form1()
         {
+            log.Info("InitializeComponent main Form");
             InitializeComponent();
             RightMouseClickFileTab.rightMouseClickFileTabContextMenuStrip = RightMouseClickFileTab.InitializeRightMouseClickFileTab(tabControl2);
         }
