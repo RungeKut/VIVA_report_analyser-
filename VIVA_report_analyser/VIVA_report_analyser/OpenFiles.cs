@@ -10,53 +10,12 @@ using System.Xml.Linq;
 
 namespace VIVA_report_analyser
 {
-    public class DoubleBufferedDataGridView : DataGridView
-    // Двойная буфферизация для таблиц, ускоряет работу
-    {
-        protected override bool DoubleBuffered { get => true; }
-    }
-    public class DataFilesClass
-    {
-        // Поля класса
-        public string fileName { get; set; }
-        public string filePath { get; set; }
-        public string boardName { get; set; }
-        public double boardID { get; set; }
-        public bool errorOpenFile { get; set; }
-        public BIClass dataParse { get; set; }
-        public List<FilterByTests> dataFilteredByTests { get; set; }
-        public bool visible { get; set; }
-        public int closeNumber { get; set; }
-    }
     internal class OpenFiles
     {
         private static Logger log = LogManager.GetCurrentClassLogger();
-        public static List<DataFilesClass> dataFile { get; set; } = new List<DataFilesClass>();
-        public static List<string> openFilesNames
-        {
-            get
-            {
-                return (from DataFilesClass file in dataFile
-                        where file.errorOpenFile == false
-                        select file.fileName).ToList();
-            }
-        }
-        public static List<string> errorOpenFilesNames
-        {
-            get
-            {
-                return (from DataFilesClass file in dataFile
-                        where file.errorOpenFile == true
-                        select file.fileName).ToList();
-            }
-        }
-        public static int openCount { get { return OpenFiles.openFilesNames.Count; } }
-        public static int errOpenCount { get { return OpenFiles.errorOpenFilesNames.Count; } }
-        public static string errorList = null;
         public static string findFileMess = null;
-        public static List<DataFilesClass> LoadXmlDocument()
+        public static void LoadXmlDocument()
         {
-            List<DataFilesClass> returnData = new List<DataFilesClass>();
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
                 AddExtension = true,
@@ -71,79 +30,44 @@ namespace VIVA_report_analyser
                 Title = "Выберите файлы .xml"
                 //InitialDirectory = @"C:\"
             };
-            if (openFileDialog.ShowDialog() != DialogResult.OK) { return null; } //errorList += "Что-то не так в диалоге выбора файлов.\n";
+            if (openFileDialog.ShowDialog() != DialogResult.OK) { } //errorList += "Что-то не так в диалоге выбора файлов.\n";
             else
             {
-                List<DataFilesClass> findFile = new List<DataFilesClass>();
+                DataModel.dataFiles.busy = true;
                 int quantityFiles = openFileDialog.FileNames.Length;
                 for (int file = 0; file < quantityFiles; file++)
                 {
                     string Path = openFileDialog.FileNames[file];
                     string Name = openFileDialog.SafeFileNames[file];
-                    findFile = (from DataFilesClass n in dataFile
-                                where n.fileName == Name
-                                select n).ToList();
-                    if (findFile.Count == 0)
-                    {
-                        XDocument doc = new XDocument(); // создаем пустой XML документ
-                        using (var Reader = new StreamReader(Path, System.Text.Encoding.UTF8))
-                        {
-                            doc = XDocument.Load(Reader);
-                            Reader.Close();
-                        }
-                        log.Trace("Parse start " + Name);
-                        var tuple = ParseXml.Parse(doc);
-                        log.Trace("Parse finish " + Name);
-                        if (tuple.Item1 != null)
-                        {
-                            foreach (var Ptest in tuple.Item1.BI)
-                            {
-                                returnData.Add(new DataFilesClass()
-                                {
-                                    fileName = Name,
-                                    filePath = Path,
-                                    boardName = Ptest.BC,
-                                    boardID = Ptest.ID,
-                                    errorOpenFile = false,
-                                    dataParse = Ptest,
-                                    dataFilteredByTests = FilterByTests.FilteringTests(Ptest),
-                                    visible = false
-                                });
-                            }
-                            if (tuple.Item2 != null)
-                            {
-                                errorList += "В файле " + Name + " отсутствуют параметры:\n" + tuple.Item2;
-                            }
-                        }
-                        else
-                        {
-                            returnData.Add(new DataFilesClass()
-                            {
-                                fileName = Name,
-                                filePath = Path,
-                                errorOpenFile = true
-                            });
-                            errorList += "Неверный формат файла " + Name + "\n";
-                        }
-                    }
-                    else
+                    if (DataModel.CheckExistenceFile(Name))
                     {
                         findFileMess += Name + "\n";
                     }
+                    else
+                    {
+                        XDocument loadDoc = new XDocument(); // создаем пустой XML документ
+                        using (var Reader = new StreamReader(Path, System.Text.Encoding.UTF8))
+                        {
+                            loadDoc = XDocument.Load(Reader);
+                            Reader.Close();
+                        }
+                        DataModel.dataFiles.Add(new DataModel.DataFile()
+                        {
+                            Name = Name,
+                            Path = Path,
+                            errorOpen = false,
+                            doc = loadDoc
+                        });
+                    }
                 }
+                DataModel.dataFiles.busy = false;
+                DataModel.dataFiles.needParser = true;
                 if (findFileMess != null)
                 {
                     MessageBox.Show("Файлы:\n" + findFileMess + "уже открыты в программе!", "Эти файлы уже открыты!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     findFileMess = null;
                 }
             }
-            if (errorList != null)
-            {
-                if (MessageBox.Show(errorList + "\nПродолжить выполнение?", "Внимание!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
-                    return null;
-                errorList = null;
-            }
-            return returnData;
         }
     }
 }

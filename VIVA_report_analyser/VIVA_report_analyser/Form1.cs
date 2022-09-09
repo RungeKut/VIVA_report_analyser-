@@ -14,6 +14,11 @@ using NLog;
 
 namespace VIVA_report_analyser
 {
+    public class DoubleBufferedDataGridView : DataGridView
+    // Двойная буфферизация для таблиц, ускоряет работу
+    {
+        protected override bool DoubleBuffered { get => true; }
+    }
     public partial class Form1 : Form
     {
         private static Logger log = LogManager.GetCurrentClassLogger();
@@ -27,7 +32,8 @@ namespace VIVA_report_analyser
         
         private void button1_Click_1(object sender, EventArgs e)
         {
-            OpenFiles.dataFile = OpenFiles.LoadXmlDocument() ?? OpenFiles.dataFile;
+            OpenFiles.LoadXmlDocument();
+            /*
             if (OpenFiles.dataFile == null) return;
             for (int file = 0; file < OpenFiles.dataFile.Count; file++)
             {
@@ -65,7 +71,7 @@ namespace VIVA_report_analyser
                             );
                         OpenFiles.dataFile[file].visible = true;
                     }
-            }
+            }*/
         }
         private void Page_MouseClick(object sender, MouseEventArgs e)
         {
@@ -152,11 +158,11 @@ namespace VIVA_report_analyser
             try
             {
                 int tabOpenCount = 0;
-                foreach (var d in OpenFiles.dataFile)
+                /*foreach (var d in OpenFiles.dataFile)
                 {
                     if (d.visible)
                         tabOpenCount++;
-                }
+                }*/
                 if (tabOpenCount == 0) throw new ArgumentException("Нет открытых файлов");
                 if (tabOpenCount == 1) throw new ArgumentException("Необходимо хотя бы ДВА открытых файла для выборки значений");
                 List<MaxDeviationCalculateFilteredTests> data = MaxDeviationCalculate.DeviationCalculate();

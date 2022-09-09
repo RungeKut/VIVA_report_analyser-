@@ -10,46 +10,54 @@ namespace VIVA_report_analyser
 {
     public class DataModel
     {
+        public static DataFiles dataFiles;
         private static Logger log = LogManager.GetCurrentClassLogger();
-        public static DataFiles dataFiles = new DataFiles();
-        public class DataFiles : List<DataFile> { }
+        public class DataFiles : List<DataFile>
+        {
+            public Boolean busy; // Занята процессом
+            public Boolean needParser; // Требуется запуск парсера
+            public Boolean needUpdateView; // Требуется обновление данных на форме
+        }
         public class DataFile : XmlData
         {
+            private String _Name;
             public String Name
             {
                 set
                 {
                     if (value == null) log.Warn("Попытка присвоить Name значение null");
-                    else Name = value;
+                    else _Name = value;
                 }
                 get
                 {
-                    return Name;
+                    return _Name;
                 }
             }
+            private String _Path;
             public String Path
             {
                 set
                 {
                     if (value == null) log.Warn("Попытка присвоить Path значение null");
-                    else Path = value;
+                    else _Path = value;
                 }
                 get
                 {
-                    return Path;
+                    return _Path;
                 }
             }
             public Boolean errorOpen { get; set; } // True if the file has not opened
+            private XDocument _doc;
             public XDocument doc
             {
                 set
                 {
                     if (value == null) log.Warn("Попытка присвоить doc значение null");
-                    else doc = value;
+                    else _doc = value;
                 }
                 get
                 {
-                    return doc;
+                    return _doc;
                 }
             }
         }
@@ -70,7 +78,7 @@ namespace VIVA_report_analyser
             public FidMrkClass FidMrk { get; set; }
             public PrgCClass PrgC { get; set; }
             public STClass ST { get; set; }
-            public BIsections BIsec { get; set; }
+            public BIsectionsClass biSec { get; set; }
             public ETClass ET { get; set; }
         }
         public class InfoClass
@@ -134,11 +142,18 @@ namespace VIVA_report_analyser
             public Double PA { get; set; } //
             public Double SI { get; set; } //
         }
-        public class BIsections: List<BIClass> { }
-        public class BIClass
+        public class BIsectionsClass
+        {
+            public List<BIParamClass> BI { get; set; }
+        }
+        public class BIParamClass: BIClass
         {
             public Boolean visible { get; set; } // Visible on the main Form & participates in calculations
             public Decimal closeNumber { get; set; } // Sequence number of hiding the tab
+            public List<FilterByTestType> dataFilteredByTests { get; set; } // Filtered test
+        }
+        public class BIClass
+        {
             public String BCP { get; set; } //
             public String BC { get; set; } //
             public Double ID { get; set; } //
@@ -148,10 +163,13 @@ namespace VIVA_report_analyser
             public Double TT { get; set; } // 
             public Double NT { get; set; } // Number of tests
             public Double NF { get; set; } // Number of errors
-            public Tests tests { get; set; }
+            public TestsSectionsClass testsSec { get; set; } // All tests
         }
-        public class Tests: List<Test> { }
-        public class Test
+        public class TestsSectionsClass
+        {
+            public List<TestClass> TEST { get; set; }
+        }
+        public class TestClass
         {
             public String F { get; set; }   //
             public String FT { get; set; }  //
@@ -176,7 +194,7 @@ namespace VIVA_report_analyser
             public String LB { get; set; } //
             public String IN { get; set; } //
             public Double IDL { get; set; } //
-            public Double TR { get; set; } //
+            public Boolean TR { get; set; } // Test with error
             public String MU { get; set; } // Units of measurement
             public Double ML { get; set; } // Minimum value
             public Double MM { get; set; } // Set value
@@ -187,7 +205,8 @@ namespace VIVA_report_analyser
             public Double IS { get; set; } //
             public Double DG { get; set; } //
             public String FR { get; set; } // Error description
-            public String uniqueTestName { get { return NM + " | " + F + " | " + PD1 + " | " + PD2; } } // Составной уникальный идентификатор теста
+            public String AL { get; set; } //
+            public String uniqueTestName { get { return NM + ";" + F + ";" + PD1 + ";" + PD2 + ";" + MR; } private set { } } // Составной уникальный идентификатор теста
         }
         public class ETClass
         {
@@ -203,6 +222,69 @@ namespace VIVA_report_analyser
             public Double NF { get; set; } //
             public String ED { get; set; } // Test end date
             public Double DM { get; set; } //
+        }
+        public class FilterByTestType
+        {
+            private static Logger log = LogManager.GetCurrentClassLogger();
+            public string testName { get; set; }
+            public List<DataModel.TestClass> Tests { get; set; }
+            public static List<FilterByTestType> FilteringTests(TestsSectionsClass data)
+            {
+                // Выборка результатов конкретного теста
+                List<FilterByTestType> filteredTest = new List<FilterByTestType>();
+                foreach (VivaXmlTestsClass test in ParseXml.vivaXmlTests)
+                {
+                    List<DataModel.TestClass> temp = (from DataModel.TestClass n in data.TEST
+                                                 where n.F == test.name
+                                                 select n).ToList();
+                    filteredTest.Add(new FilterByTestType()
+                    {
+                        testName = test.translation,
+                        Tests = temp
+                    });
+                }
+                return filteredTest;
+            }
+        }
+        public static void Init()
+        {
+            dataFiles = new DataFiles()
+            {
+                busy = false,
+                needParser = false,
+                needUpdateView = false
+            };
+        }
+        public static List<string> openFiles
+        {
+            get
+            {
+                return (from DataFile file in DataModel.dataFiles
+                        where file.errorOpen == false
+                        select file.Name).ToList();
+            }
+            private set { }
+        }
+        public static List<string> errorOpenFiles
+        {
+            get
+            {
+                return (from DataFile file in DataModel.dataFiles
+                        where file.errorOpen == true
+                        select file.Name).ToList();
+            }
+            private set { }
+        }
+        public static Boolean CheckExistenceFile(string name)
+        {
+            List<DataFile> findFile = new List<DataFile>();
+            findFile = (from DataFile n in DataModel.dataFiles
+                        where n.Name == name
+                        select n).ToList();
+            if (findFile.Count == 0)
+                return false;
+            else
+                return true;
         }
     }
 }

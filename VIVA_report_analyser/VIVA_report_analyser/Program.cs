@@ -23,6 +23,7 @@ namespace VIVA_report_analyser
         static void Main()
         {
             log.Info("Start program main()");
+            DataModel.Init();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());

@@ -179,6 +179,7 @@ namespace VIVA_report_analyser
         {
             List<FilterTestClass> uniTest = UniqueTest();
             List<UniqueFileClass> uniqFile = new List<UniqueFileClass>();
+            /*
             for (int f = 0; f < OpenFiles.dataFile.Count; f++)
             {
                 uniqFile.Add(new UniqueFileClass() // Создали раздел с Файлом
@@ -282,7 +283,7 @@ namespace VIVA_report_analyser
                             }
                         }
                     }
-            }
+            }*/
             return uniqFile;
         }
         public static List<FilterTestClass> UniqueTest()
@@ -290,6 +291,7 @@ namespace VIVA_report_analyser
             //Составляем выборку уникальных тестов внутри фильтра по названию теста
             List<FilterTestClass> returnFile = new List<FilterTestClass>();
             int firstFile = 0;
+            /*
             for (int f = 0; f < OpenFiles.dataFile.Count; f++)
             {
                 if (OpenFiles.dataFile[f].errorOpenFile != true)
@@ -363,7 +365,7 @@ namespace VIVA_report_analyser
                                       select cell).ToList();
                     }
             }
-
+            */
             return returnFile;
         }
         public static void DeviationAddNewComponentTab<T>(string nameTab, TabControl tabControl, IList<T> data)

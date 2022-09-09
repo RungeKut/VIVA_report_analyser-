@@ -131,7 +131,6 @@ namespace VIVA_report_analyser
             this.ClientSize = new System.Drawing.Size(1424, 971);
             this.Controls.Add(this.tabControl2);
             this.Controls.Add(this.tabControl1);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Location = new System.Drawing.Point(100, 15);
             this.Name = "Form1";
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;

@@ -52,7 +52,7 @@ namespace VIVA_report_analyser
             }
         }
         private static void CloseTab_MenuItem_Click(object sender, EventArgs e)
-        {
+        {/*
             closeTabCount++;
             int i = 0;
             foreach (var data in OpenFiles.dataFile)
@@ -68,15 +68,15 @@ namespace VIVA_report_analyser
                 i++;
             }
             if (selectTab.TabPages[tabNumber].Name == ParseXml.Сalculations[1].translation)
-                selectTab.TabPages.Remove(selectTab.TabPages[tabNumber] as TabPage);
+                selectTab.TabPages.Remove(selectTab.TabPages[tabNumber] as TabPage);*/
         }
         private static void CloseTabs_MenuItem_Click(object sender, EventArgs e)
         {
             selectTab.TabPages.Clear();
-            OpenFiles.dataFile.Clear();
+            //OpenFiles.dataFile.Clear();
         }
         private static void RecoverTab_MenuItem_Click(object sender, EventArgs e)
-        {
+        {/*
             int i = 0;
             foreach (var data in OpenFiles.dataFile)
             {
@@ -122,7 +122,7 @@ namespace VIVA_report_analyser
                     break;
                 }
                 i++;
-            }
+            }*/
         }
     }
 }
