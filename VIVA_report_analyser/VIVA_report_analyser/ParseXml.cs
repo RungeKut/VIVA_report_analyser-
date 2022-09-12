@@ -7,296 +7,13 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
 
 namespace VIVA_report_analyser
 {
-    public class ParsedXml
-    {
-        internal InfoClass     Info   { get; set; }
-        internal FidMrkClass   FidMrk { get; set; }
-        internal PrgCClass     PrgC   { get; set; }
-        internal STClass       ST     { get; set; }
-        internal List<BIClass> BI     { get; set; }
-        internal ETClass       ET     { get; set; }
-    }
-    internal class InfoClass
-    {
-        public String Version { get; set; }
-    }
-    internal class FidMrkClass
-    {
-        internal List<MIClass> MI { get; set; }
-    }
-    internal class MIClass
-    {
-        public String NM { get; set; }
-        public String MZ { get; set; }
-        public String K  { get; set; }
-        public String SD { get; set; }
-        public String M  { get; set; }
-        public Double C  { get; set; }
-        public Double X  { get; set; }
-        public Double Y  { get; set; }
-        public Double XO { get; set; }
-        public Double YO { get; set; }
-        public String F  { get; set; }
-    }
-    internal class PrgCClass
-    {
-        public String AD { get; set; }
-        public String SD { get; set; }
-        public String PN { get; set; }
-        public Double TU { get; set; }
-        public Double TN { get; set; }
-        public Double TD { get; set; }
-        public Double TT { get; set; }
-        public Double BU { get; set; }
-        public Double BN { get; set; }
-        public Double BD { get; set; }
-        public Double BT { get; set; }
-        public Double TH { get; set; }
-        public Double SX { get; set; }
-        public Double SZ { get; set; }
-        public String TO { get; set; }
-        public String TY { get; set; }
-        public String MR { get; set; }
-        public Double TM { get; set; }
-        public Double BM { get; set; }
-        public String RT { get; set; }
-        public Double NR { get; set; }
-        public Double MO { get; set; }
-        public String RA { get; set; }
-        public Double PV { get; set; }
-    }
-    internal class STClass
-    {
-        public String TN  { get; set; } //
-        public String NMP { get; set; } //
-        public String NM  { get; set; } // Board Name
-        public String LT  { get; set; } // Batch code Код партии
-        public String BC  { get; set; } // Board code
-        public String OP  { get; set; } // Operator name
-        public String TS  { get; set; } // Test Metod (Normal test)
-        public String WS  { get; set; } //
-        public String SD  { get; set; } // Test start date
-        public Double ME  { get; set; } //
-        public Double PA  { get; set; } //
-        public Double SI  { get; set; } //
-    }
-    public class BIClass
-    {
-        private static Logger log = LogManager.GetCurrentClassLogger();
-        private String _BCP;
-        public String BCP //
-        {
-            get
-            {
-                return _BCP;
-            }
-            set
-            {
-                if (value == null) log.Warn("Попытка присвоить BCP значение null");
-                else _BCP = value;
-            }
-        }
-        private String _BC;
-        public String BC
-        {
-            set
-            {
-                if (value == null) log.Warn("Попытка присвоить BC значение null");
-                else _BC = value;
-            }
-            get
-            {
-                return _BC;
-            }
-        }
-        private Double _ID;
-        public Double ID //
-        {
-            set
-            {
-                if (value == 0) log.Warn("Попытка присвоить ID значение 0");
-                else _ID = value;
-            }
-            get
-            {
-                return _ID;
-            }
-        }
-        private Double _TR;
-        public Double TR //
-        {
-            set
-            {
-                if (value == 0) log.Warn("Попытка присвоить TR значение 0");
-                else _TR = value;
-            }
-            get
-            {
-                return _TR;
-            }
-        }
-        private Double _AK;
-        public Double AK //
-        {
-            set
-            {
-                if (value == 0) log.Warn("Попытка присвоить AK значение 0");
-                else _AK = value;
-            }
-            get
-            {
-                return _AK;
-            }
-        }
-        private String _SD;
-        public String SD // Test start date
-        {
-            set
-            {
-                if (value == null) log.Warn("Попытка присвоить SD значение null");
-                else _SD = value;
-            }
-            get
-            {
-                return _SD;
-            }
-        }
-        private Double _TT;
-        public Double TT // 
-        {
-            set
-            {
-                if (value == 0) log.Warn("Попытка присвоить TT значение 0");
-                else _TT = value;
-            }
-            get
-            {
-                return _TT;
-            }
-        }
-        private Double _NT;
-        public Double NT // Number of tests
-        {
-            set
-            {
-                if (value == 0) log.Warn("Попытка присвоить NT значение 0");
-                else _NT = value;
-            }
-            get
-            {
-                return _NT;
-            }
-        }
-        private Double _NF;
-        public Double NF // Number of errors
-        {
-            set
-            {
-                if (value == 0) log.Warn("Попытка присвоить NF значение 0");
-                else _NF = value;
-            }
-            get
-            {
-                return _NF;
-            }
-        }
-        public List<ColumnsClass> Test { get; set; }
-    }
-    public class ColumnsClass
-    {
-        private static Logger log = LogManager.GetCurrentClassLogger();
-        // Поля класса
-        private String _F  ;
-        public String F   { set { if (value == null) log.Warn("Попытка присвоить F значение null"); else _F   = value; } get { return _F  ; } } //
-        private String _FT ;
-        public String FT  { set { if (value == null) log.Warn("Попытка присвоить FT значение null"); else _FT  = value; } get { return _FT ; } } //
-        private String _C  ;
-        public String C   { set { if (value == null) log.Warn("Попытка присвоить C значение null"); else _C   = value; } get { return _C  ; } } //
-        private String _SG1;
-        public String SG1 { set { if (value == null) log.Warn("Попытка присвоить SG1 значение null"); else _SG1 = value; } get { return _SG1; } } // Net name 1
-        private String _SG2;
-        public String SG2 { set { if (value == null) log.Warn("Попытка присвоить SG2 значение null"); else _SG2 = value; } get { return _SG2; } } // Net name 2
-        private String _PD1;
-        public String PD1 { set { if (value == null) log.Warn("Попытка присвоить PD1 значение null"); else _PD1 = value; } get { return _PD1; } } // Pad name 1
-        private String _PD2;
-        public String PD2 { set { if (value == null) log.Warn("Попытка присвоить PD2 значение null"); else _PD2 = value; } get { return _PD2; } } // Pad name 2
-        private String _XY1;
-        public String XY1 { set { if (value == null) log.Warn("Попытка присвоить XY1 значение null"); else _XY1 = value; } get { return _XY1; } } // Probe coordinates 1
-        private String _XY2;
-        public String XY2 { set { if (value == null) log.Warn("Попытка присвоить XY2 значение null"); else _XY2 = value; } get { return _XY2; } } // Probe coordinates 1
-        private String _CP1;
-        public String CP1 { set { if (value == null) log.Warn("Попытка присвоить CP1 значение null"); else _CP1 = value; } get { return _CP1; } } // 
-        private String _CP2;
-        public String CP2 { set { if (value == null) log.Warn("Попытка присвоить CP2 значение null"); else _CP2 = value; } get { return _CP2; } } // 
-        private String _SC ;
-        public String SC  { set { if (value == null) log.Warn("Попытка присвоить SC значение null"); else _SC  = value; } get { return _SC ; } } // 
-        private String _NM ;
-        public String NM  { set { if (value == null) log.Warn("Попытка присвоить NM значение null"); else _NM  = value; } get { return _NM ; } } // Component name
-        private String _DN ;
-        public String DN  { set { if (value == null) log.Warn("Попытка присвоить DN значение null"); else _DN  = value; } get { return _DN ; } } // Component description
-        private Double _PT ;
-        public Double PT  { set { if (value == 0) log.Warn("Попытка присвоить PT значение 0"); else _PT  = value; } get { return _PT ; } } // Positive tolerance ?
-        private Double _NT ;
-        public Double NT  { set { if (value == 0) log.Warn("Попытка присвоить NT значение 0"); else _NT  = value; } get { return _NT ; } } // Negative tolerance ?
-        private Double _IDC;
-        public Double IDC { set { if (value == 0) log.Warn("Попытка присвоить IDC значение 0"); else _IDC = value; } get { return _IDC; } } //
-        private String _MK ;
-        public String MK  { set { if (value == null) log.Warn("Попытка присвоить MK значение null"); else _MK  = value; } get { return _MK ; } } //
-        private Double _IDM;
-        public Double IDM { set { if (value == 0) log.Warn("Попытка присвоить IDM значение 0"); else _IDM = value; } get { return _IDM; } } //
-        private Double _PW ;
-        public Double PW  { set { if (value == 0) log.Warn("Попытка присвоить PW значение 0"); else _PW  = value; } get { return _PW ; } } //
-        private String _LB ;
-        public String LB  { set { if (value == null) log.Warn("Попытка присвоить LB значение null"); else _LB  = value; } get { return _LB ; } } //
-        private String _IN ;
-        public String IN  { set { if (value == null) log.Warn("Попытка присвоить IN значение null"); else _IN  = value; } get { return _IN ; } } //
-        private Double _IDL;
-        public Double IDL { set { if (value == 0) log.Warn("Попытка присвоить IDL значение 0"); else _IDL = value; } get { return _IDL; } } //
-        private Double _TR ;
-        public Double TR  { set { if (value == 0) log.Warn("Попытка присвоить TR значение 0"); else _TR  = value; } get { return _TR ; } } //
-        private String _MU ;
-        public String MU  { set { if (value == null) log.Warn("Попытка присвоить MU значение null"); else _MU  = value; } get { return _MU ; } } // Units of measurement
-        private Double _ML ;
-        public Double ML  { set { if (value == 0) log.Warn("Попытка присвоить ML значение 0"); else _ML  = value; } get { return _ML ; } } // Minimum value
-        private Double _MM ;
-        public Double MM  { set { if (value == 0) log.Warn("Попытка присвоить MM значение 0"); else _MM  = value; } get { return _MM ; } } // Set value
-        private Double _MH ;
-        public Double MH  { set { if (value == 0) log.Warn("Попытка присвоить MH значение 0"); else _MH  = value; } get { return _MH ; } } // Maximum value
-        private Double _MR ;
-        public Double MR  { set { if (value == 0) log.Warn("Попытка присвоить MR значение 0"); else _MR  = value; } get { return _MR ; } } // Measured value
-        private Double _MP ;
-        public Double MP  { set { if (value == 0) log.Warn("Попытка присвоить MP значение 0"); else _MP  = value; } get { return _MP ; } } // Measurement deviation %
-        private Double _TT ;
-        public Double TT  { set { if (value == 0) log.Warn("Попытка присвоить TT значение 0"); else _TT  = value; } get { return _TT ; } } //
-        private Double _IS ;
-        public Double IS  { set { if (value == 0) log.Warn("Попытка присвоить IS значение 0"); else _IS  = value; } get { return _IS ; } } //
-        private Double _DG ;
-        public Double DG  { set { if (value == 0) log.Warn("Попытка присвоить DG значение 0"); else _DG  = value; } get { return _DG ; } } //
-        private String _FR ;
-        public String FR  { set { if (value == null) log.Warn("Попытка присвоить FR значение null"); else _FR  = value; } get { return _FR ; } } // Error description
-        public String uniqueTestName { get { return NM + " | " + F + " | " + PD1 + " | " + PD2; } } // Составной уникальный идентификатор теста
-    }
-    internal class ETClass
-    {
-        public String NMP { get; set; } //
-        public String NM  { get; set; } //
-        public String LT  { get; set; } //
-        public String BC  { get; set; } //
-        public String OP  { get; set; } //
-        public Double TR  { get; set; } //
-        public Double AK  { get; set; } //
-        public String TT  { get; set; } //
-        public Double NT  { get; set; } //
-        public Double NF  { get; set; } //
-        public String ED  { get; set; } // Test end date
-        public Double DM  { get; set; } //
-    }
     internal class VivaXmlColumnsClass
     {
         // Поля класса
@@ -365,11 +82,60 @@ namespace VIVA_report_analyser
             new СalculationsClass { name = "MaxDeviation", translation ="MAX отклонение" }
         };
         public static int testCount { get { return ParseXml.vivaXmlTests.Count; } }
-        public async void ParseAllFile()
+        public static void StartParseThread()
         {
-            
+            Thread parserThread = new Thread(ParseXml.ParseAllFile);
+            parserThread.Name = "ParserThread";
+            parserThread.IsBackground = true;
+            parserThread.Start();
         }
-        public DataModel.XmlData Parse(XDocument doc)
+        private static void ParseAllFile()
+        {
+            uint i = 0;
+            while (true)
+            {
+                if (DataModel.dataFiles.needParser)
+                {
+                    if (!DataModel.dataFiles.busy)
+                    {
+                        foreach (var file in DataModel.dataFiles)
+                        {
+                            if (!file.errorOpen)
+                            {
+                                DataModel.XmlData temp = Parse(file.doc);
+                                DataModel.dataFiles.busy = true;
+                                file.Info = temp.Info;
+                                file.FidMrk = temp.FidMrk;
+                                file.PrgC = temp.PrgC;
+                                file.ST = temp.ST;
+                                file.biSec = temp.biSec;
+                                file.ET = temp.ET;
+                                if (file.biSec == null)
+                                {
+                                    file.errorOpen = true;
+                                    log.Warn("Файл/Секция помечены ошибкой открытия т.к. отсутсвует секция BI " + file.Name);
+                                    break;
+                                }
+                                foreach (var numBI in file.biSec.BI)
+                                {
+                                    numBI.dataFilteredByTests = DataModel.FilterByTestType.FilteringTests(numBI.testsSec);
+                                }
+                            }
+                        }
+                        DataModel.dataFiles.busy = false;
+                        DataModel.dataFiles.needParser = false;
+                        DataModel.dataFiles.needUpdateView = true;
+                    }
+                }
+                else
+                {
+                    Thread.Sleep(1000);
+                    i++;
+                    //log.Info("Поток парсера спит " + i + " сек.");
+                }
+            }
+        }
+        public static DataModel.XmlData Parse(XDocument doc)
         {
             if (doc == null) return null;
 
@@ -440,7 +206,7 @@ namespace VIVA_report_analyser
                         NF = Double.Parse(b.Attribute("NF")?.Value, new CultureInfo("en-US")),
                         testsSec = new DataModel.TestsSectionsClass
                         {
-                            TEST = b.Elements("TEST")?.Select(t => new DataModel.TestClass
+                            TEST = b.Elements("TEST").Select(t => new DataModel.TestClass
                             {
                                 F = t.Attribute("F")?.Value,
                                 FT = t.Attribute("FT")?.Value,
@@ -465,13 +231,13 @@ namespace VIVA_report_analyser
                                 LB = t.Attribute("LB")?.Value,
                                 IN = t.Attribute("IN")?.Value,
                                 IDL = Double.Parse(t.Attribute("IDL")?.Value, new CultureInfo("en-US")),
-                                TR = Boolean.Parse(t.Attribute("TR")?.Value),
+                                TR = Double.Parse(t.Attribute("TR")?.Value, new CultureInfo("en-US")),
                                 MU = t.Attribute("MU")?.Value,
                                 ML = Double.Parse(t.Attribute("ML")?.Value, new CultureInfo("en-US")),
                                 MM = Double.Parse(t.Attribute("MM")?.Value, new CultureInfo("en-US")),
                                 MH = Double.Parse(t.Attribute("MH")?.Value, new CultureInfo("en-US")),
                                 MR = Double.Parse(t.Attribute("MR")?.Value, new CultureInfo("en-US")),
-                                MP = Double.Parse(t.Attribute("MP")?.Value.TrimEnd('%'), new CultureInfo("en-US")),
+                                MP = Math.Abs(Double.Parse(t.Attribute("MP")?.Value.TrimEnd('%'), new CultureInfo("en-US"))),
                                 TT = Double.Parse(t.Attribute("TT")?.Value, new CultureInfo("en-US")),
                                 IS = Double.Parse(t.Attribute("IS")?.Value, new CultureInfo("en-US")),
                                 DG = Double.Parse(t.Attribute("DG")?.Value, new CultureInfo("en-US")),

@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Xml.Linq;
 using NLog;
+using System.Threading;
 
 namespace VIVA_report_analyser
 {
@@ -27,11 +28,6 @@ namespace VIVA_report_analyser
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
-        }
-
-        static void AddTabPage()
-        {
-            
         }
     }
 }

@@ -11,6 +11,7 @@ using System.IO;
 using System.Xml.Linq;
 using System.Globalization;
 using NLog;
+using System.Threading;
 
 namespace VIVA_report_analyser
 {
@@ -24,6 +25,8 @@ namespace VIVA_report_analyser
         private static Logger log = LogManager.GetCurrentClassLogger();
         public Form1()
         {
+            ParseXml.StartParseThread();
+            StartUpdateThread();
             log.Info("InitializeComponent main Form");
             InitializeComponent();
             RightMouseClickFileTab.rightMouseClickFileTabContextMenuStrip = RightMouseClickFileTab.InitializeRightMouseClickFileTab(tabControl2);
@@ -33,45 +36,72 @@ namespace VIVA_report_analyser
         private void button1_Click_1(object sender, EventArgs e)
         {
             OpenFiles.LoadXmlDocument();
-            /*
-            if (OpenFiles.dataFile == null) return;
-            for (int file = 0; file < OpenFiles.dataFile.Count; file++)
+        }
+        public void StartUpdateThread()
+        {
+            Thread updateThread = new Thread(updateForm);
+            updateThread.Name = "UpdateThread";
+            updateThread.IsBackground = true;
+            updateThread.Start();
+        }
+        private void updateForm()
+        {
+            uint i = 0;
+            while (true)
             {
-                if (OpenFiles.dataFile[file].errorOpenFile != true)
-                if (OpenFiles.dataFile[file].visible != true)
+                if (DataModel.dataFiles.needUpdateView)
+                {
+                    for (int file = 0; file < DataModel.dataFiles.Count; file++) // Перебираем открытые файлы
                     {
-                        string tabName = OpenFiles.dataFile[file].fileName + " | " + OpenFiles.dataFile[file].boardID + " | " + OpenFiles.dataFile[file].boardName;
-                        TabPage page = new TabPage(tabName);
-                        page.Name = tabName;
-                        tabControl2.TabPages.Add(page);
-                        page.MouseClick += Page_MouseClick;
-                        TabControl tabTests = new TabControl();
-                        page.Controls.Add(tabTests);
-                        tabTests.Dock = DockStyle.Fill;
-                        tabTests.ItemSize = new System.Drawing.Size(0, 24);
-                        tabTests.SelectedIndex = 0;
-                        tabTests.TabIndex = 1;
-                        tabTests.Name = OpenFiles.dataFile[file].fileName;
-
-                        for (int test = 0; test < ParseXml.testCount; test++)
+                        if (!DataModel.dataFiles[file].errorOpen) // Если файл смог открыться
                         {
-                            AddNewComponentTab
-                            (
-                                ParseXml.vivaXmlTests[test].translation,
-                                tabTests,
-                                OpenFiles.dataFile[file].dataFilteredByTests[test].Tests
-                            );
-                            
+                            for (int numBI = 0; numBI < DataModel.dataFiles[file].biSec.BI.Count; numBI++) // Перебираем все секции с платами в одном файле
+                            {
+                                if (!DataModel.dataFiles[file].biSec.BI[numBI].visible) // Если секция еще не отображается, то создаем новую вкладку с ней
+                                {
+                                    string tabName = DataModel.dataFiles[file].Name + " | " + DataModel.dataFiles[file].biSec.BI[numBI].ID + " | " + DataModel.dataFiles[file].biSec.BI[numBI].BC;
+                                    TabPage page = new TabPage(tabName);
+                                    page.Name = tabName;
+                                    
+                                    page.MouseClick += Page_MouseClick;
+                                    TabControl tabTests = new TabControl();
+                                    page.Controls.Add(tabTests);
+                                    tabTests.Dock = DockStyle.Fill;
+                                    tabTests.ItemSize = new System.Drawing.Size(0, 24);
+                                    tabTests.SelectedIndex = 0;
+                                    tabTests.TabIndex = 1;
+                                    tabTests.Name = DataModel.dataFiles[file].Name;
+
+                                    for (int test = 0; test < ParseXml.testCount; test++)
+                                    {
+                                        AddNewComponentTab
+                                        (
+                                            ParseXml.vivaXmlTests[test].translation,
+                                            tabTests,
+                                            DataModel.dataFiles[file].biSec.BI[numBI].dataFilteredByTests[test].Tests
+                                        );
+
+                                    }
+                                    AddNewComponentTab
+                                        (
+                                            ParseXml.Сalculations[0].translation,
+                                            tabTests,
+                                            DataModel.dataFiles[file].biSec.BI[numBI].testsSec.TEST
+                                        );
+                                    tabControl2.Invoke(new Action(() => { tabControl2.TabPages.Add(page); }));
+                                    DataModel.dataFiles[file].biSec.BI[numBI].visible = true;
+                                }
+                            }
                         }
-                        AddNewComponentTab
-                            (
-                                ParseXml.Сalculations[0].translation,
-                                tabTests,
-                                OpenFiles.dataFile[file].dataParse.Test
-                            );
-                        OpenFiles.dataFile[file].visible = true;
                     }
-            }*/
+                }
+                else
+                {
+                    Thread.Sleep(1000);
+                    i++;
+                    //log.Info("Поток обновления формы спит " + i + " сек.");
+                }
+            }
         }
         private void Page_MouseClick(object sender, MouseEventArgs e)
         {
