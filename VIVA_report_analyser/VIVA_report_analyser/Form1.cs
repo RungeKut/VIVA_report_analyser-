@@ -12,6 +12,7 @@ using System.Xml.Linq;
 using System.Globalization;
 using NLog;
 using System.Threading;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace VIVA_report_analyser
 {
@@ -19,6 +20,15 @@ namespace VIVA_report_analyser
     // Двойная буфферизация для таблиц, ускоряет работу
     {
         protected override bool DoubleBuffered { get => true; }
+
+        private void InitializeComponent()
+        {
+            ((System.ComponentModel.ISupportInitialize)(this)).BeginInit();
+            this.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this)).EndInit();
+            this.ResumeLayout(false);
+
+        }
     }
     public partial class Form1 : Form
     {
@@ -32,10 +42,14 @@ namespace VIVA_report_analyser
             RightMouseClickFileTab.rightMouseClickFileTabContextMenuStrip = RightMouseClickFileTab.InitializeRightMouseClickFileTab(tabControl2);
         }
         public static Dictionary<string, Dictionary<string, DataTable>> filteredTestOnFile = new Dictionary<string, Dictionary<string, DataTable>>();
-        
         private void button1_Click_1(object sender, EventArgs e)
         {
+            button1.Enabled = false;
+            progressBar1.Value = 0;
+            progressBar1.Visible = true;
+            progressBar1.Maximum = 0;
             OpenFiles.LoadXmlDocument();
+            button1.Enabled = true;
         }
         public void StartUpdateThread()
         {

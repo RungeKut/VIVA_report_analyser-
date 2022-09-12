@@ -290,8 +290,8 @@ namespace VIVA_report_analyser
         {
             //Составляем выборку уникальных тестов внутри фильтра по названию теста
             List<FilterTestClass> returnFile = new List<FilterTestClass>();
-            int firstFile = 0;
-            /*
+            /*int firstFile = 0;
+            
             for (int f = 0; f < OpenFiles.dataFile.Count; f++)
             {
                 if (OpenFiles.dataFile[f].errorOpenFile != true)

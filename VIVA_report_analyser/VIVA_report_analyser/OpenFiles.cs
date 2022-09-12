@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace VIVA_report_analyser
 {
@@ -35,6 +36,7 @@ namespace VIVA_report_analyser
             {
                 DataModel.dataFiles.busy = true;
                 int quantityFiles = openFileDialog.FileNames.Length;
+                
                 for (int file = 0; file < quantityFiles; file++)
                 {
                     string Path = openFileDialog.FileNames[file];
