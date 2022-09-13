@@ -20,18 +20,11 @@ namespace VIVA_report_analyser
     // Двойная буфферизация для таблиц, ускоряет работу
     {
         protected override bool DoubleBuffered { get => true; }
-
-        private void InitializeComponent()
-        {
-            ((System.ComponentModel.ISupportInitialize)(this)).BeginInit();
-            this.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this)).EndInit();
-            this.ResumeLayout(false);
-
-        }
     }
     public partial class Form1 : Form
     {
+        public static Form1 form = null;
+        private delegate void EnableDelegate(bool enable);
         private static Logger log = LogManager.GetCurrentClassLogger();
         public Form1()
         {
@@ -39,16 +32,17 @@ namespace VIVA_report_analyser
             StartUpdateThread();
             log.Info("InitializeComponent main Form");
             InitializeComponent();
+            form = this;
             RightMouseClickFileTab.rightMouseClickFileTabContextMenuStrip = RightMouseClickFileTab.InitializeRightMouseClickFileTab(tabControl2);
         }
         public static Dictionary<string, Dictionary<string, DataTable>> filteredTestOnFile = new Dictionary<string, Dictionary<string, DataTable>>();
         private void button1_Click_1(object sender, EventArgs e)
         {
             button1.Enabled = false;
-            progressBar1.Value = 0;
-            progressBar1.Visible = true;
-            progressBar1.Maximum = 0;
+            ProgressView.progressReset();
+            ProgressView.progressV(true);
             OpenFiles.LoadXmlDocument();
+            //ProgressView.progressV(false);
             button1.Enabled = true;
         }
         public void StartUpdateThread()
@@ -199,14 +193,17 @@ namespace VIVA_report_analyser
         }
         private void button2_Click(object sender, EventArgs e)
         {
-            try
-            {
+            /*try
+            {*/
                 int tabOpenCount = 0;
-                /*foreach (var d in OpenFiles.dataFile)
+                for (int file = 0; file < DataModel.dataFiles.Count; file++) // Перебираем открытые файлы
                 {
-                    if (d.visible)
-                        tabOpenCount++;
-                }*/
+                    for (int numBI = 0; numBI < DataModel.dataFiles[file].biSec.BI.Count; numBI++) // Перебираем все секции с платами в одном файле
+                    {
+                        if (DataModel.dataFiles[file].biSec.BI[numBI].visible)
+                            tabOpenCount++;
+                    }
+                }
                 if (tabOpenCount == 0) throw new ArgumentException("Нет открытых файлов");
                 if (tabOpenCount == 1) throw new ArgumentException("Необходимо хотя бы ДВА открытых файла для выборки значений");
                 List<MaxDeviationCalculateFilteredTests> data = MaxDeviationCalculate.DeviationCalculate();
@@ -237,15 +234,16 @@ namespace VIVA_report_analyser
                     );
 
                 }
-            }
+            /*}
             catch (Exception CalculateError)
             {
                 MessageBox.Show("Ошибка при создании вкладки вычислений.\nПодробнее:\n" + CalculateError.Message, "Ошибка вычисления максимального отклонения", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            }*/
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
+            button3.Enabled = false;
             MessageBox.Show("т.к. это хорошо заметно в последнем столбце расчетов МАХ отклонения", "Нереализованная функциональность", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
     }

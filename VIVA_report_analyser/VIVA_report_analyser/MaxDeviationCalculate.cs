@@ -28,7 +28,7 @@ namespace VIVA_report_analyser
     internal class UniqueFileClass
     {
         // Поля класса
-        public string fileName { get; set; }
+        public string pcbName { get; set; }
         public List<UniqueTestsClass> tests { get; set; }
     }
     internal class UniqueTestsClass
@@ -110,13 +110,13 @@ namespace VIVA_report_analyser
                                 maxDeviationCalculate[fltr].data.Add(new MaxDeviationCalculate() // Создали раздел теста
                                 {
                                     NM = data[f].tests[fltr].uniqueTests[t].uniqueTestName,
-                                    fileMin = data[f].fileName,
+                                    fileMin = data[f].pcbName,
                                     minValue = Math.Round(data[f].tests[fltr].uniqueTests[t].MR, 3),
-                                    fileMax = data[f].fileName,
+                                    fileMax = data[f].pcbName,
                                     maxValue = Math.Round(data[f].tests[fltr].uniqueTests[t].MR, 3),
-                                    fileMinP = data[f].fileName,
+                                    fileMinP = data[f].pcbName,
                                     minValueP = Math.Round(data[f].tests[fltr].uniqueTests[t].MP, 1),
-                                    fileMaxP = data[f].fileName,
+                                    fileMaxP = data[f].pcbName,
                                     maxValueP = Math.Round(data[f].tests[fltr].uniqueTests[t].MP, 1)
                                 });
                             }
@@ -130,13 +130,13 @@ namespace VIVA_report_analyser
                                 maxDeviationCalculate[fltr].data.Add(new MaxDeviationCalculate() // Создали раздел теста
                                 {
                                     NM = data[fl].tests[fltr].uniqueTests[t].uniqueTestName,
-                                    fileMin = data[fl].fileName,
+                                    fileMin = data[fl].pcbName,
                                     minValue = Math.Round(data[fl].tests[fltr].uniqueTests[t].MR, 3),
-                                    fileMax = data[fl].fileName,
+                                    fileMax = data[fl].pcbName,
                                     maxValue = Math.Round(data[fl].tests[fltr].uniqueTests[t].MR, 3),
-                                    fileMinP = data[fl].fileName,
+                                    fileMinP = data[fl].pcbName,
                                     minValueP = Math.Round(data[fl].tests[fltr].uniqueTests[t].MP, 1),
-                                    fileMaxP = data[fl].fileName,
+                                    fileMaxP = data[fl].pcbName,
                                     maxValueP = Math.Round(data[fl].tests[fltr].uniqueTests[t].MP, 1)
                                 });
                             }
@@ -146,29 +146,29 @@ namespace VIVA_report_analyser
                             if (maxDeviationCalculate[fltr].data[t].minValue > data[f].tests[fltr].uniqueTests[t].MR)
                             {
                                 maxDeviationCalculate[fltr].data[t].minValue = Math.Round(data[f].tests[fltr].uniqueTests[t].MR, 3);
-                                maxDeviationCalculate[fltr].data[t].fileMin = data[f].fileName;
+                                maxDeviationCalculate[fltr].data[t].fileMin = data[f].pcbName;
                             }
                             if (maxDeviationCalculate[fltr].data[t].maxValue < data[f].tests[fltr].uniqueTests[t].MR)
                             {
                                 maxDeviationCalculate[fltr].data[t].maxValue = Math.Round(data[f].tests[fltr].uniqueTests[t].MR, 3);
-                                maxDeviationCalculate[fltr].data[t].fileMax = data[f].fileName;
+                                maxDeviationCalculate[fltr].data[t].fileMax = data[f].pcbName;
                             }
                             maxDeviationCalculate[fltr].data[t].delta = Math.Round(maxDeviationCalculate[fltr].data[t].maxValue - maxDeviationCalculate[fltr].data[t].minValue, 3);
                             if (maxDeviationCalculate[fltr].data[t].minValueP > data[f].tests[fltr].uniqueTests[t].MP)
                             {
                                 maxDeviationCalculate[fltr].data[t].minValueP = Math.Round(data[f].tests[fltr].uniqueTests[t].MP, 1);
-                                maxDeviationCalculate[fltr].data[t].fileMinP = data[f].fileName;
+                                maxDeviationCalculate[fltr].data[t].fileMinP = data[f].pcbName;
                             }
                             if (maxDeviationCalculate[fltr].data[t].maxValueP < data[f].tests[fltr].uniqueTests[t].MP)
                             {
                                 maxDeviationCalculate[fltr].data[t].maxValueP = Math.Round(data[f].tests[fltr].uniqueTests[t].MP, 1);
-                                maxDeviationCalculate[fltr].data[t].fileMaxP = data[f].fileName;
+                                maxDeviationCalculate[fltr].data[t].fileMaxP = data[f].pcbName;
                             }
                             maxDeviationCalculate[fltr].data[t].deltaP = Math.Round(maxDeviationCalculate[fltr].data[t].maxValueP - maxDeviationCalculate[fltr].data[t].minValueP, 1);
                         }
                         else
                         {
-                            maxDeviationCalculate[fltr].data[t].missingInFiles += data[f].fileName + ";";
+                            maxDeviationCalculate[fltr].data[t].missingInFiles += data[f].pcbName + ";";
                         }
                     }
                 }
@@ -177,158 +177,188 @@ namespace VIVA_report_analyser
         }
         public static List<UniqueFileClass> CollectValuesForCalc()
         {
+            ProgressView.progressReset();
+            ProgressView.progressV(true);
+            ProgressView.progressMax((DataModel.dataFiles.Count - 1) * 2);
             List<FilterTestClass> uniTest = UniqueTest();
             List<UniqueFileClass> uniqFile = new List<UniqueFileClass>();
-            /*
-            for (int f = 0; f < OpenFiles.dataFile.Count; f++)
+            int pcbNumb = -1;
+            for (int file = 0; file < DataModel.dataFiles.Count; file++) // Перебираем открытые файлы
             {
-                uniqFile.Add(new UniqueFileClass() // Создали раздел с Файлом
+                for (int numBI = 0; numBI < DataModel.dataFiles[file].biSec.BI.Count; numBI++) // Перебираем все секции с платами в одном файле
                 {
-                    fileName = OpenFiles.dataFile[f].fileName + " | " + OpenFiles.dataFile[f].boardID + " | " + OpenFiles.dataFile[f].boardName,
-                    tests = new List<UniqueTestsClass>()
-                });
-                if (OpenFiles.dataFile[f].errorOpenFile != true)
-                if (OpenFiles.dataFile[f].visible == true)
+                    uniqFile.Add(new UniqueFileClass() // Создали раздел с Платой
                     {
-                        for (int filter = 0; filter < OpenFiles.dataFile[f].dataFilteredByTests.Count; filter++)
+                        pcbName = DataModel.dataFiles[file].Name + " | " + DataModel.dataFiles[file].biSec.BI[numBI].ID + " | " + DataModel.dataFiles[file].biSec.BI[numBI].BC,
+                        tests = new List<UniqueTestsClass>()
+                    });
+                    if (!DataModel.dataFiles[file].errorOpen)
+                        if (DataModel.dataFiles[file].biSec.BI[numBI].visible)
                         {
-                            uniqFile[f].tests.Add(new UniqueTestsClass() //Создали раздел с фильтра тестов
+                            pcbNumb++;
+                            for (int test = 0; test < DataModel.dataFiles[file].biSec.BI[numBI].dataFilteredByTests.Count; test++)
                             {
-                                testName = OpenFiles.dataFile[f].dataFilteredByTests[filter].testName,
+                                uniqFile[pcbNumb].tests.Add(new UniqueTestsClass() //Создали раздел с фильтра тестов
+                                {
+                                    testName = DataModel.dataFiles[file].biSec.BI[numBI].dataFilteredByTests[test].testName,
+                                    uniqueTests = new List<UniqueTestClass>()
+                                });
+                                for (int t = 0; t < uniTest[test].uniqueTests.Count; t++)
+                                {
+                                    List<DataModel.TestClass> tempData = ( from   DataModel.TestClass n
+                                                                           in     DataModel.dataFiles[file].biSec.BI[numBI].dataFilteredByTests[test].Tests
+                                                                           where  n.uniqueTestName == uniTest[test].uniqueTests[t]
+                                                                           select n
+                                                                         ).ToList();
+                                    if (tempData.Count != 0)
+                                    {
+                                        int repeatData = 0;
+                                        foreach (DataModel.TestClass columns in tempData)
+                                        {
+                                            repeatData++;
+                                            uniqFile[pcbNumb].tests[test].uniqueTests.Add(new UniqueTestClass() //Если такой тест найден в разделе фильтра то создаем тест и копируем из него данные
+                                            {
+                                                uniqueTestName = uniTest[test].uniqueTests[t],
+                                                MR = columns.MR,
+                                                MP = columns.MP,
+                                                attend = true
+                                            });
+                                            if (repeatData > 1)
+                                            {
+                                                MessageBox.Show("Уникальное имя: " + uniTest[test].uniqueTests[t], "Внимание, повторяющийся тест!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        uniqFile[pcbNumb].tests[test].uniqueTests.Add(new UniqueTestClass() //Если такой тест НЕнайден в разделе фильтра то всеравно создаем тест но без данных с флагом отсутсвует
+                                        {
+                                            uniqueTestName = uniTest[test].uniqueTests[t],
+                                            MR = 0,
+                                            MP = 0,
+                                            attend = false
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                }
+                ProgressView.progress(file, "Этап 2 из 3 - Составляем выборку для групп компонентов файла: " + DataModel.dataFiles[file].Name);
+            }
+            //И повторяем для всех тестов
+            pcbNumb = -1;
+            int allTestNum = uniTest.Count - 1;
+            for (int file = 0; file < DataModel.dataFiles.Count; file++) // Перебираем открытые файлы
+            {
+                for (int numBI = 0; numBI < DataModel.dataFiles[file].biSec.BI.Count; numBI++) // Перебираем все секции с платами в одном файле
+                {
+                    if (!DataModel.dataFiles[file].errorOpen)
+                        if (DataModel.dataFiles[file].biSec.BI[numBI].visible)
+                        {
+                            pcbNumb++;
+                            uniqFile[pcbNumb].tests.Add(new UniqueTestsClass() //Создали раздел с фильтра тестов
+                            {
+                                testName = ParseXml.Сalculations[0].translation,
                                 uniqueTests = new List<UniqueTestClass>()
                             });
-                            for (int t = 0; t < uniTest[filter].uniqueTests.Count; t++)
+                            for (int t = 0; t < uniTest[allTestNum].uniqueTests.Count; t++)
                             {
-                                List<ColumnsClass> tempData = (from ColumnsClass n in OpenFiles.dataFile[f].dataFilteredByTests[filter].Tests
-                                                           where n.uniqueTestName == uniTest[filter].uniqueTests[t]
-                                                           select n).ToList();
+                                List<DataModel.TestClass> tempData = (from DataModel.TestClass n in DataModel.dataFiles[file].biSec.BI[numBI].testsSec.TEST
+                                                                      where n.uniqueTestName == uniTest[allTestNum].uniqueTests[t]
+                                                                      select n).ToList();
                                 if (tempData.Count != 0)
                                 {
                                     int repeatData = 0;
-                                    foreach (ColumnsClass columns in tempData)
+                                    foreach (DataModel.TestClass columns in tempData)
                                     {
                                         repeatData++;
-                                        uniqFile[f].tests[filter].uniqueTests.Add(new UniqueTestClass() //Если такой тест найден в разделе фильтра то создаем тест и копируем из него данные
+                                        uniqFile[pcbNumb].tests[allTestNum].uniqueTests.Add(new UniqueTestClass() //Если такой тест найден в разделе фильтра то создаем тест и копируем из него данные
                                         {
-                                            uniqueTestName = uniTest[filter].uniqueTests[t],
+                                            uniqueTestName = uniTest[allTestNum].uniqueTests[t],
                                             MR = columns.MR,
                                             MP = columns.MP,
                                             attend = true
                                         });
                                         if (repeatData > 1)
                                         {
-                                            MessageBox.Show("Уникальное имя: " + uniTest[filter].uniqueTests[t], "Внимание, повторяющийся тест!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                            MessageBox.Show("Уникальное имя: " + uniTest[allTestNum].uniqueTests[t], "Внимание, повторяющийся тест!", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                         }
                                     }
                                 }
                                 else
                                 {
-                                    uniqFile[f].tests[filter].uniqueTests.Add(new UniqueTestClass() //Если такой тест НЕнайден в разделе фильтра то всеравно создаем тест но без данных с флагом отсутсвует
+                                    uniqFile[pcbNumb].tests[allTestNum].uniqueTests.Add(new UniqueTestClass() //Если такой тест НЕнайден в разделе фильтра то всеравно создаем тест но без данных с флагом отсутсвует
                                     {
-                                        uniqueTestName = uniTest[filter].uniqueTests[t],
+                                        uniqueTestName = uniTest[allTestNum].uniqueTests[t],
                                         MR = 0,
                                         MP = 0,
                                         attend = false
                                     });
                                 }
                             }
-                        }  
-                    }
-            }
-            //И повторяем для всех тестов
-            int allTestNum = uniTest.Count - 1;
-            for (int f = 0; f < OpenFiles.dataFile.Count; f++)
-            {
-                if (OpenFiles.dataFile[f].errorOpenFile != true)
-                    if (OpenFiles.dataFile[f].visible == true)
-                    {
-                        uniqFile[f].tests.Add(new UniqueTestsClass() //Создали раздел с фильтра тестов
-                        {
-                            testName = ParseXml.Сalculations[0].translation,
-                            uniqueTests = new List<UniqueTestClass>()
-                        });
-                        for (int t = 0; t < uniTest[allTestNum].uniqueTests.Count; t++)
-                        {
-                            List<ColumnsClass> tempData = (from ColumnsClass n in OpenFiles.dataFile[f].dataParse.Test
-                                                           where n.uniqueTestName == uniTest[allTestNum].uniqueTests[t]
-                                                           select n).ToList();
-                            if (tempData.Count != 0)
-                            {
-                                int repeatData = 0;
-                                foreach (ColumnsClass columns in tempData)
-                                {
-                                    repeatData++;
-                                    uniqFile[f].tests[allTestNum].uniqueTests.Add(new UniqueTestClass() //Если такой тест найден в разделе фильтра то создаем тест и копируем из него данные
-                                    {
-                                        uniqueTestName = uniTest[allTestNum].uniqueTests[t],
-                                        MR = columns.MR,
-                                        MP = columns.MP,
-                                        attend = true
-                                    });
-                                    if (repeatData > 1)
-                                    {
-                                        MessageBox.Show("Уникальное имя: " + uniTest[allTestNum].uniqueTests[t], "Внимание, повторяющийся тест!", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                uniqFile[f].tests[allTestNum].uniqueTests.Add(new UniqueTestClass() //Если такой тест НЕнайден в разделе фильтра то всеравно создаем тест но без данных с флагом отсутсвует
-                                {
-                                    uniqueTestName = uniTest[allTestNum].uniqueTests[t],
-                                    MR = 0,
-                                    MP = 0,
-                                    attend = false
-                                });
-                            }
                         }
-                    }
-            }*/
+                }
+                ProgressView.progress((DataModel.dataFiles.Count - 1) + file, "Этап 2 из 3 - Составляем выборку для всех компонентов файла: " + DataModel.dataFiles[file].Name);
+            }
             return uniqFile;
         }
         public static List<FilterTestClass> UniqueTest()
         {
+            ProgressView.progressReset();
+            ProgressView.progressV(true);
+            ProgressView.progressMax((DataModel.dataFiles.Count - 1) * 2);
+            int progress = 0;
             //Составляем выборку уникальных тестов внутри фильтра по названию теста
             List<FilterTestClass> returnFile = new List<FilterTestClass>();
-            /*int firstFile = 0;
-            
-            for (int f = 0; f < OpenFiles.dataFile.Count; f++)
+            int firstFile = 0;
+            // Забиваем лист return File первым видимым массивом и выходим.
+            for (int file = 0; file < DataModel.dataFiles.Count; file++) // Перебираем открытые файлы
             {
-                if (OpenFiles.dataFile[f].errorOpenFile != true)
-                    if (OpenFiles.dataFile[f].visible == true)
-                    {
-                        firstFile = f;
-                        for (int filter = 0; filter < OpenFiles.dataFile[f].dataFilteredByTests.Count; filter++)
+                for (int numBI = 0; numBI < DataModel.dataFiles[file].biSec.BI.Count; numBI++) // Перебираем все секции с платами в одном файле
+                {
+                    if (!DataModel.dataFiles[file].errorOpen)
+                        if (DataModel.dataFiles[file].biSec.BI[numBI].visible)
                         {
-                            returnFile.Add(new FilterTestClass()
+                            firstFile = file;
+                            for (int filter = 0; filter < DataModel.dataFiles[file].biSec.BI[numBI].dataFilteredByTests.Count; filter++)
                             {
-                                testName = OpenFiles.dataFile[f].dataFilteredByTests[filter].testName,
-                                uniqueTests = new List<string>()
-                            });
-                            foreach (var test in OpenFiles.dataFile[f].dataFilteredByTests[filter].Tests)
-                            {
-                                returnFile[filter].uniqueTests.Add(test.uniqueTestName);
+                                returnFile.Add(new FilterTestClass()
+                                {
+                                    testName = DataModel.dataFiles[file].biSec.BI[numBI].dataFilteredByTests[filter].testName,
+                                    uniqueTests = new List<string>()
+                                });
+                                foreach (var test in DataModel.dataFiles[file].biSec.BI[numBI].dataFilteredByTests[filter].Tests)
+                                {
+                                    returnFile[filter].uniqueTests.Add(test.uniqueTestName);
+                                }
                             }
+                            file = DataModel.dataFiles.Count;
+                            break;
                         }
-                        f = OpenFiles.dataFile.Count;
-                    }
+                }
             }
-            for ( int f = firstFile + 1; f < OpenFiles.dataFile.Count; f++ )
+            // Делаем объединение с оставшимися массивами
+            for (int file = 0; file < DataModel.dataFiles.Count; file++) // Перебираем открытые файлы
             {
-                if (OpenFiles.dataFile[f].errorOpenFile != true)
-                    if (OpenFiles.dataFile[f].visible == true)
-                    {
-                        for (int filter = 0; filter < OpenFiles.dataFile[f].dataFilteredByTests.Count; filter++)
+                for (int numBI = 0; numBI < DataModel.dataFiles[file].biSec.BI.Count; numBI++) // Перебираем все секции с платами в одном файле
+                {
+                    if (!DataModel.dataFiles[file].errorOpen)
+                        if (DataModel.dataFiles[file].biSec.BI[numBI].visible)
                         {
-                            List<string> tempFile = new List<string>();
-                            foreach (var test in OpenFiles.dataFile[f].dataFilteredByTests[filter].Tests)
+                            for (int filter = 0; filter < DataModel.dataFiles[file].biSec.BI[numBI].dataFilteredByTests.Count; filter++)
                             {
-                                tempFile.Add(test.uniqueTestName);
+                                List<string> tempFile = new List<string>();
+                                foreach (var test in DataModel.dataFiles[file].biSec.BI[numBI].dataFilteredByTests[filter].Tests)
+                                {
+                                    tempFile.Add(test.uniqueTestName);
+                                }
+                                returnFile[filter].uniqueTests = (from cell in returnFile[filter].uniqueTests.Union(tempFile)
+                                                                  select cell).ToList();
                             }
-                            returnFile[filter].uniqueTests = (from cell in returnFile[filter].uniqueTests.Union(tempFile)
-                                          select cell).ToList();
                         }
-                    }
+                }
+                progress++;
+                ProgressView.progress(progress, "Этап 1 из 3 - Составляем список уникальных тестов для групп компонентов файла: " + DataModel.dataFiles[file].Name);
             }
             //Составляем выборку уникальных тестов из всего списка тестов
             returnFile.Add(new FilterTestClass()
@@ -338,34 +368,44 @@ namespace VIVA_report_analyser
             });
             firstFile = 0;
             int lastTest = returnFile.Count - 1;
-            for (int i = 0; i < OpenFiles.dataFile.Count; i++)
+            // Так же в начале Забиваем лист return File первым видимым массивом и выходим.
+            for (int file = 0; file < DataModel.dataFiles.Count; file++) // Перебираем открытые файлы
             {
-                if (OpenFiles.dataFile[i].errorOpenFile != true)
-                    if (OpenFiles.dataFile[i].visible == true)
-                    {
-                        firstFile = i;
-                        foreach (var test in OpenFiles.dataFile[i].dataParse.Test)
+                for (int numBI = 0; numBI < DataModel.dataFiles[file].biSec.BI.Count; numBI++) // Перебираем все секции с платами в одном файле
+                {
+                    if (!DataModel.dataFiles[file].errorOpen)
+                        if (DataModel.dataFiles[file].biSec.BI[numBI].visible)
                         {
-                            returnFile[lastTest].uniqueTests.Add(test.uniqueTestName);
+                            firstFile = file;
+                            foreach (var test in DataModel.dataFiles[file].biSec.BI[numBI].testsSec.TEST)
+                            {
+                                returnFile[lastTest].uniqueTests.Add(test.uniqueTestName);
+                            }
+                            file = DataModel.dataFiles.Count;
+                            break;
                         }
-                        i = OpenFiles.dataFile.Count;
-                    }
+                }
             }
-            for (int i = firstFile + 1; i < OpenFiles.dataFile.Count; i++)
+            // Делаем объединение с оставшимися массивами
+            for (int file = 0; file < DataModel.dataFiles.Count; file++) // Перебираем открытые файлы
             {
-                if (OpenFiles.dataFile[i].errorOpenFile != true)
-                    if (OpenFiles.dataFile[i].visible == true)
-                    {
-                        List<string> tempFile = new List<string>();
-                        foreach (var test in OpenFiles.dataFile[i].dataParse.Test)
+                for (int numBI = 0; numBI < DataModel.dataFiles[file].biSec.BI.Count; numBI++) // Перебираем все секции с платами в одном файле
+                {
+                    if (!DataModel.dataFiles[file].errorOpen)
+                        if (DataModel.dataFiles[file].biSec.BI[numBI].visible)
                         {
-                            tempFile.Add(test.uniqueTestName);
+                            List<string> tempFile = new List<string>();
+                            foreach (var test in DataModel.dataFiles[file].biSec.BI[numBI].testsSec.TEST)
+                            {
+                                tempFile.Add(test.uniqueTestName);
+                            }
+                            returnFile[lastTest].uniqueTests = (from cell in returnFile[lastTest].uniqueTests.Union(tempFile)
+                                                                select cell).ToList();
                         }
-                        returnFile[lastTest].uniqueTests = (from cell in returnFile[lastTest].uniqueTests.Union(tempFile)
-                                      select cell).ToList();
-                    }
+                }
+                progress++;
+                ProgressView.progress(progress, "Этап 1 из 3 - Составляем список уникальных тестов для всех компонентов файла: " + DataModel.dataFiles[file].Name);
             }
-            */
             return returnFile;
         }
         public static void DeviationAddNewComponentTab<T>(string nameTab, TabControl tabControl, IList<T> data)

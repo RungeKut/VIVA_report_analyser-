@@ -83,6 +83,7 @@
     <Compile Include="OpenFiles.cs" />
     <Compile Include="ParseXml.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="ProgressView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RightMouseClickFileTab.cs" />
     <Compile Include="SelectFile.cs">

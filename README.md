@@ -1,15 +1,11 @@
 # VIVA report analyser
 XML report analyser.
 
--  [How it Works](How_it_Works)
--  [Citation](Citation)
--  [Contacts](Contacts)
-
 ## How it Works
 ### Добавить файлы к расчету:
 Импорт происходит из окна Добавить файлы по нескольку штук за раз.
 
-## Citation
+## Sourses
 + [LINQ C#](https://devkazakov.com/ru/blog/linq-c-sharp/#_Filtering_operators)​
 + [LINQ to Objects](https://professorweb.ru/my/LINQ/base/level1/linq_index.php)​
 + [Проверка на null, операторы ?. и ??](https://metanit.com/sharp/tutorial/3.26.php)​
@@ -24,6 +20,7 @@ XML report analyser.
 + [Запомнить значение переменной между запусками программы](https://www.cyberforum.ru/csharp-beginners/thread1495318.html)
 + [Создание потоков и передача данных во время запуска](https://docs.microsoft.com/ru-ru/dotnet/standard/threading/creating-threads-and-passing-data-at-start-time)
 + [Работа с потоками в C# Joseph Albahari](https://rsdn.org/article/dotnet/CSThreading1.xml)
++ [Доступ к элементам управления формы из другого класса](https://translated.turbopages.org/proxy_u/en-ru.ru.03125158-63201c60-0aa0d039-74722d776562/https/stackoverflow.com/questions/12983427/accessing-forms-controls-from-another-class)
 
 ## Contacts
 

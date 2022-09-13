@@ -52,77 +52,80 @@ namespace VIVA_report_analyser
             }
         }
         private static void CloseTab_MenuItem_Click(object sender, EventArgs e)
-        {/*
+        {
             closeTabCount++;
-            int i = 0;
-            foreach (var data in OpenFiles.dataFile)
+            for (int file = 0; file < DataModel.dataFiles.Count; file++)
             {
-                if (selectTab.TabPages[tabNumber].Name == data.fileName + " | " + data.boardID + " | " + data.boardName)
+                for (int numBI = 0; numBI < DataModel.dataFiles[file].biSec.BI.Count; numBI++)
                 {
-                    OpenFiles.dataFile[i].visible = false;
-                    OpenFiles.dataFile[i].closeNumber = closeTabCount;
-                    selectTab.TabPages.Remove(selectTab.TabPages[tabNumber] as TabPage);
-                    rightMouseClickFileTabContextMenuStrip.Items[2].Enabled = true;
-                    return;
+                    if (selectTab.TabPages[tabNumber].Name ==
+                        DataModel.dataFiles[file].Name + " | " + DataModel.dataFiles[file].biSec.BI[numBI].ID + " | " + DataModel.dataFiles[file].biSec.BI[numBI].BC)
+                    {
+                        DataModel.dataFiles[file].biSec.BI[numBI].visible = false;
+                        DataModel.dataFiles[file].biSec.BI[numBI].closeNumber = closeTabCount;
+                        selectTab.TabPages.Remove(selectTab.TabPages[tabNumber] as TabPage);
+                        rightMouseClickFileTabContextMenuStrip.Items[2].Enabled = true;
+                        return;
+                    }
                 }
-                i++;
             }
             if (selectTab.TabPages[tabNumber].Name == ParseXml.Сalculations[1].translation)
-                selectTab.TabPages.Remove(selectTab.TabPages[tabNumber] as TabPage);*/
+                selectTab.TabPages.Remove(selectTab.TabPages[tabNumber] as TabPage);
         }
         private static void CloseTabs_MenuItem_Click(object sender, EventArgs e)
         {
             selectTab.TabPages.Clear();
-            //OpenFiles.dataFile.Clear();
+            DataModel.dataFiles.Clear();
         }
         private static void RecoverTab_MenuItem_Click(object sender, EventArgs e)
-        {/*
-            int i = 0;
-            foreach (var data in OpenFiles.dataFile)
+        {
+            for (int file = 0; file < DataModel.dataFiles.Count; file++)
             {
-                if (OpenFiles.dataFile[i].closeNumber == closeTabCount)
+                for (int numBI = 0; numBI < DataModel.dataFiles[file].biSec.BI.Count; numBI++)
                 {
-                    closeTabCount--;
-                    string tabName = data.fileName + " | " + data.boardID + " | " + data.boardName;
-                    TabPage page = new TabPage(tabName);
-                    page.Name = tabName;
-                    selectTab.TabPages.Add(page);
-                    //page.MouseClick += Page_MouseClick;
-                    TabControl tabTests = new TabControl();
-                    page.Controls.Add(tabTests);
-                    tabTests.Dock = DockStyle.Fill;
-                    tabTests.ItemSize = new System.Drawing.Size(0, 24);
-                    tabTests.SelectedIndex = 0;
-                    tabTests.TabIndex = 1;
-                    tabTests.Name = OpenFiles.dataFile[i].fileName;
-
-                    for (int test = 0; test < ParseXml.testCount; test++)
+                    if (DataModel.dataFiles[file].biSec.BI[numBI].closeNumber == closeTabCount)
                     {
+                        closeTabCount--;
+                        string tabName = DataModel.dataFiles[file].Name + " | " + DataModel.dataFiles[file].biSec.BI[numBI].ID + " | " + DataModel.dataFiles[file].biSec.BI[numBI].BC;
+                        TabPage page = new TabPage(tabName);
+                        page.Name = tabName;
+                        selectTab.TabPages.Add(page);
+                        //page.MouseClick += Page_MouseClick;
+                        TabControl tabTests = new TabControl();
+                        page.Controls.Add(tabTests);
+                        tabTests.Dock = DockStyle.Fill;
+                        tabTests.ItemSize = new System.Drawing.Size(0, 24);
+                        tabTests.SelectedIndex = 0;
+                        tabTests.TabIndex = 1;
+                        tabTests.Name = DataModel.dataFiles[file].Name;
+
+                        for (int test = 0; test < ParseXml.testCount; test++)
+                        {
+                            Form1.AddNewComponentTab
+                            (
+                                ParseXml.vivaXmlTests[test].translation,
+                                tabTests,
+                                DataModel.dataFiles[file].biSec.BI[numBI].dataFilteredByTests[test].Tests
+                            );
+
+                        }
                         Form1.AddNewComponentTab
-                        (
-                            ParseXml.vivaXmlTests[test].translation,
-                            tabTests,
-                            OpenFiles.dataFile[i].dataFilteredByTests[test].Tests
-                        );
-
+                            (
+                                ParseXml.Сalculations[0].translation,
+                                tabTests,
+                                DataModel.dataFiles[file].biSec.BI[numBI].testsSec.TEST
+                            );
+                        DataModel.dataFiles[file].biSec.BI[numBI].visible = true;
+                        DataModel.dataFiles[file].biSec.BI[numBI].closeNumber = 0;
+                        if (closeTabCount <= 0)
+                        {
+                            closeTabCount = 0;
+                            rightMouseClickFileTabContextMenuStrip.Items[2].Enabled = false;
+                        }
+                        break;
                     }
-                    Form1.AddNewComponentTab
-                        (
-                            ParseXml.Сalculations[0].translation,
-                            tabTests,
-                            OpenFiles.dataFile[i].dataParse.Test
-                        );
-                    OpenFiles.dataFile[i].visible = true;
-                    OpenFiles.dataFile[i].closeNumber = 0;
-                    if (closeTabCount <= 0)
-                    {
-                        closeTabCount = 0;
-                        rightMouseClickFileTabContextMenuStrip.Items[2].Enabled = false;
-                    }
-                    break;
                 }
-                i++;
-            }*/
+            }
         }
     }
 }
