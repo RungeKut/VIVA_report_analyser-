@@ -1,4 +1,5 @@
 ﻿using FastMember;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,6 +8,7 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -53,6 +55,7 @@ namespace VIVA_report_analyser
     }
     internal class MaxDeviationCalculate
     {
+        private static Logger log = LogManager.GetCurrentClassLogger();
         public string NM             { get; set; }
         public string fileMin        { get; set; }
         public double minValue       { get; set; }
@@ -85,6 +88,7 @@ namespace VIVA_report_analyser
         // Выборка результатов конкретного теста
         {
             List<UniqueFileClass> data = CollectValuesForCalc();
+            ProgressView.progressMax(data.Count - 1);
             List<MaxDeviationCalculateFilteredTests> maxDeviationCalculate = new List<MaxDeviationCalculateFilteredTests>();
             for (int f = 0; f < data.Count; f++)
             {
@@ -172,13 +176,12 @@ namespace VIVA_report_analyser
                         }
                     }
                 }
+                ProgressView.progress(f, "Этап 3 из 3 - Расчет отклонения для платы: " + data[f].pcbName);
             }
             return maxDeviationCalculate;
         }
         public static List<UniqueFileClass> CollectValuesForCalc()
         {
-            ProgressView.progressReset();
-            ProgressView.progressV(true);
             ProgressView.progressMax((DataModel.dataFiles.Count - 1) * 2);
             List<FilterTestClass> uniTest = UniqueTest();
             List<UniqueFileClass> uniqFile = new List<UniqueFileClass>();
@@ -225,7 +228,8 @@ namespace VIVA_report_analyser
                                             });
                                             if (repeatData > 1)
                                             {
-                                                MessageBox.Show("Уникальное имя: " + uniTest[test].uniqueTests[t], "Внимание, повторяющийся тест!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                                //MessageBox.Show("Уникальное имя: " + uniTest[test].uniqueTests[t], "Внимание, повторяющийся тест!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                                log.Warn("Повторяющийся тест! Плата: " + uniqFile[pcbNumb].pcbName + " Тест: " + uniTest[test].uniqueTests[t]);
                                             }
                                         }
                                     }
@@ -281,7 +285,8 @@ namespace VIVA_report_analyser
                                         });
                                         if (repeatData > 1)
                                         {
-                                            MessageBox.Show("Уникальное имя: " + uniTest[allTestNum].uniqueTests[t], "Внимание, повторяющийся тест!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                            //MessageBox.Show("Уникальное имя: " + uniTest[allTestNum].uniqueTests[t], "Внимание, повторяющийся тест!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                            log.Warn("Повторяющийся тест! Плата: " + uniqFile[pcbNumb].pcbName + " Тест: " + uniTest[allTestNum].uniqueTests[t]);
                                         }
                                     }
                                 }
@@ -304,8 +309,6 @@ namespace VIVA_report_analyser
         }
         public static List<FilterTestClass> UniqueTest()
         {
-            ProgressView.progressReset();
-            ProgressView.progressV(true);
             ProgressView.progressMax((DataModel.dataFiles.Count - 1) * 2);
             int progress = 0;
             //Составляем выборку уникальных тестов внутри фильтра по названию теста
@@ -426,15 +429,17 @@ namespace VIVA_report_analyser
                 dataGridView.AllowUserToAddRows = false;
                 dataGridView.AllowUserToDeleteRows = false;
                 dataGridView.ReadOnly = true;
+                dataGridView.AutoGenerateColumns = true;
+                dataGridView.RowHeadersVisible = false;
                 //dataGridView.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
                 //dataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
                 dataGridView.DataSource = view;
                 dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
                 dataGridView.VirtualMode = true; //отрисовываются только те ячейки, которые видны в данный момент
 
-                dataGridView.Columns["min %"].DefaultCellStyle.Format = "#0.0\\%";
-                dataGridView.Columns["max %"].DefaultCellStyle.Format = "#0.0\\%";
-                dataGridView.Columns["Размах %"].DefaultCellStyle.Format = "#0.0\\%";
+                //dataGridView.Columns["min %"].DefaultCellStyle.Format = "#0.0\\%";
+                //dataGridView.Columns["max %"].DefaultCellStyle.Format = "#0.0\\%";
+                //dataGridView.Columns["Размах %"].DefaultCellStyle.Format = "#0.0\\%";
 
                 dataGridView.TopLeftHeaderCell.Value = "Тест"; // Заголовок столбца названия строк
                 /*if (view.Count > 0)
@@ -449,7 +454,7 @@ namespace VIVA_report_analyser
                 dataGridView.RowsDefaultCellStyle.BackColor = Color.Ivory; //Строки всей таблицы
                 //dataGridView.Rows[1].DefaultCellStyle.BackColor = Color.IndianRed; //Одной строки
                 dataGridView.AlternatingRowsDefaultCellStyle.BackColor = Color.MintCream; //Цвет четных строк
-
+                dataGridView.RowPrePaint += DataGridView_RowPrePaint;
                 /*for (int r = 0; r < rowCount; r++)
                 {
                     var h = dataGridView.Rows[r].Cells[2].Value;
@@ -462,6 +467,17 @@ namespace VIVA_report_analyser
                 MessageBox.Show("Ошибка при создании вкладки " + nameTab + ". Подробнее: " + ReadFileError.Message, "Ошибка создания вкладки", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        private static void DataGridView_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
+        {/*
+            DataGridView grid = sender as DataGridView;
+            if (grid != null)
+            {
+                if (Double.Parse(grid["TR", e.RowIndex].Value.ToString(), new CultureInfo("en-US")) > 0)
+                    grid.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.IndianRed;
+            };*/
+        }
+
         public static DataTable ConvertToDataTable<T>(IList<T> data)
         {
             DataTable table = new DataTable();

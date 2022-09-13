@@ -28,6 +28,7 @@ XML report analyser.
 + [Создание потоков и передача данных во время запуска](https://docs.microsoft.com/ru-ru/dotnet/standard/threading/creating-threads-and-passing-data-at-start-time)
 + [Работа с потоками в C# Joseph Albahari](https://rsdn.org/article/dotnet/CSThreading1.xml)
 + [Доступ к элементам управления формы из другого класса](https://translated.turbopages.org/proxy_u/en-ru.ru.03125158-63201c60-0aa0d039-74722d776562/https/stackoverflow.com/questions/12983427/accessing-forms-controls-from-another-class)
++ [Datagridview - формирование цвета строки по значению параметра](https://www.cyberforum.ru/windows-forms/thread153589.html)
 
 ## Contacts
 

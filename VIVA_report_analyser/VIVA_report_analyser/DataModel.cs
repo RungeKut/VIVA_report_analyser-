@@ -347,7 +347,7 @@ namespace VIVA_report_analyser
             public String FR { set { if (value == null) log.Warn("Попытка присвоить FR значение null"); else _FR = value; } get { return _FR; } } // Error description
             private String _AL;
             public String AL { set { if (value == null) log.Warn("Попытка присвоить AL значение null"); else _AL = value; } get { return _AL; } } //
-            public String uniqueTestName { get { return NM + ";" + F + ";" + PD1 + ";" + PD2 + ";" + MR; } private set { } } // Составной уникальный идентификатор теста
+            public String uniqueTestName { get { return NM + ";" + F + ";" + PD1 + ";" + PD2/* + ";" + MR*/; } private set { } } // Составной уникальный идентификатор теста
         }
         public class ETClass
         {

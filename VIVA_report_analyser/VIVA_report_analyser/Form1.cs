@@ -39,8 +39,8 @@ namespace VIVA_report_analyser
         private void button1_Click_1(object sender, EventArgs e)
         {
             button1.Enabled = false;
-            ProgressView.progressReset();
             ProgressView.progressV(true);
+            ProgressView.progressReset();
             OpenFiles.LoadXmlDocument();
             //ProgressView.progressV(false);
             button1.Enabled = true;
@@ -102,6 +102,8 @@ namespace VIVA_report_analyser
                             }
                         }
                     }
+                    ProgressView.progressReset();
+                    ProgressView.progressV(false);
                 }
                 else
                 {
@@ -144,6 +146,8 @@ namespace VIVA_report_analyser
                 dataGridView.AllowUserToAddRows = false;
                 dataGridView.AllowUserToDeleteRows = false;
                 dataGridView.ReadOnly = true;
+                dataGridView.AutoGenerateColumns = true;
+                dataGridView.RowHeadersVisible = false;
                 //dataGridView.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
                 //dataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
                 dataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
@@ -156,6 +160,12 @@ namespace VIVA_report_analyser
                 dataGridView.TopLeftHeaderCell.Value = "Тест"; // Заголовок столбца названия строк
                 //DataGridView.Columns[0].HeaderText = "название столбца";
                 //dataGridView.Rows[0].HeaderCell.Value = "Название строки";
+                dataGridView.RowsDefaultCellStyle.BackColor = Color.Ivory; //Строки всей таблицы
+                //dataGridView.Rows[1].DefaultCellStyle.BackColor = Color.IndianRed; //Одной строки
+                dataGridView.AlternatingRowsDefaultCellStyle.BackColor = Color.MintCream; //Цвет четных строк
+                dataGridView.RowPrePaint += DataGridView_RowPrePaint;
+                //dataGridView.Columns["TR"].Visible = false;
+                //dataGridView.Columns[1].Visible = false;
                 /*if (view.Count > 0)
                 {
                     int i = 0;
@@ -178,6 +188,16 @@ namespace VIVA_report_analyser
             }
         }
 
+        private static void DataGridView_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
+        {
+            DataGridView grid = sender as DataGridView;
+            if (grid != null)
+            {
+                if (Double.Parse(grid["TR", e.RowIndex].Value.ToString(), new CultureInfo("en-US")) > 0)
+                    grid.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.IndianRed;
+            }
+        }
+
         private void DataGridView_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
@@ -193,54 +213,70 @@ namespace VIVA_report_analyser
         }
         private void button2_Click(object sender, EventArgs e)
         {
-            /*try
-            {*/
-                int tabOpenCount = 0;
-                for (int file = 0; file < DataModel.dataFiles.Count; file++) // Перебираем открытые файлы
-                {
-                    for (int numBI = 0; numBI < DataModel.dataFiles[file].biSec.BI.Count; numBI++) // Перебираем все секции с платами в одном файле
-                    {
-                        if (DataModel.dataFiles[file].biSec.BI[numBI].visible)
-                            tabOpenCount++;
-                    }
-                }
-                if (tabOpenCount == 0) throw new ArgumentException("Нет открытых файлов");
-                if (tabOpenCount == 1) throw new ArgumentException("Необходимо хотя бы ДВА открытых файла для выборки значений");
-                List<MaxDeviationCalculateFilteredTests> data = MaxDeviationCalculate.DeviationCalculate();
-                TabPage page = new TabPage(ParseXml.Сalculations[1].translation);
-                page.Name = ParseXml.Сalculations[1].translation;
-                tabControl2.TabPages.Add(page);
-                page.Visible = true;
-                page.Select();
-                TabControl tabTests = new TabControl();
-                page.Controls.Add(tabTests);
-                tabTests.Dock = DockStyle.Fill;
-                tabTests.ItemSize = new System.Drawing.Size(0, 24);
-                tabTests.SelectedIndex = 0;
-                tabTests.TabIndex = 1;
-                tabTests.Name = ParseXml.Сalculations[1].translation;
-                tabTests.Visible = true;
-                //int tabCount = tabControl2.TabCount;
-                tabControl2.SelectTab(tabControl2.TabCount - 1);
-
-                //for (int test = 0; test < ParseXml.testCount; test++)
-                foreach ( var test in data)
-                {
-                    MaxDeviationCalculate.DeviationAddNewComponentTab
-                    (
-                        test.testName,
-                        tabTests,
-                        test.data
-                    );
-
-                }
-            /*}
-            catch (Exception CalculateError)
-            {
-                MessageBox.Show("Ошибка при создании вкладки вычислений.\nПодробнее:\n" + CalculateError.Message, "Ошибка вычисления максимального отклонения", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }*/
+            button2.Enabled = false;
+            ProgressView.progressV(true);
+            StartDeviationCalculateThread();
         }
+        public void StartDeviationCalculateThread()
+        {
+            Thread deviationCalculateThread = new Thread(CreateTabDeviationCalc);
+            deviationCalculateThread.Name = "DeviationCalculateThread";
+            deviationCalculateThread.IsBackground = true;
+            deviationCalculateThread.Start();
+        }
+        private void CreateTabDeviationCalc()
+        {
+            ProgressView.progressV(true);
+            ProgressView.progressReset();
+            int tabOpenCount = 0;
+                    for (int file = 0; file < DataModel.dataFiles.Count; file++) // Перебираем открытые файлы
+                    {
+                        for (int numBI = 0; numBI < DataModel.dataFiles[file].biSec.BI.Count; numBI++) // Перебираем все секции с платами в одном файле
+                        {
+                            if (DataModel.dataFiles[file].biSec.BI[numBI].visible)
+                                tabOpenCount++;
+                            if (tabOpenCount > 1) break;
+                        }
+                        if (tabOpenCount > 1) break;
+                    }
+                    if (tabOpenCount == 0) throw new ArgumentException("Нет открытых файлов");
+                    if (tabOpenCount == 1) throw new ArgumentException("Необходимо хотя бы ДВА открытых файла для выборки значений");
+                    List<MaxDeviationCalculateFilteredTests> data = MaxDeviationCalculate.DeviationCalculate();
+                    ProgressView.progressV(true);
+                    ProgressView.progressMax(100);
+                    ProgressView.progress(100, "Построение формы");
+                    TabPage page = new TabPage(ParseXml.Сalculations[1].translation);
+                    page.Name = ParseXml.Сalculations[1].translation;
+                    page.Visible = true;
+                    page.Select();
+                    TabControl tabTests = new TabControl();
+                    page.Controls.Add(tabTests);
+                    tabTests.Dock = DockStyle.Fill;
+                    tabTests.ItemSize = new System.Drawing.Size(0, 24);
+                    tabTests.SelectedIndex = 0;
+                    tabTests.TabIndex = 1;
+                    tabTests.Name = ParseXml.Сalculations[1].translation;
+                    tabTests.Visible = true;
+                    //int tabCount = tabControl2.TabCount;
 
+
+                    //for (int test = 0; test < ParseXml.testCount; test++)
+                    foreach (var test in data)
+                    {
+                        MaxDeviationCalculate.DeviationAddNewComponentTab
+                        (
+                            test.testName,
+                            tabTests,
+                            test.data
+                        );
+
+                    }
+                    tabControl2.Invoke(new Action(() => { tabControl2.TabPages.Add(page); }));
+                    tabControl2.Invoke(new Action(() => { tabControl2.SelectTab(tabControl2.TabCount - 1); }));
+                    button2.Invoke(new Action(() => { button2.Enabled = true; }));
+                    ProgressView.progressReset();
+                    ProgressView.progressV(false);
+        }
         private void button3_Click(object sender, EventArgs e)
         {
             button3.Enabled = false;

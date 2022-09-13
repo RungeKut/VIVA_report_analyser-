@@ -294,7 +294,7 @@ namespace VIVA_report_analyser
         public static DataTable ConvertToDataTable<T>(IList<T> data)
         {
             DataTable table = new DataTable();
-            using (var reader = ObjectReader.Create(data, "NM", "C", "SG1", "SG2", "PD1", "PD2", "MU", "ML", "MM", "MH", "MR", "MP", "FR"))
+            using (var reader = ObjectReader.Create(data, "TR", "NM", "C", "SG1", "SG2", "PD1", "PD2", "MU", "ML", "MM", "MH", "MR", "MP", "FR"))
             {
                 table.Load(reader);
             }
