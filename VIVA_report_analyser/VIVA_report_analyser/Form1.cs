@@ -16,11 +16,6 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace VIVA_report_analyser
 {
-    public class DoubleBufferedDataGridView : DataGridView
-    // Двойная буфферизация для таблиц, ускоряет работу
-    {
-        protected override bool DoubleBuffered { get => true; }
-    }
     public partial class Form1 : Form
     {
         public static Form1 form = null;
@@ -282,6 +277,12 @@ namespace VIVA_report_analyser
             button3.Enabled = false;
             MessageBox.Show("т.к. это хорошо заметно в последнем столбце расчетов МАХ отклонения", "Нереализованная функциональность", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
+    }
+
+    public class DoubleBufferedDataGridView : DataGridView
+    // Двойная буфферизация для таблиц, ускоряет работу
+    {
+        protected override bool DoubleBuffered { get => true; }
     }
 
     
