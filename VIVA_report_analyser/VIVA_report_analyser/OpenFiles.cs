@@ -36,7 +36,7 @@ namespace VIVA_report_analyser
             {
                 DataModel.dataFiles.busy = true;
                 int quantityFiles = openFileDialog.FileNames.Length;
-                ProgressView.progressMax(quantityFiles - 1);
+                MainForm.ProgressView.progressMax(quantityFiles - 1);
                 for (int file = 0; file < quantityFiles; file++)
                 {
                     string Path = openFileDialog.FileNames[file];
@@ -61,7 +61,7 @@ namespace VIVA_report_analyser
                             doc = loadDoc
                         });
                     }
-                    ProgressView.progress(file, Path);
+                    MainForm.ProgressView.progress(file, Path);
                 }
                 DataModel.dataFiles.busy = false;
                 DataModel.dataFiles.needParser = true;

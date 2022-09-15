@@ -27,7 +27,7 @@ namespace VIVA_report_analyser
             DataModel.Init();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new MainForm.MainForm());
         }
     }
 }
