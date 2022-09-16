@@ -61,7 +61,8 @@ namespace VIVA_report_analyser
             new VivaXmlColumnsClass { name = "IS" ,            translation ="IS"                        }, // 31
             new VivaXmlColumnsClass { name = "DG" ,            translation ="DG"                        }, // 32
             new VivaXmlColumnsClass { name = "FR" ,            translation ="Описание ошибки"           }, // 33
-            new VivaXmlColumnsClass { name = "uniqueTestName", translation ="Идентификатор"             }  // 34
+            new VivaXmlColumnsClass { name = "AL" ,            translation ="AL"                        }, // 34
+            new VivaXmlColumnsClass { name = "uniqueTestName", translation ="Идентификатор"             }  // 35
         };
         public static List<VivaXmlTestsClass> vivaXmlTests = new List<VivaXmlTestsClass>
         // Битовая маска указывает какие столбцы интересны для конкретного теста
@@ -232,7 +233,7 @@ namespace VIVA_report_analyser
                                 IN = t.Attribute("IN")?.Value,
                                 IDL = Double.Parse(t.Attribute("IDL")?.Value, new CultureInfo("en-US")),
                                 TR = Double.Parse(t.Attribute("TR")?.Value, new CultureInfo("en-US")),
-                                MU = t.Attribute("MU")?.Value,
+                                MU = ConvertUnit(t.Attribute("MU")?.Value),
                                 ML = Double.Parse(t.Attribute("ML")?.Value, new CultureInfo("en-US")),
                                 MM = Double.Parse(t.Attribute("MM")?.Value, new CultureInfo("en-US")),
                                 MH = Double.Parse(t.Attribute("MH")?.Value, new CultureInfo("en-US")),
@@ -262,6 +263,25 @@ namespace VIVA_report_analyser
             tempData.ET.ED =  AtrbToStr(doc, "ET", "ED" );
             tempData.ET.DM =  AtrbToDbl(doc, "ET", "DM");
             return tempData;
+        }
+        private static String ConvertUnit(string data)
+        {
+            string temp = data;
+            if (data == "O") temp = "Ом";
+            if (data == "KOhm") temp = "КОм";
+            if (data == "uF") temp = "мкФ";
+            if (data == "nF") temp = "нФ";
+            if (data == "pF") temp = "пФ";
+            if (data == "uH") temp = "мкГн";
+            if (data == "nH") temp = "нГн";
+            if (data == "mH") temp = "мГн";
+            if (data == "V") temp = "В";
+            if (data == "mV") temp = "мВ";
+            if (data == "uV") temp = "мкВ";
+            if (data == "A") temp = "А";
+            if (data == "mA") temp = "мА";
+            if (data == "uA") temp = "мкА";
+            return temp;
         }
         private static XElement GetElement(XDocument doc, string elementName)
         {
@@ -294,7 +314,7 @@ namespace VIVA_report_analyser
         public static DataTable ConvertToDataTable<T>(IList<T> data)
         {
             DataTable table = new DataTable();
-            using (var reader = ObjectReader.Create(data, "TR", "NM", "C", "SG1", "SG2", "PD1", "PD2", "MU", "ML", "MM", "MH", "MR", "MP", "FR"))
+            using (var reader = ObjectReader.Create(data, "TR", "NM", "C", "SG1", "SG2", "PD1", "PD2", "ML", "MM", "MH", "MR", "MU", "MP", "FR", "AL"))
             {
                 table.Load(reader);
             }
