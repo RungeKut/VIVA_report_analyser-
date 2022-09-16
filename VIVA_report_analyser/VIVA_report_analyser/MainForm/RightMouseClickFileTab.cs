@@ -9,14 +9,18 @@ namespace VIVA_report_analyser.MainForm
 {
     internal class RightMouseClickFileTab
     {
+        private class ClosedTab
+        {
+            public int fileCount { get; set; }
+            public int boardCount { get; set; }
+        }
         public static ContextMenuStrip rightMouseClickFileTabContextMenuStrip;
         private static int tabNumber = 0;
-        private static int closeTabCount = 0;
+        private static bool hitTarget = false;
+        private static List<ClosedTab> closedTabs = new List<ClosedTab>();
         private static TabControl selectTab;
         public static ContextMenuStrip InitializeRightMouseClickFileTab(TabControl tab)
         {
-            tab.Focus();
-            tab.MouseUp += FileTab_MouseClick;
             ContextMenuStrip fileTabMenu = new ContextMenuStrip();
             ToolStripMenuItem CloseTab_MenuItem = new ToolStripMenuItem("Закрыть вкладку");
             ToolStripMenuItem CloseTabs_MenuItem = new ToolStripMenuItem("Закрыть все вкладки");
@@ -33,19 +37,29 @@ namespace VIVA_report_analyser.MainForm
             CloseTab_MenuItem.Click += CloseTab_MenuItem_Click;
             CloseTabs_MenuItem.Click += CloseTabs_MenuItem_Click;
             RecoverTab_MenuItem.Click += RecoverTab_MenuItem_Click;
-            fileTabMenu.Show(Cursor.Position);
+            if (hitTarget)
+                fileTabMenu.Show(Cursor.Position);
+                
             selectTab = tab;
             return fileTabMenu;
         }
-        private static void FileTab_MouseClick(object sender, MouseEventArgs e)
+        public static void FileTab_MouseClick(object sender, MouseEventArgs e)
         {
+            TabControl tab = (TabControl)sender;
+            if (tab != MainForm.mainForm.tabControl2)
+            {
+                hitTarget = false;
+                return;
+            }
+            hitTarget = true;
             if (e.Button == MouseButtons.Right)
             {
-                for (int i = 0; i < selectTab.TabPages.Count; i++)
+                for (int i = 0; i < tab.TabPages.Count; i++)
                 {
-                    if (selectTab.GetTabRect(i).Contains(e.Location))
+                    if (tab.GetTabRect(i).Contains(e.Location))
                     {
                         tabNumber = i;
+                        rightMouseClickFileTabContextMenuStrip = InitializeRightMouseClickFileTab(tab);
                         return;
                     }
                 }
@@ -53,7 +67,7 @@ namespace VIVA_report_analyser.MainForm
         }
         private static void CloseTab_MenuItem_Click(object sender, EventArgs e)
         {
-            closeTabCount++;
+            if (!hitTarget) return;
             for (int file = 0; file < DataModel.dataFiles.Count; file++)
             {
                 for (int numBI = 0; numBI < DataModel.dataFiles[file].biSec.BI.Count; numBI++)
@@ -62,7 +76,12 @@ namespace VIVA_report_analyser.MainForm
                         DataModel.dataFiles[file].Name + " | " + DataModel.dataFiles[file].biSec.BI[numBI].ID + " | " + DataModel.dataFiles[file].biSec.BI[numBI].BC)
                     {
                         DataModel.dataFiles[file].biSec.BI[numBI].visible = false;
-                        DataModel.dataFiles[file].biSec.BI[numBI].closeNumber = closeTabCount;
+                        closedTabs.Add(new ClosedTab
+                        {
+                            fileCount = file,
+                            boardCount = numBI,
+                        });
+                        DataModel.dataFiles[file].biSec.BI[numBI].closeNumber = closedTabs.Count;
                         selectTab.TabPages.Remove(selectTab.TabPages[tabNumber] as TabPage);
                         rightMouseClickFileTabContextMenuStrip.Items[2].Enabled = true;
                         return;
@@ -79,53 +98,13 @@ namespace VIVA_report_analyser.MainForm
         }
         private static void RecoverTab_MenuItem_Click(object sender, EventArgs e)
         {
-            for (int file = 0; file < DataModel.dataFiles.Count; file++)
-            {
-                for (int numBI = 0; numBI < DataModel.dataFiles[file].biSec.BI.Count; numBI++)
-                {
-                    if (DataModel.dataFiles[file].biSec.BI[numBI].closeNumber == closeTabCount)
-                    {
-                        closeTabCount--;
-                        string tabName = DataModel.dataFiles[file].Name + " | " + DataModel.dataFiles[file].biSec.BI[numBI].ID + " | " + DataModel.dataFiles[file].biSec.BI[numBI].BC;
-                        TabPage page = new TabPage(tabName);
-                        page.Name = tabName;
-                        selectTab.TabPages.Add(page);
-                        //page.MouseClick += Page_MouseClick;
-                        TabControl tabTests = new TabControl();
-                        page.Controls.Add(tabTests);
-                        tabTests.Dock = DockStyle.Fill;
-                        tabTests.ItemSize = new System.Drawing.Size(0, 24);
-                        tabTests.SelectedIndex = 0;
-                        tabTests.TabIndex = 1;
-                        tabTests.Name = DataModel.dataFiles[file].Name;
-
-                        for (int test = 0; test < ParseXml.testCount; test++)
-                        {
-                            UpdateView.AddNewComponentTab
-                            (
-                                ParseXml.vivaXmlTests[test].translation,
-                                tabTests,
-                                DataModel.dataFiles[file].biSec.BI[numBI].dataFilteredByTests[test].Tests
-                            );
-
-                        }
-                        UpdateView.AddNewComponentTab
-                            (
-                                ParseXml.Сalculations[0].translation,
-                                tabTests,
-                                DataModel.dataFiles[file].biSec.BI[numBI].testsSec.TEST
-                            );
-                        DataModel.dataFiles[file].biSec.BI[numBI].visible = true;
-                        DataModel.dataFiles[file].biSec.BI[numBI].closeNumber = 0;
-                        if (closeTabCount <= 0)
-                        {
-                            closeTabCount = 0;
-                            rightMouseClickFileTabContextMenuStrip.Items[2].Enabled = false;
-                        }
-                        break;
-                    }
-                }
-            }
+            int closeNumber = closedTabs.Count - 1;
+            DataModel.dataFiles[closedTabs[closeNumber].fileCount].biSec.BI[closedTabs[closeNumber].boardCount].closeNumber = 0;
+            DataModel.dataFiles.needUpdateView = true;
+            if (closeNumber <= 0)
+                rightMouseClickFileTabContextMenuStrip.Items[2].Enabled = false;
+            closedTabs.RemoveAt(closeNumber);
         }
+                        
     }
 }

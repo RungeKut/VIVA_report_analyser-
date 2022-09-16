@@ -28,6 +28,7 @@ namespace VIVA_report_analyser.MainForm
                             for (int numBI = 0; numBI < DataModel.dataFiles[file].biSec.BI.Count; numBI++) // Перебираем все секции с платами в одном файле
                             {
                                 if (!DataModel.dataFiles[file].biSec.BI[numBI].visible) // Если секция еще не отображается, то создаем новую вкладку с ней
+                                if (DataModel.dataFiles[file].biSec.BI[numBI].closeNumber == 0)
                                 {
                                     string tabName = DataModel.dataFiles[file].Name + " | " + DataModel.dataFiles[file].biSec.BI[numBI].ID + " | " + DataModel.dataFiles[file].biSec.BI[numBI].BC;
                                     TabPage page = new TabPage(tabName);
@@ -135,7 +136,6 @@ namespace VIVA_report_analyser.MainForm
                     if (Double.Parse(grid["TR", e.RowIndex].Value.ToString(), new CultureInfo("en-US")) > 0)
                         grid.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.IndianRed;
                     grid.Columns["TR"].Visible = false;
-                    //grid.Columns["TR"].SortMode =
                 }
                 if (grid.Columns["MP"] != null)
                     grid.Columns["MP"].DefaultCellStyle.Format = "#0.0\\%";

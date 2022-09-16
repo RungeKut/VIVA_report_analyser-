@@ -33,7 +33,7 @@ namespace VIVA_report_analyser.MainForm
             
             InitializeComponent();
             StyleColor.Init();
-            RightMouseClickFileTab.rightMouseClickFileTabContextMenuStrip = RightMouseClickFileTab.InitializeRightMouseClickFileTab(tabControl2);
+            tabControl2.MouseUp += RightMouseClickFileTab.FileTab_MouseClick;
         }
         private void Form1_Load(object sender, EventArgs e)
         {
