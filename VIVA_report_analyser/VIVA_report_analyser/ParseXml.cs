@@ -53,7 +53,7 @@ namespace VIVA_report_analyser
             new VivaXmlColumnsClass { name = "TR" ,            translation ="TR"                        }, // 23
             new VivaXmlColumnsClass { name = "MU" ,            translation ="Единицы измерения"         }, // 24
             new VivaXmlColumnsClass { name = "ML" ,            translation ="Минимальное"               }, // 25
-            new VivaXmlColumnsClass { name = "MM" ,            translation ="Уставка"                   }, // 26
+            new VivaXmlColumnsClass { name = "MM" ,            translation ="Номинал"                   }, // 26
             new VivaXmlColumnsClass { name = "MH" ,            translation ="Максимальное"              }, // 27
             new VivaXmlColumnsClass { name = "MR" ,            translation ="Измеренное"                }, // 28
             new VivaXmlColumnsClass { name = "MP" ,            translation ="Отклонение, %"             }, // 29

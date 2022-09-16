@@ -43,6 +43,8 @@ namespace VIVA_report_analyser
     {
         // Поля класса
         public string uniqueTestName { get; set; }
+        public double MM { get; set; }
+        public string MU { get; set; }
         public double MR { get; set; }
         public double MP { get; set; }
         public bool attend { get; set; }
@@ -57,6 +59,8 @@ namespace VIVA_report_analyser
     {
         private static Logger log = LogManager.GetCurrentClassLogger();
         public string NM             { get; set; }
+        public double MM             { get; set; }
+        public string MU             { get; set; }
         public string fileMin        { get; set; }
         public double minValue       { get; set; }
         public string fileMax        { get; set; }
@@ -72,6 +76,8 @@ namespace VIVA_report_analyser
         // Битовая маска указывает какие столбцы интересны для конкретного теста
         {
             new MaxDeviationColumnsClass { name = "NM" ,            translation ="Имя компонента"       },
+            new MaxDeviationColumnsClass { name = "MM" ,            translation ="Номинал"              },
+            new MaxDeviationColumnsClass { name = "MU",             translation ="Единицы"              },
             new MaxDeviationColumnsClass { name = "fileMin",        translation ="Файл min"             },
             new MaxDeviationColumnsClass { name = "minValue",       translation ="Минимум"              },
             new MaxDeviationColumnsClass { name = "fileMax",        translation ="Файл max"             },
@@ -114,6 +120,8 @@ namespace VIVA_report_analyser
                                 maxDeviationCalculate[fltr].data.Add(new MaxDeviationCalculate() // Создали раздел теста
                                 {
                                     NM = data[f].tests[fltr].uniqueTests[t].uniqueTestName,
+                                    MM = data[f].tests[fltr].uniqueTests[t].MM,
+                                    MU = data[f].tests[fltr].uniqueTests[t].MU,
                                     fileMin = data[f].pcbName,
                                     minValue = Math.Round(data[f].tests[fltr].uniqueTests[t].MR, 3),
                                     fileMax = data[f].pcbName,
@@ -134,6 +142,8 @@ namespace VIVA_report_analyser
                                 maxDeviationCalculate[fltr].data.Add(new MaxDeviationCalculate() // Создали раздел теста
                                 {
                                     NM = data[fl].tests[fltr].uniqueTests[t].uniqueTestName,
+                                    MM = data[f].tests[fltr].uniqueTests[t].MM,
+                                    MU = data[f].tests[fltr].uniqueTests[t].MU,
                                     fileMin = data[fl].pcbName,
                                     minValue = Math.Round(data[fl].tests[fltr].uniqueTests[t].MR, 3),
                                     fileMax = data[fl].pcbName,
@@ -224,6 +234,8 @@ namespace VIVA_report_analyser
                                                 uniqueTestName = uniTest[test].uniqueTests[t],
                                                 MR = columns.MR,
                                                 MP = columns.MP,
+                                                MM = columns.MM,
+                                                MU = columns.MU,
                                                 attend = true
                                             });
                                             if (repeatData > 1)
@@ -281,6 +293,8 @@ namespace VIVA_report_analyser
                                             uniqueTestName = uniTest[allTestNum].uniqueTests[t],
                                             MR = columns.MR,
                                             MP = columns.MP,
+                                            MM = columns.MM,
+                                            MU = columns.MU,
                                             attend = true
                                         });
                                         if (repeatData > 1)
@@ -469,19 +483,23 @@ namespace VIVA_report_analyser
         }
 
         private static void DataGridView_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
-        {/*
+        {
             DataGridView grid = sender as DataGridView;
             if (grid != null)
             {
-                if (Double.Parse(grid["TR", e.RowIndex].Value.ToString(), new CultureInfo("en-US")) > 0)
-                    grid.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.IndianRed;
-            };*/
+                if (grid.Columns["min %"] != null)
+                    grid.Columns["min %"].DefaultCellStyle.Format = "#0.0\\%";
+                if (grid.Columns["max %"] != null)
+                    grid.Columns["max %"].DefaultCellStyle.Format = "#0.0\\%";
+                if (grid.Columns["Размах %"] != null)
+                    grid.Columns["Размах %"].DefaultCellStyle.Format = "#0.0\\%";
+            }
         }
 
         public static DataTable ConvertToDataTable<T>(IList<T> data)
         {
             DataTable table = new DataTable();
-            using (var reader = ObjectReader.Create(data, "NM", "fileMin", "minValue", "fileMax", "maxValue", "delta", "fileMinP", "minValueP", "fileMaxP", "maxValueP", "deltaP", "missingInFiles"))
+            using (var reader = ObjectReader.Create(data, "NM", "MM", "MU", "fileMin", "minValue", "fileMax", "maxValue", "delta", "fileMinP", "minValueP", "fileMaxP", "maxValueP", "deltaP", "missingInFiles"))
             {
                 table.Load(reader);
             }
