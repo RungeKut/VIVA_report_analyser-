@@ -21,6 +21,7 @@ namespace VIVA_report_analyser.MainForm
             {
                 if (DataModel.dataFiles.needUpdateView)
                 {
+                    MainForm.mainForm.tabControl2.Invoke(new Action(() => { MainForm.mainForm.tabControl2.SuspendLayout(); }));
                     for (int file = 0; file < DataModel.dataFiles.Count; file++) // Перебираем открытые файлы
                     {
                         if (!DataModel.dataFiles[file].errorOpen) // Если файл смог открыться
@@ -34,7 +35,6 @@ namespace VIVA_report_analyser.MainForm
                                     TabPage page = new TabPage(tabName);
                                     page.Name = tabName;
 
-                                    page.MouseClick += Page_MouseClick;
                                     TabControl tabTests = new TabControl();
                                     page.Controls.Add(tabTests);
                                     tabTests.Dock = DockStyle.Fill;
@@ -49,7 +49,9 @@ namespace VIVA_report_analyser.MainForm
                                         (
                                             ParseXml.vivaXmlTests[test].translation,
                                             tabTests,
-                                            DataModel.dataFiles[file].biSec.BI[numBI].dataFilteredByTests[test].Tests
+                                            DataModel.dataFiles[file].biSec.BI[numBI].dataFilteredByTests[test].Tests,
+                                            DataModel.dataFiles[file].biSec.BI[numBI].dataFilteredByTests[test].Tests.Count,
+                                            DataModel.dataFiles[file].biSec.BI[numBI].dataFilteredByTests[test].errorTests.Count
                                         );
 
                                     }
@@ -57,7 +59,9 @@ namespace VIVA_report_analyser.MainForm
                                         (
                                             ParseXml.Сalculations[0].translation,
                                             tabTests,
-                                            DataModel.dataFiles[file].biSec.BI[numBI].testsSec.TEST
+                                            DataModel.dataFiles[file].biSec.BI[numBI].testsSec.TEST,
+                                            DataModel.dataFiles[file].biSec.BI[numBI].testsSec.TEST.Count,
+                                            0
                                         );
                                     MainForm.mainForm.tabControl2.Invoke(new Action(() => { MainForm.mainForm.tabControl2.TabPages.Add(page); }));
                                     DataModel.dataFiles[file].biSec.BI[numBI].visible = true;
@@ -65,8 +69,7 @@ namespace VIVA_report_analyser.MainForm
                             }
                         }
                     }
-                    ProgressView.progressReset();
-                    ProgressView.progressV(false);
+                    MainForm.mainForm.tabControl2.Invoke(new Action(() => { MainForm.mainForm.tabControl2.ResumeLayout(); }));
                 }
                 else
                 {
@@ -76,19 +79,18 @@ namespace VIVA_report_analyser.MainForm
                 }
             }
         }
-        private static void Page_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-                MessageBox.Show("Ошибка", "Ошибка созкладки", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-        public static void AddNewComponentTab<T>(string nameTab, TabControl tabControl, IList<T> data)
+        public static void AddNewComponentTab<T>(string nameTab, TabControl tabControl, IList<T> data, int testCount, int errCount)
         // Создание фкладки с именем компонента во вкладке с файлом
         {
             try
             {
+                if (testCount <= 0) return;
                 DataView view = ParseXml.ConvertToDataTable(data).DefaultView;
-                int rowCount = view.Count;
-                TabPage page = new TabPage(nameTab + " (" + rowCount + ")");
+                TabPage page;
+                if (errCount <= 0)
+                    page = new TabPage(nameTab + " (" + testCount + ")");
+                else
+                    page = new TabPage(nameTab + " (" + testCount + ") (" + errCount + ")");
                 tabControl.TabPages.Add(page);
                 DoubleBufferedDataGridView dataGridView = new DoubleBufferedDataGridView();
                 page.Controls.Add(dataGridView);
@@ -108,11 +110,45 @@ namespace VIVA_report_analyser.MainForm
                 dataGridView.RowsDefaultCellStyle.BackColor = Color.Ivory; //Строки всей таблицы
                 dataGridView.AlternatingRowsDefaultCellStyle.BackColor = Color.MintCream; //Цвет четных строк
                 dataGridView.RowPrePaint += DataGridView_RowPrePaint;
+                dataGridView.RowPostPaint += DataGridView_RowPostPaint;
+                dataGridView.SortCompare += DataGridView_SortCompare;
                 //dataGridView.AutoResizeColumns();
             }
             catch (Exception ReadFileError)
             {
                 MessageBox.Show("Ошибка при создании вкладки " + nameTab + ". Подробнее: " + ReadFileError.Message, "Ошибка создания вкладки", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private static void DataGridView_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
+        {
+            DataGridView grid = sender as DataGridView;
+            if (grid != null)
+            {
+                foreach (var tr in ParseXml.vivaXmlColumns)
+                {
+                    if (grid.Columns[tr.name] != null)
+                    {
+                        grid.Columns[tr.name].HeaderText = tr.translation;
+                    }
+                }
+                if (grid.Columns["TR"] != null)
+                {
+                    grid.Columns["TR"].Visible = false;
+                }
+                if (grid.Columns["MP"] != null)
+                    grid.Columns["MP"].DefaultCellStyle.Format = "#0.0\\%";
+            }
+        }
+
+        private static void DataGridView_SortCompare(object sender, DataGridViewSortCompareEventArgs e)
+        { //Это событие возникает только в том случае, если DataSource свойство не задано, а VirtualMode значение свойства равно false.
+            DataGridView grid = sender as DataGridView;
+            if (grid != null)
+            {
+                e.SortResult = System.String.Compare(
+                    grid.Rows[e.RowIndex1].Cells["TR"].Value.ToString(),
+                    grid.Rows[e.RowIndex2].Cells["MP"].Value.ToString());
             }
         }
 
@@ -135,16 +171,11 @@ namespace VIVA_report_analyser.MainForm
                 {
                     if (Double.Parse(grid["TR", e.RowIndex].Value.ToString(), new CultureInfo("en-US")) > 0)
                         grid.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.IndianRed;
-                    grid.Columns["TR"].Visible = false;
                 }
-                if (grid.Columns["MP"] != null)
-                    grid.Columns["MP"].DefaultCellStyle.Format = "#0.0\\%";
             }
         }
         public static void CreateTabDeviationCalc()
         {
-            ProgressView.progressV(true);
-            ProgressView.progressReset();
             int tabOpenCount = 0;
             for (int file = 0; file < DataModel.dataFiles.Count; file++) // Перебираем открытые файлы
             {
@@ -170,9 +201,6 @@ namespace VIVA_report_analyser.MainForm
             }
 
             List<MaxDeviationCalculateFilteredTests> data = MaxDeviationCalculate.DeviationCalculate();
-            ProgressView.progressV(true);
-            ProgressView.progressMax(100);
-            ProgressView.progress(100, "Построение формы");
             TabPage page = new TabPage(ParseXml.Сalculations[1].translation);
             page.Name = ParseXml.Сalculations[1].translation;
             page.Visible = true;
@@ -205,9 +233,6 @@ namespace VIVA_report_analyser.MainForm
                 MainForm.mainForm.tabControl2.SelectTab(MainForm.mainForm.tabControl2.TabCount - 1);
                 MainForm.mainForm.button2.Enabled = true;
             }));
-            
-            ProgressView.progressReset();
-            ProgressView.progressV(false);
         }
     }
 }

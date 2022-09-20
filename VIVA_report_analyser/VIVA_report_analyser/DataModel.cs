@@ -14,7 +14,16 @@ namespace VIVA_report_analyser
         private static Logger log = LogManager.GetCurrentClassLogger();
         public class DataFiles : List<DataFile>
         {
+            public event EventHandler<EventArgs> OnBusyChanged;
+            private void InvokeOnBusyChanged() { OnBusyChanged?.Invoke(this, EventArgs.Empty); }    
+            
+
             public Boolean busy; // Занята процессом
+            public Boolean Busy
+            {
+                get { return busy; }
+                set { if (value != busy) { busy = value; InvokeOnBusyChanged(); } }
+            }
             public Boolean needParser; // Требуется запуск парсера
             public Boolean needUpdateView; // Требуется обновление данных на форме
         }
@@ -368,6 +377,7 @@ namespace VIVA_report_analyser
         {
             private static Logger log = LogManager.GetCurrentClassLogger();
             public string testName { get; set; }
+            public List<DataModel.TestClass> errorTests { get; set; }
             public List<DataModel.TestClass> Tests { get; set; }
             public static List<FilterByTestType> FilteringTests(TestsSectionsClass data)
             {
@@ -378,10 +388,14 @@ namespace VIVA_report_analyser
                     List<DataModel.TestClass> temp = (from DataModel.TestClass n in data.TEST
                                                  where n.F == test.name
                                                  select n).ToList();
+                    List<DataModel.TestClass> ertemp = (from DataModel.TestClass n in temp
+                                                        where (n.F == test.name) & (n.TR != 0)
+                                                      select n).ToList();
                     filteredTest.Add(new FilterByTestType()
                     {
                         testName = test.translation,
-                        Tests = temp
+                        Tests = temp,
+                        errorTests = ertemp
                     });
                 }
                 return filteredTest;

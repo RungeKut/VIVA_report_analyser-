@@ -34,6 +34,10 @@ XML report analyser.
 + [Доступ к элементам управления формы из другого класса](https://translated.turbopages.org/proxy_u/en-ru.ru.03125158-63201c60-0aa0d039-74722d776562/https/stackoverflow.com/questions/12983427/accessing-forms-controls-from-another-class)
 + [Datagridview - формирование цвета строки по значению параметра](https://www.cyberforum.ru/windows-forms/thread153589.html)
 + [Изменяем внешний вид System.Windows.Forms.Form](https://coolcode.ru/izmenyaem-vneshniy-vid-system-windows-forms-form/)
++ [Сортируемый стобец ДАТЫ в DataGridView](https://stackoverflow.com/questions/3770857/how-do-i-implement-automatic-sorting-of-datagridview))
++ [Правильный способ реализовать панель прогресса в C#](https://stackoverflow.com/questions/6204749/the-right-way-to-implement-a-progressbar-in-c-sharp)
++ [String Format for Double [C#]](https://www.csharp-examples.net/string-format-double/)
++ [BackgroundWorker Класс](https://learn.microsoft.com/ru-ru/dotnet/api/system.componentmodel.backgroundworker?view=netframework-4.7)
 ## Contacts
 
 - tps5430@yandex.ru

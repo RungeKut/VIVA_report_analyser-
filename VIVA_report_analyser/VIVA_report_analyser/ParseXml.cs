@@ -83,59 +83,6 @@ namespace VIVA_report_analyser
             new СalculationsClass { name = "MaxDeviation", translation ="MAX отклонение" }
         };
         public static int testCount { get { return ParseXml.vivaXmlTests.Count; } }
-        public static void StartParseThread()
-        {
-            Thread parserThread = new Thread(ParseXml.ParseAllFile);
-            parserThread.Name = "ParserThread";
-            parserThread.IsBackground = true;
-            parserThread.Start();
-        }
-        private static void ParseAllFile()
-        {
-            uint i = 0;
-            while (true)
-            {
-                if (DataModel.dataFiles.needParser)
-                {
-                    if (!DataModel.dataFiles.busy)
-                    {
-                        foreach (var file in DataModel.dataFiles)
-                        {
-                            if (!file.errorOpen)
-                            {
-                                DataModel.XmlData temp = Parse(file.doc);
-                                DataModel.dataFiles.busy = true;
-                                file.Info = temp.Info;
-                                file.FidMrk = temp.FidMrk;
-                                file.PrgC = temp.PrgC;
-                                file.ST = temp.ST;
-                                file.biSec = temp.biSec;
-                                file.ET = temp.ET;
-                                if (file.biSec == null)
-                                {
-                                    file.errorOpen = true;
-                                    log.Warn("Файл/Секция помечены ошибкой открытия т.к. отсутсвует секция BI " + file.Name);
-                                    break;
-                                }
-                                foreach (var numBI in file.biSec.BI)
-                                {
-                                    numBI.dataFilteredByTests = DataModel.FilterByTestType.FilteringTests(numBI.testsSec);
-                                }
-                            }
-                        }
-                        DataModel.dataFiles.busy = false;
-                        DataModel.dataFiles.needParser = false;
-                        DataModel.dataFiles.needUpdateView = true;
-                    }
-                }
-                else
-                {
-                    Thread.Sleep(1000);
-                    i++;
-                    //log.Info("Поток парсера спит " + i + " сек.");
-                }
-            }
-        }
         public static DataModel.XmlData Parse(XDocument doc)
         {
             if (doc == null) return null;

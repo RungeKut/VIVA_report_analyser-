@@ -81,10 +81,8 @@
     </Compile>
     <Compile Include="MainForm\UpdateView.cs" />
     <Compile Include="MaxDeviationCalculate.cs" />
-    <Compile Include="OpenFiles.cs" />
     <Compile Include="ParseXml.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="MainForm\ProgressView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MainForm\RightMouseClickFileTab.cs" />
     <Compile Include="SelectFile.cs">

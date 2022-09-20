@@ -24,14 +24,16 @@ namespace VIVA_report_analyser.MainForm
         public MainForm()
         {
             log.Info("InitializeComponent main Form");
+            WorkThreads.Init();
             mainForm = this;
 
             mainForm.FormClosing += Form_FormClosing;
             Application.ApplicationExit += Application_ApplicationExit;
-            ParseXml.StartParseThread();
-            StartUpdateThread();
+            //StartUpdateThread();
             
             InitializeComponent();
+            progressBar1.Maximum = 1000;
+            progressBar1.Visible = true;
             StyleColor.Init();
             tabControl2.MouseUp += RightMouseClickFileTab.FileTab_MouseClick;
         }
@@ -50,16 +52,11 @@ namespace VIVA_report_analyser.MainForm
         private void button1_Click_1(object sender, EventArgs e)
         {
             button1.Enabled = false;
-            ProgressView.progressV(true);
-            ProgressView.progressReset();
-            OpenFiles.LoadXmlDocument();
-            //ProgressView.progressV(false);
-            button1.Enabled = true;
+            WorkThreads.openFiles.RunWorkerAsync();
         }
         private void button2_Click(object sender, EventArgs e)
         {
             button2.Enabled = false;
-            ProgressView.progressV(true);
             StartDeviationCalculateThread();
         }
         private void button3_Click(object sender, EventArgs e)

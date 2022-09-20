@@ -94,7 +94,7 @@ namespace VIVA_report_analyser
         // Выборка результатов конкретного теста
         {
             List<UniqueFileClass> data = CollectValuesForCalc();
-            MainForm.ProgressView.progressMax(data.Count - 1);
+            //MainForm.ProgressView.progressMax(data.Count - 1);
             List<MaxDeviationCalculateFilteredTests> maxDeviationCalculate = new List<MaxDeviationCalculateFilteredTests>();
             for (int f = 0; f < data.Count; f++)
             {
@@ -186,13 +186,13 @@ namespace VIVA_report_analyser
                         }
                     }
                 }
-                MainForm.ProgressView.progress(f, "Этап 3 из 3 - Расчет отклонения для платы: " + data[f].pcbName);
+                //MainForm.ProgressView.progress(f, "Этап 3 из 3 - Расчет отклонения для платы: " + data[f].pcbName);
             }
             return maxDeviationCalculate;
         }
         public static List<UniqueFileClass> CollectValuesForCalc()
         {
-            MainForm.ProgressView.progressMax((DataModel.dataFiles.Count - 1) * 2);
+            //MainForm.ProgressView.progressMax((DataModel.dataFiles.Count - 1) * 2);
             List<FilterTestClass> uniTest = UniqueTest();
             List<UniqueFileClass> uniqFile = new List<UniqueFileClass>();
             int pcbNumb = -1;
@@ -259,7 +259,7 @@ namespace VIVA_report_analyser
                             }
                         }
                 }
-                MainForm.ProgressView.progress(file, "Этап 2 из 3 - Составляем выборку для групп компонентов файла: " + DataModel.dataFiles[file].Name);
+                //MainForm.ProgressView.progress(file, "Этап 2 из 3 - Составляем выборку для групп компонентов файла: " + DataModel.dataFiles[file].Name);
             }
             //И повторяем для всех тестов
             pcbNumb = -1;
@@ -317,13 +317,13 @@ namespace VIVA_report_analyser
                             }
                         }
                 }
-                MainForm.ProgressView.progress((DataModel.dataFiles.Count - 1) + file, "Этап 2 из 3 - Составляем выборку для всех компонентов файла: " + DataModel.dataFiles[file].Name);
+                //MainForm.ProgressView.progress((DataModel.dataFiles.Count - 1) + file, "Этап 2 из 3 - Составляем выборку для всех компонентов файла: " + DataModel.dataFiles[file].Name);
             }
             return uniqFile;
         }
         public static List<FilterTestClass> UniqueTest()
         {
-            MainForm.ProgressView.progressMax((DataModel.dataFiles.Count - 1) * 2);
+            //MainForm.ProgressView.progressMax((DataModel.dataFiles.Count - 1) * 2);
             int progress = 0;
             //Составляем выборку уникальных тестов внутри фильтра по названию теста
             List<FilterTestClass> returnFile = new List<FilterTestClass>();
@@ -375,7 +375,7 @@ namespace VIVA_report_analyser
                         }
                 }
                 progress++;
-                MainForm.ProgressView.progress(progress, "Этап 1 из 3 - Составляем список уникальных тестов для групп компонентов файла: " + DataModel.dataFiles[file].Name);
+                //MainForm.ProgressView.progress(progress, "Этап 1 из 3 - Составляем список уникальных тестов для групп компонентов файла: " + DataModel.dataFiles[file].Name);
             }
             //Составляем выборку уникальных тестов из всего списка тестов
             returnFile.Add(new FilterTestClass()
@@ -421,7 +421,7 @@ namespace VIVA_report_analyser
                         }
                 }
                 progress++;
-                MainForm.ProgressView.progress(progress, "Этап 1 из 3 - Составляем список уникальных тестов для всех компонентов файла: " + DataModel.dataFiles[file].Name);
+                //MainForm.ProgressView.progress(progress, "Этап 1 из 3 - Составляем список уникальных тестов для всех компонентов файла: " + DataModel.dataFiles[file].Name);
             }
             return returnFile;
         }
