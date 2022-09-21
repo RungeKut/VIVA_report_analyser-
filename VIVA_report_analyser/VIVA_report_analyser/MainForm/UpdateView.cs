@@ -21,7 +21,7 @@ namespace VIVA_report_analyser.MainForm
             {
                 if (DataModel.dataFiles.needUpdateView)
                 {
-                    MainForm.mainForm.tabControl2.Invoke(new Action(() => { MainForm.mainForm.tabControl2.SuspendLayout(); }));
+                    //MainForm.mainForm.tabControl2.Invoke(new Action(() => { MainForm.mainForm.tabControl2.SuspendLayout(); }));
                     for (int file = 0; file < DataModel.dataFiles.Count; file++) // Перебираем открытые файлы
                     {
                         if (!DataModel.dataFiles[file].errorOpen) // Если файл смог открыться
@@ -56,20 +56,27 @@ namespace VIVA_report_analyser.MainForm
 
                                     }
                                     AddNewComponentTab
-                                        (
-                                            ParseXml.Сalculations[0].translation,
-                                            tabTests,
-                                            DataModel.dataFiles[file].biSec.BI[numBI].testsSec.TEST,
-                                            DataModel.dataFiles[file].biSec.BI[numBI].testsSec.TEST.Count,
-                                            0
-                                        );
-                                    MainForm.mainForm.tabControl2.Invoke(new Action(() => { MainForm.mainForm.tabControl2.TabPages.Add(page); }));
+                                    (
+                                        ParseXml.Сalculations[0].translation,
+                                        tabTests,
+                                        DataModel.dataFiles[file].biSec.BI[numBI].testsSec.TEST,
+                                        DataModel.dataFiles[file].biSec.BI[numBI].testsSec.TEST.Count,
+                                        0
+                                    );
+                                    MainForm.mainForm.tabControl2.BeginInvoke(new Action(() =>
+                                    {
+                                        MainForm.mainForm.tabControl2.TabPages.Add(page);
+                                    }));
+                                    /*MainForm.mainForm.tabControl2.Invoke(new Action(() =>
+                                    {
+                                        MainForm.mainForm.tabControl2.TabPages.Add(page);
+                                    }));*/
                                     DataModel.dataFiles[file].biSec.BI[numBI].visible = true;
                                 }
                             }
                         }
                     }
-                    MainForm.mainForm.tabControl2.Invoke(new Action(() => { MainForm.mainForm.tabControl2.ResumeLayout(); }));
+                    //MainForm.mainForm.tabControl2.Invoke(new Action(() => { MainForm.mainForm.tabControl2.ResumeLayout(); }));
                 }
                 else
                 {
