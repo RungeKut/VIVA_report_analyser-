@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
 
-namespace VIVA_report_analyser
+namespace VIVA_report_analyser.MainForm
 {
     internal class MaxDeviationColumnsClass
     {
@@ -90,111 +90,199 @@ namespace VIVA_report_analyser
             new MaxDeviationColumnsClass { name = "deltaP",         translation ="Размах %"             },
             new MaxDeviationColumnsClass { name = "missingInFiles", translation ="Тест отсутствует в файлах" }
         };
-        public static List<MaxDeviationCalculateFilteredTests> DeviationCalculate()
-        // Выборка результатов конкретного теста
+        private static List<FilterTestClass> uniTest = new List<FilterTestClass>();
+        private static List<UniqueFileClass> uniqFile = new List<UniqueFileClass>();
+        public static List<MaxDeviationCalculateFilteredTests> maxDeviationCalculate = new List<MaxDeviationCalculateFilteredTests>();
+        public static BackgroundWorker uniqueTest = new BackgroundWorker();
+        public static BackgroundWorker collectValuesForCalc = new BackgroundWorker();
+        public static BackgroundWorker deviationCalculate = new BackgroundWorker();
+        public static BackgroundWorker deviationCalc = new BackgroundWorker();
+        public static void ThreadsInit()
         {
-            List<UniqueFileClass> data = CollectValuesForCalc();
-            //MainForm.ProgressView.progressMax(data.Count - 1);
-            List<MaxDeviationCalculateFilteredTests> maxDeviationCalculate = new List<MaxDeviationCalculateFilteredTests>();
-            for (int f = 0; f < data.Count; f++)
-            {
-                for (int fltr = 0; fltr < data[f].tests.Count; fltr++)
-                {
-                    try { if (maxDeviationCalculate[fltr].testName != null){} }
-                    catch (Exception) // Если елемента с таким индексом нет - то создаем
-                    {
-                        maxDeviationCalculate.Add(new MaxDeviationCalculateFilteredTests() // Создали раздел с фильтра по тесту
-                        {
-                            testName = data[f].tests[fltr].testName,
-                            data = new List<MaxDeviationCalculate>()
-                        });
-                    }
-                    
-                    for (int t = 0; t < data[f].tests[fltr].uniqueTests.Count; t++)
-                    {
-                        try { if (maxDeviationCalculate[fltr].data[t].fileMin != null){} }
-                        catch (Exception) // Если елемента с таким индексом нет - то создаем
-                        {
-                            if (data[f].tests[fltr].uniqueTests[t].attend == true)
-                            {
-                                maxDeviationCalculate[fltr].data.Add(new MaxDeviationCalculate() // Создали раздел теста
-                                {
-                                    NM = data[f].tests[fltr].uniqueTests[t].uniqueTestName,
-                                    MM = data[f].tests[fltr].uniqueTests[t].MM,
-                                    MU = data[f].tests[fltr].uniqueTests[t].MU,
-                                    fileMin = data[f].pcbName,
-                                    minValue = Math.Round(data[f].tests[fltr].uniqueTests[t].MR, 3),
-                                    fileMax = data[f].pcbName,
-                                    maxValue = Math.Round(data[f].tests[fltr].uniqueTests[t].MR, 3),
-                                    fileMinP = data[f].pcbName,
-                                    minValueP = Math.Round(data[f].tests[fltr].uniqueTests[t].MP, 1),
-                                    fileMaxP = data[f].pcbName,
-                                    maxValueP = Math.Round(data[f].tests[fltr].uniqueTests[t].MP, 1)
-                                });
-                            }
-                            else
-                            {
-                                int fl = f + 1;
-                                while (data[fl].tests[fltr].uniqueTests[t].attend != true)
-                                {
-                                    fl++;
-                                }
-                                maxDeviationCalculate[fltr].data.Add(new MaxDeviationCalculate() // Создали раздел теста
-                                {
-                                    NM = data[fl].tests[fltr].uniqueTests[t].uniqueTestName,
-                                    MM = data[f].tests[fltr].uniqueTests[t].MM,
-                                    MU = data[f].tests[fltr].uniqueTests[t].MU,
-                                    fileMin = data[fl].pcbName,
-                                    minValue = Math.Round(data[fl].tests[fltr].uniqueTests[t].MR, 3),
-                                    fileMax = data[fl].pcbName,
-                                    maxValue = Math.Round(data[fl].tests[fltr].uniqueTests[t].MR, 3),
-                                    fileMinP = data[fl].pcbName,
-                                    minValueP = Math.Round(data[fl].tests[fltr].uniqueTests[t].MP, 1),
-                                    fileMaxP = data[fl].pcbName,
-                                    maxValueP = Math.Round(data[fl].tests[fltr].uniqueTests[t].MP, 1)
-                                });
-                            }
-                        }
-                        if (data[f].tests[fltr].uniqueTests[t].attend == true)
-                        {
-                            if (maxDeviationCalculate[fltr].data[t].minValue > data[f].tests[fltr].uniqueTests[t].MR)
-                            {
-                                maxDeviationCalculate[fltr].data[t].minValue = Math.Round(data[f].tests[fltr].uniqueTests[t].MR, 3);
-                                maxDeviationCalculate[fltr].data[t].fileMin = data[f].pcbName;
-                            }
-                            if (maxDeviationCalculate[fltr].data[t].maxValue < data[f].tests[fltr].uniqueTests[t].MR)
-                            {
-                                maxDeviationCalculate[fltr].data[t].maxValue = Math.Round(data[f].tests[fltr].uniqueTests[t].MR, 3);
-                                maxDeviationCalculate[fltr].data[t].fileMax = data[f].pcbName;
-                            }
-                            maxDeviationCalculate[fltr].data[t].delta = Math.Round(maxDeviationCalculate[fltr].data[t].maxValue - maxDeviationCalculate[fltr].data[t].minValue, 3);
-                            if (maxDeviationCalculate[fltr].data[t].minValueP > data[f].tests[fltr].uniqueTests[t].MP)
-                            {
-                                maxDeviationCalculate[fltr].data[t].minValueP = Math.Round(data[f].tests[fltr].uniqueTests[t].MP, 1);
-                                maxDeviationCalculate[fltr].data[t].fileMinP = data[f].pcbName;
-                            }
-                            if (maxDeviationCalculate[fltr].data[t].maxValueP < data[f].tests[fltr].uniqueTests[t].MP)
-                            {
-                                maxDeviationCalculate[fltr].data[t].maxValueP = Math.Round(data[f].tests[fltr].uniqueTests[t].MP, 1);
-                                maxDeviationCalculate[fltr].data[t].fileMaxP = data[f].pcbName;
-                            }
-                            maxDeviationCalculate[fltr].data[t].deltaP = Math.Round(maxDeviationCalculate[fltr].data[t].maxValueP - maxDeviationCalculate[fltr].data[t].minValueP, 1);
-                        }
-                        else
-                        {
-                            maxDeviationCalculate[fltr].data[t].missingInFiles += data[f].pcbName + ";";
-                        }
-                    }
-                }
-                //MainForm.ProgressView.progress(f, "Этап 3 из 3 - Расчет отклонения для платы: " + data[f].pcbName);
-            }
-            return maxDeviationCalculate;
+            uniqueTest.WorkerReportsProgress = true;
+            uniqueTest.WorkerSupportsCancellation = true;
+            uniqueTest.DoWork += UniqueTest_DoWork;
+            uniqueTest.ProgressChanged += UniqueTest_ProgressChanged;
+            uniqueTest.RunWorkerCompleted += UniqueTest_RunWorkerCompleted;
+            //uniqueTest.RunWorkerAsync();
+
+            collectValuesForCalc.WorkerReportsProgress = true;
+            collectValuesForCalc.WorkerSupportsCancellation = true;
+            collectValuesForCalc.DoWork += CollectValuesForCalc_DoWork;
+            collectValuesForCalc.ProgressChanged += CollectValuesForCalc_ProgressChanged;
+            collectValuesForCalc.RunWorkerCompleted += CollectValuesForCalc_RunWorkerCompleted;
+            //collectValuesForCalc.RunWorkerAsync();
+
+            deviationCalculate.WorkerReportsProgress = true;
+            deviationCalculate.WorkerSupportsCancellation = true;
+            deviationCalculate.DoWork += DeviationCalculate_DoWork;
+            deviationCalculate.ProgressChanged += DeviationCalculate_ProgressChanged;
+            deviationCalculate.RunWorkerCompleted += DeviationCalculate_RunWorkerCompleted;
+            //deviationCalculate.RunWorkerAsync();
+
+            deviationCalc.WorkerReportsProgress = true;
+            deviationCalc.WorkerSupportsCancellation = true;
+            deviationCalc.ProgressChanged += DeviationCalc_ProgressChanged;
+            deviationCalc.DoWork += DeviationCalc_DoWork;
+            deviationCalc.RunWorkerCompleted += DeviationCalc_RunWorkerCompleted;
+            //deviationCalc.RunWorkerAsync();
         }
-        public static List<UniqueFileClass> CollectValuesForCalc()
+        private static void UniqueTest_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            collectValuesForCalc.RunWorkerAsync();
+        }
+        private static void UniqueTest_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            MainForm.mainForm.progressBar1.Value = e.ProgressPercentage;
+            MainForm.mainForm.label1.Text = "   Этап 1 из 3 - Составляем список уникальных тестов   " + String.Format("{0:0.0}", (Double)e.ProgressPercentage / 10) + "%";
+        }
+        private static void UniqueTest_DoWork(object sender, DoWorkEventArgs e)
+        {
+            int tabOpenCount = 0;
+            for (int file = 0; file < DataModel.dataFiles.Count; file++) // Перебираем открытые файлы
+            {
+                for (int numBI = 0; numBI < DataModel.dataFiles[file].biSec.BI.Count; numBI++) // Перебираем все секции с платами в одном файле
+                {
+                    if (DataModel.dataFiles[file].biSec.BI[numBI].visible)
+                        tabOpenCount++;
+                    if (tabOpenCount > 1) break;
+                }
+                if (tabOpenCount > 1) break;
+            }
+            if (tabOpenCount == 0)
+            {
+                MessageBox.Show("Нет открытых файлов", "Не буду считать!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MainForm.mainForm.button2.Invoke(new Action(() => { MainForm.mainForm.button2.Enabled = true; }));
+                return;
+            }
+            if (tabOpenCount == 1)
+            {
+                MessageBox.Show("Необходимо хотя бы ДВА открытых файла для выборки значений", "Не буду считать!", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MainForm.mainForm.button2.Invoke(new Action(() => { MainForm.mainForm.button2.Enabled = true; }));
+                return;
+            }
+
+            int progress = 0;
+            uniqueTest.ReportProgress(progress);
+            int stepProgress = 1000 / (DataModel.dataFiles.Count * 2);
+            uniTest.Clear();
+            //Составляем выборку уникальных тестов внутри фильтра по названию теста
+            List<FilterTestClass> returnFile = new List<FilterTestClass>();
+            int firstFile = 0;
+            // Забиваем лист return File первым видимым массивом и выходим.
+            for (int file = 0; file < DataModel.dataFiles.Count; file++) // Перебираем открытые файлы
+            {
+                for (int numBI = 0; numBI < DataModel.dataFiles[file].biSec.BI.Count; numBI++) // Перебираем все секции с платами в одном файле
+                {
+                    if (!DataModel.dataFiles[file].errorOpen)
+                        if (DataModel.dataFiles[file].biSec.BI[numBI].visible)
+                        {
+                            firstFile = file;
+                            for (int filter = 0; filter < DataModel.dataFiles[file].biSec.BI[numBI].dataFilteredByTests.Count; filter++)
+                            {
+                                returnFile.Add(new FilterTestClass()
+                                {
+                                    testName = DataModel.dataFiles[file].biSec.BI[numBI].dataFilteredByTests[filter].testName,
+                                    uniqueTests = new List<string>()
+                                });
+                                foreach (var test in DataModel.dataFiles[file].biSec.BI[numBI].dataFilteredByTests[filter].Tests)
+                                {
+                                    returnFile[filter].uniqueTests.Add(test.uniqueTestName);
+                                }
+                            }
+                            file = DataModel.dataFiles.Count;
+                            break;
+                        }
+                }
+            }
+            // Делаем объединение с оставшимися массивами
+            for (int file = 0; file < DataModel.dataFiles.Count; file++) // Перебираем открытые файлы
+            {
+                for (int numBI = 0; numBI < DataModel.dataFiles[file].biSec.BI.Count; numBI++) // Перебираем все секции с платами в одном файле
+                {
+                    if (!DataModel.dataFiles[file].errorOpen)
+                        if (DataModel.dataFiles[file].biSec.BI[numBI].visible)
+                        {
+                            for (int filter = 0; filter < DataModel.dataFiles[file].biSec.BI[numBI].dataFilteredByTests.Count; filter++)
+                            {
+                                List<string> tempFile = new List<string>();
+                                foreach (var test in DataModel.dataFiles[file].biSec.BI[numBI].dataFilteredByTests[filter].Tests)
+                                {
+                                    tempFile.Add(test.uniqueTestName);
+                                }
+                                returnFile[filter].uniqueTests = (from cell in returnFile[filter].uniqueTests.Union(tempFile)
+                                                                  select cell).ToList();
+                            }
+                        }
+                }
+                progress += stepProgress;
+                uniqueTest.ReportProgress(progress);
+            }
+            //Составляем выборку уникальных тестов из всего списка тестов
+            returnFile.Add(new FilterTestClass()
+            {
+                testName = ParseXml.Сalculations[0].translation,
+                uniqueTests = new List<string>()
+            });
+            firstFile = 0;
+            int lastTest = returnFile.Count - 1;
+            // Так же в начале Забиваем лист return File первым видимым массивом и выходим.
+            for (int file = 0; file < DataModel.dataFiles.Count; file++) // Перебираем открытые файлы
+            {
+                for (int numBI = 0; numBI < DataModel.dataFiles[file].biSec.BI.Count; numBI++) // Перебираем все секции с платами в одном файле
+                {
+                    if (!DataModel.dataFiles[file].errorOpen)
+                        if (DataModel.dataFiles[file].biSec.BI[numBI].visible)
+                        {
+                            firstFile = file;
+                            foreach (var test in DataModel.dataFiles[file].biSec.BI[numBI].testsSec.TEST)
+                            {
+                                returnFile[lastTest].uniqueTests.Add(test.uniqueTestName);
+                            }
+                            file = DataModel.dataFiles.Count;
+                            break;
+                        }
+                }
+            }
+            // Делаем объединение с оставшимися массивами
+            for (int file = 0; file < DataModel.dataFiles.Count; file++) // Перебираем открытые файлы
+            {
+                for (int numBI = 0; numBI < DataModel.dataFiles[file].biSec.BI.Count; numBI++) // Перебираем все секции с платами в одном файле
+                {
+                    if (!DataModel.dataFiles[file].errorOpen)
+                        if (DataModel.dataFiles[file].biSec.BI[numBI].visible)
+                        {
+                            List<string> tempFile = new List<string>();
+                            foreach (var test in DataModel.dataFiles[file].biSec.BI[numBI].testsSec.TEST)
+                            {
+                                tempFile.Add(test.uniqueTestName);
+                            }
+                            returnFile[lastTest].uniqueTests = (from cell in returnFile[lastTest].uniqueTests.Union(tempFile)
+                                                                select cell).ToList();
+                        }
+                }
+                progress += stepProgress;
+                uniqueTest.ReportProgress(progress);
+            }
+            uniqueTest.ReportProgress(1000);
+            uniTest = returnFile;
+        }
+        private static void CollectValuesForCalc_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            deviationCalculate.RunWorkerAsync();
+        }
+        private static void CollectValuesForCalc_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            MainForm.mainForm.progressBar1.Value = e.ProgressPercentage;
+            MainForm.mainForm.label1.Text = "   Этап 2 из 3 - Составляем выборку для компонентов файлов   " + String.Format("{0:0.0}", (Double)e.ProgressPercentage / 10) + "%";
+        }
+        private static void CollectValuesForCalc_DoWork(object sender, DoWorkEventArgs e)
+        {
+            int progress = 0;
+            collectValuesForCalc.ReportProgress(progress);
+            int stepProgress = 1000 / (DataModel.dataFiles.Count * 2);
+            uniqFile.Clear();
             //MainForm.ProgressView.progressMax((DataModel.dataFiles.Count - 1) * 2);
-            List<FilterTestClass> uniTest = UniqueTest();
-            List<UniqueFileClass> uniqFile = new List<UniqueFileClass>();
             int pcbNumb = -1;
             for (int file = 0; file < DataModel.dataFiles.Count; file++) // Перебираем открытые файлы
             {
@@ -218,10 +306,10 @@ namespace VIVA_report_analyser
                                 });
                                 for (int t = 0; t < uniTest[test].uniqueTests.Count; t++)
                                 {
-                                    List<DataModel.TestClass> tempData = ( from   DataModel.TestClass n
-                                                                           in     DataModel.dataFiles[file].biSec.BI[numBI].dataFilteredByTests[test].Tests
-                                                                           where  n.uniqueTestName == uniTest[test].uniqueTests[t]
-                                                                           select n
+                                    List<DataModel.TestClass> tempData = (from DataModel.TestClass n
+                                                                           in DataModel.dataFiles[file].biSec.BI[numBI].dataFilteredByTests[test].Tests
+                                                                          where n.uniqueTestName == uniTest[test].uniqueTests[t]
+                                                                          select n
                                                                          ).ToList();
                                     if (tempData.Count != 0)
                                     {
@@ -259,6 +347,8 @@ namespace VIVA_report_analyser
                             }
                         }
                 }
+                progress += stepProgress;
+                collectValuesForCalc.ReportProgress(progress);
                 //MainForm.ProgressView.progress(file, "Этап 2 из 3 - Составляем выборку для групп компонентов файла: " + DataModel.dataFiles[file].Name);
             }
             //И повторяем для всех тестов
@@ -317,113 +407,175 @@ namespace VIVA_report_analyser
                             }
                         }
                 }
+                progress += stepProgress;
+                collectValuesForCalc.ReportProgress(progress);
                 //MainForm.ProgressView.progress((DataModel.dataFiles.Count - 1) + file, "Этап 2 из 3 - Составляем выборку для всех компонентов файла: " + DataModel.dataFiles[file].Name);
             }
-            return uniqFile;
+            collectValuesForCalc.ReportProgress(1000);
         }
-        public static List<FilterTestClass> UniqueTest()
+        private static void DeviationCalculate_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            //MainForm.ProgressView.progressMax((DataModel.dataFiles.Count - 1) * 2);
+            deviationCalc.RunWorkerAsync();
+        }
+        private static void DeviationCalculate_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            MainForm.mainForm.progressBar1.Value = e.ProgressPercentage;
+            MainForm.mainForm.label1.Text = "   Этап 3 из 3 - Расчет отклонения   " + String.Format("{0:0.0}", (Double)e.ProgressPercentage / 10) + "%";
+        }
+        private static void DeviationCalculate_DoWork(object sender, DoWorkEventArgs e)
+        {
             int progress = 0;
-            //Составляем выборку уникальных тестов внутри фильтра по названию теста
-            List<FilterTestClass> returnFile = new List<FilterTestClass>();
-            int firstFile = 0;
-            // Забиваем лист return File первым видимым массивом и выходим.
-            for (int file = 0; file < DataModel.dataFiles.Count; file++) // Перебираем открытые файлы
+            deviationCalculate.ReportProgress(progress);
+            int stepProgress = 1000 / (uniqFile.Count);
+            maxDeviationCalculate.Clear();
+            //MainForm.ProgressView.progressMax(data.Count - 1);
+            for (int f = 0; f < uniqFile.Count; f++)
             {
-                for (int numBI = 0; numBI < DataModel.dataFiles[file].biSec.BI.Count; numBI++) // Перебираем все секции с платами в одном файле
+                for (int fltr = 0; fltr < uniqFile[f].tests.Count; fltr++)
                 {
-                    if (!DataModel.dataFiles[file].errorOpen)
-                        if (DataModel.dataFiles[file].biSec.BI[numBI].visible)
+                    try { if (maxDeviationCalculate[fltr].testName != null) { } }
+                    catch (Exception) // Если елемента с таким индексом нет - то создаем
+                    {
+                        maxDeviationCalculate.Add(new MaxDeviationCalculateFilteredTests() // Создали раздел с фильтра по тесту
                         {
-                            firstFile = file;
-                            for (int filter = 0; filter < DataModel.dataFiles[file].biSec.BI[numBI].dataFilteredByTests.Count; filter++)
+                            testName = uniqFile[f].tests[fltr].testName,
+                            data = new List<MaxDeviationCalculate>()
+                        });
+                    }
+
+                    for (int t = 0; t < uniqFile[f].tests[fltr].uniqueTests.Count; t++)
+                    {
+                        try { if (maxDeviationCalculate[fltr].data[t].fileMin != null) { } }
+                        catch (Exception) // Если элемента с таким индексом нет - то создаем
+                        {
+                            if (uniqFile[f].tests[fltr].uniqueTests[t].attend == true)
                             {
-                                returnFile.Add(new FilterTestClass()
+                                maxDeviationCalculate[fltr].data.Add(new MaxDeviationCalculate() // Создали раздел теста
                                 {
-                                    testName = DataModel.dataFiles[file].biSec.BI[numBI].dataFilteredByTests[filter].testName,
-                                    uniqueTests = new List<string>()
+                                    NM = uniqFile[f].tests[fltr].uniqueTests[t].uniqueTestName,
+                                    MM = uniqFile[f].tests[fltr].uniqueTests[t].MM,
+                                    MU = uniqFile[f].tests[fltr].uniqueTests[t].MU,
+                                    fileMin = uniqFile[f].pcbName,
+                                    minValue = Math.Round(uniqFile[f].tests[fltr].uniqueTests[t].MR, 3),
+                                    fileMax = uniqFile[f].pcbName,
+                                    maxValue = Math.Round(uniqFile[f].tests[fltr].uniqueTests[t].MR, 3),
+                                    fileMinP = uniqFile[f].pcbName,
+                                    minValueP = Math.Round(uniqFile[f].tests[fltr].uniqueTests[t].MP, 1),
+                                    fileMaxP = uniqFile[f].pcbName,
+                                    maxValueP = Math.Round(uniqFile[f].tests[fltr].uniqueTests[t].MP, 1)
                                 });
-                                foreach (var test in DataModel.dataFiles[file].biSec.BI[numBI].dataFilteredByTests[filter].Tests)
+                            }
+                            else
+                            {
+                                int fl = f + 1;
+                                while (uniqFile[fl].tests[fltr].uniqueTests[t].attend != true)
                                 {
-                                    returnFile[filter].uniqueTests.Add(test.uniqueTestName);
+                                    fl++;
+                                    if (fl >= uniqFile.Count) break;
                                 }
-                            }
-                            file = DataModel.dataFiles.Count;
-                            break;
-                        }
-                }
-            }
-            // Делаем объединение с оставшимися массивами
-            for (int file = 0; file < DataModel.dataFiles.Count; file++) // Перебираем открытые файлы
-            {
-                for (int numBI = 0; numBI < DataModel.dataFiles[file].biSec.BI.Count; numBI++) // Перебираем все секции с платами в одном файле
-                {
-                    if (!DataModel.dataFiles[file].errorOpen)
-                        if (DataModel.dataFiles[file].biSec.BI[numBI].visible)
-                        {
-                            for (int filter = 0; filter < DataModel.dataFiles[file].biSec.BI[numBI].dataFilteredByTests.Count; filter++)
-                            {
-                                List<string> tempFile = new List<string>();
-                                foreach (var test in DataModel.dataFiles[file].biSec.BI[numBI].dataFilteredByTests[filter].Tests)
+                                maxDeviationCalculate[fltr].data.Add(new MaxDeviationCalculate() // Создали раздел теста
                                 {
-                                    tempFile.Add(test.uniqueTestName);
-                                }
-                                returnFile[filter].uniqueTests = (from cell in returnFile[filter].uniqueTests.Union(tempFile)
-                                                                  select cell).ToList();
+                                    NM = uniqFile[fl].tests[fltr].uniqueTests[t].uniqueTestName,
+                                    MM = uniqFile[f].tests[fltr].uniqueTests[t].MM,
+                                    MU = uniqFile[f].tests[fltr].uniqueTests[t].MU,
+                                    fileMin = uniqFile[fl].pcbName,
+                                    minValue = Math.Round(uniqFile[fl].tests[fltr].uniqueTests[t].MR, 3),
+                                    fileMax = uniqFile[fl].pcbName,
+                                    maxValue = Math.Round(uniqFile[fl].tests[fltr].uniqueTests[t].MR, 3),
+                                    fileMinP = uniqFile[fl].pcbName,
+                                    minValueP = Math.Round(uniqFile[fl].tests[fltr].uniqueTests[t].MP, 1),
+                                    fileMaxP = uniqFile[fl].pcbName,
+                                    maxValueP = Math.Round(uniqFile[fl].tests[fltr].uniqueTests[t].MP, 1)
+                                });
                             }
                         }
-                }
-                progress++;
-                //MainForm.ProgressView.progress(progress, "Этап 1 из 3 - Составляем список уникальных тестов для групп компонентов файла: " + DataModel.dataFiles[file].Name);
-            }
-            //Составляем выборку уникальных тестов из всего списка тестов
-            returnFile.Add(new FilterTestClass()
-            {
-                testName = ParseXml.Сalculations[0].translation,
-                uniqueTests = new List<string>()
-            });
-            firstFile = 0;
-            int lastTest = returnFile.Count - 1;
-            // Так же в начале Забиваем лист return File первым видимым массивом и выходим.
-            for (int file = 0; file < DataModel.dataFiles.Count; file++) // Перебираем открытые файлы
-            {
-                for (int numBI = 0; numBI < DataModel.dataFiles[file].biSec.BI.Count; numBI++) // Перебираем все секции с платами в одном файле
-                {
-                    if (!DataModel.dataFiles[file].errorOpen)
-                        if (DataModel.dataFiles[file].biSec.BI[numBI].visible)
+                        if (uniqFile[f].tests[fltr].uniqueTests[t].attend == true)
                         {
-                            firstFile = file;
-                            foreach (var test in DataModel.dataFiles[file].biSec.BI[numBI].testsSec.TEST)
+                            if (maxDeviationCalculate[fltr].data[t].minValue > uniqFile[f].tests[fltr].uniqueTests[t].MR)
                             {
-                                returnFile[lastTest].uniqueTests.Add(test.uniqueTestName);
+                                maxDeviationCalculate[fltr].data[t].minValue = Math.Round(uniqFile[f].tests[fltr].uniqueTests[t].MR, 3);
+                                maxDeviationCalculate[fltr].data[t].fileMin = uniqFile[f].pcbName;
                             }
-                            file = DataModel.dataFiles.Count;
-                            break;
+                            if (maxDeviationCalculate[fltr].data[t].maxValue < uniqFile[f].tests[fltr].uniqueTests[t].MR)
+                            {
+                                maxDeviationCalculate[fltr].data[t].maxValue = Math.Round(uniqFile[f].tests[fltr].uniqueTests[t].MR, 3);
+                                maxDeviationCalculate[fltr].data[t].fileMax = uniqFile[f].pcbName;
+                            }
+                            maxDeviationCalculate[fltr].data[t].delta = Math.Round(maxDeviationCalculate[fltr].data[t].maxValue - maxDeviationCalculate[fltr].data[t].minValue, 3);
+                            if (maxDeviationCalculate[fltr].data[t].minValueP > uniqFile[f].tests[fltr].uniqueTests[t].MP)
+                            {
+                                maxDeviationCalculate[fltr].data[t].minValueP = Math.Round(uniqFile[f].tests[fltr].uniqueTests[t].MP, 1);
+                                maxDeviationCalculate[fltr].data[t].fileMinP = uniqFile[f].pcbName;
+                            }
+                            if (maxDeviationCalculate[fltr].data[t].maxValueP < uniqFile[f].tests[fltr].uniqueTests[t].MP)
+                            {
+                                maxDeviationCalculate[fltr].data[t].maxValueP = Math.Round(uniqFile[f].tests[fltr].uniqueTests[t].MP, 1);
+                                maxDeviationCalculate[fltr].data[t].fileMaxP = uniqFile[f].pcbName;
+                            }
+                            maxDeviationCalculate[fltr].data[t].deltaP = Math.Round(maxDeviationCalculate[fltr].data[t].maxValueP - maxDeviationCalculate[fltr].data[t].minValueP, 1);
                         }
-                }
-            }
-            // Делаем объединение с оставшимися массивами
-            for (int file = 0; file < DataModel.dataFiles.Count; file++) // Перебираем открытые файлы
-            {
-                for (int numBI = 0; numBI < DataModel.dataFiles[file].biSec.BI.Count; numBI++) // Перебираем все секции с платами в одном файле
-                {
-                    if (!DataModel.dataFiles[file].errorOpen)
-                        if (DataModel.dataFiles[file].biSec.BI[numBI].visible)
+                        else
                         {
-                            List<string> tempFile = new List<string>();
-                            foreach (var test in DataModel.dataFiles[file].biSec.BI[numBI].testsSec.TEST)
-                            {
-                                tempFile.Add(test.uniqueTestName);
-                            }
-                            returnFile[lastTest].uniqueTests = (from cell in returnFile[lastTest].uniqueTests.Union(tempFile)
-                                                                select cell).ToList();
+                            maxDeviationCalculate[fltr].data[t].missingInFiles += uniqFile[f].pcbName + ";";
                         }
+                    }
                 }
-                progress++;
-                //MainForm.ProgressView.progress(progress, "Этап 1 из 3 - Составляем список уникальных тестов для всех компонентов файла: " + DataModel.dataFiles[file].Name);
+                progress += stepProgress;
+                deviationCalculate.ReportProgress(progress);
+                //MainForm.ProgressView.progress(f, "Этап 3 из 3 - Расчет отклонения для платы: " + data[f].pcbName);
             }
-            return returnFile;
+        }
+        private static void DeviationCalc_DoWork(object sender, DoWorkEventArgs e)
+        {
+            int progress = 0;
+            deviationCalc.ReportProgress(progress);
+            int stepProgress = 1000 / (maxDeviationCalculate.Count);
+            TabPage page = new TabPage(ParseXml.Сalculations[1].translation);
+            page.Name = ParseXml.Сalculations[1].translation;
+            page.Visible = true;
+            page.Select();
+            TabControl tabTests = new TabControl();
+            page.Controls.Add(tabTests);
+            tabTests.Dock = DockStyle.Fill;
+            tabTests.ItemSize = new System.Drawing.Size(0, 24);
+            tabTests.SelectedIndex = 0;
+            tabTests.TabIndex = 1;
+            tabTests.Name = ParseXml.Сalculations[1].translation;
+            tabTests.Visible = true;
+            //int tabCount = tabControl2.TabCount;
+
+
+            //for (int test = 0; test < ParseXml.testCount; test++)
+            foreach (var test in MaxDeviationCalculate.maxDeviationCalculate)
+            {
+                MaxDeviationCalculate.DeviationAddNewComponentTab
+                (
+                    test.testName,
+                    tabTests,
+                    test.data
+                );
+                progress += stepProgress;
+                deviationCalc.ReportProgress(progress);
+            }
+            MainForm.mainForm.Invoke(new Action(() =>
+            {
+                MainForm.mainForm.tabControl2.TabPages.Add(page);
+                MainForm.mainForm.tabControl2.SelectTab(MainForm.mainForm.tabControl2.TabCount - 1);
+                MainForm.mainForm.button2.Enabled = true;
+            }));
+            deviationCalc.ReportProgress(1000);
+        }
+
+        private static void DeviationCalc_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            MainForm.mainForm.progressBar1.Value = e.ProgressPercentage;
+            MainForm.mainForm.label1.Text = "   Идет отображение результатов   " + String.Format("{0:0.0}", (Double)e.ProgressPercentage / 10) + "%";
+        }
+        private static void DeviationCalc_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            MainForm.mainForm.button2.Enabled = true;
+            MainForm.mainForm.progressBar1.Visible = false;
+            MainForm.mainForm.label1.Text = "";
         }
         public static void DeviationAddNewComponentTab<T>(string nameTab, TabControl tabControl, IList<T> data)
         // Создание фкладки с именем компонента во вкладке с файлом
@@ -437,7 +589,7 @@ namespace VIVA_report_analyser
                 //page.Tag = "";
                 //page.MouseClick += page_MouseClick;
                 //page.MouseClick += new MouseEventHandler(page_MouseClick);
-                MainForm.DoubleBufferedDataGridView dataGridView = new MainForm.DoubleBufferedDataGridView();
+                DoubleBufferedDataGridView dataGridView = new DoubleBufferedDataGridView();
                 page.Controls.Add(dataGridView);
                 dataGridView.Dock = DockStyle.Fill;
                 dataGridView.AllowUserToAddRows = false;

@@ -17,7 +17,7 @@ namespace VIVA_report_analyser.MainForm
         public static ContextMenuStrip rightMouseClickFileTabContextMenuStrip;
         private static int tabNumber = 0;
         private static bool hitTarget = false;
-        private static List<ClosedTab> closedTabs = new List<ClosedTab>();
+        private static List<ClosedTab> closedTabs = new List<ClosedTab>(); // История закрытия вкладок
         private static TabControl selectTab;
         public static ContextMenuStrip InitializeRightMouseClickFileTab(TabControl tab)
         {
@@ -95,6 +95,7 @@ namespace VIVA_report_analyser.MainForm
         {
             selectTab.TabPages.Clear();
             DataModel.dataFiles.Clear();
+            closedTabs.Clear();
         }
         private static void RecoverTab_MenuItem_Click(object sender, EventArgs e)
         {

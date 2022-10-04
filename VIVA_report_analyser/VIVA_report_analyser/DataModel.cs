@@ -56,6 +56,7 @@ namespace VIVA_report_analyser
                 }
             }
             public Boolean errorOpen { get; set; } // True if the file has not opened
+            public Boolean parsed { get; set; } // True if the file has been parsed
             private XDocument _doc;
             public XDocument doc
             {

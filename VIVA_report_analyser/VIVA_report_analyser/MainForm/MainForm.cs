@@ -52,31 +52,42 @@ namespace VIVA_report_analyser.MainForm
         private void button1_Click_1(object sender, EventArgs e)
         {
             button1.Enabled = false;
+            progressBar1.Visible = true;
             WorkThreads.openFiles.RunWorkerAsync();
         }
         private void button2_Click(object sender, EventArgs e)
         {
             button2.Enabled = false;
-            StartDeviationCalculateThread();
+            progressBar1.Visible = true;
+            MaxDeviationCalculate.uniqueTest.RunWorkerAsync();
         }
         private void button3_Click(object sender, EventArgs e)
         {
             button3.Enabled = false;
             MessageBox.Show("т.к. это хорошо заметно в последнем столбце расчетов МАХ отклонения", "Нереализованная функциональность", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
-        public void StartUpdateThread()
+
+        private void UpdateProgressAction(ProgressInfo obj)
         {
-            Thread updateThread = new Thread(UpdateView.updateForm);
-            updateThread.Name = "UpdateThread";
-            updateThread.IsBackground = true;
-            updateThread.Start();
+            progressBar1.Value = (int)obj.CompletedPercentage;
+            label1.Text = obj.ProgressStatusText + " " + String.Format("{0:0.0}", obj.CompletedPercentage) + "%";
         }
-        public void StartDeviationCalculateThread()
+
+        internal class WorkClass
         {
-            Thread deviationCalculateThread = new Thread(UpdateView.CreateTabDeviationCalc);
-            deviationCalculateThread.Name = "DeviationCalculateThread";
-            deviationCalculateThread.IsBackground = true;
-            deviationCalculateThread.Start();
+            public async Task LongMethod(IReadOnlyList<string> something, IProgress<ProgressInfo> progress)
+            {
+                await Task.Factory.StartNew(() =>
+                {
+                    var count = something.Count;
+                    for (int i = 0; i < count; i++)
+                    {
+                        var element = something[i];
+                        Thread.Sleep(5);
+                        progress.Report(new ProgressInfo((double)(i + 1) / count, element));
+                    }
+                });
+            }
         }
     }
 
