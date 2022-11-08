@@ -36,7 +36,48 @@ namespace VIVA_report_analyser.MainForm
             progressBar1.Visible = true;
             StyleColor.Init();
             tabControl2.MouseUp += RightMouseClickFileTab.FileTab_MouseClick;
+            tabControl2.DrawItem += TabControl2_DrawItem;
         }
+
+        private void TabControl2_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            //Делаем вкладку горизонтальной
+            Graphics g;
+            string sText;
+            int iX;
+            float iY;
+
+            SizeF sizeText;
+            TabControl ctlTab;
+
+            ctlTab = (TabControl)sender;
+
+            g = e.Graphics;
+
+            sText = ctlTab.TabPages[e.Index].Text;
+            sizeText = g.MeasureString(sText, ctlTab.Font);
+            iX = e.Bounds.Left + 6;
+            iY = e.Bounds.Top + (e.Bounds.Height - sizeText.Height) / 2;
+            g.DrawString(sText, ctlTab.Font, Brushes.Black, iX, iY);
+
+            //Красим выделенную вкладку цветом
+            e.Graphics.SetClip(e.Bounds);
+            string text = tabControl2.TabPages[e.Index].Text;
+            SizeF sz = e.Graphics.MeasureString(text, e.Font);
+
+            bool bSelected = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
+            using (SolidBrush b = new SolidBrush(bSelected ? SystemColors.Highlight : SystemColors.Control))
+                e.Graphics.FillRectangle(b, e.Bounds);
+
+            using (SolidBrush b = new SolidBrush(bSelected ? SystemColors.HighlightText : SystemColors.ControlText))
+                e.Graphics.DrawString(text, e.Font, b, e.Bounds.X + 2, e.Bounds.Y + (e.Bounds.Height - sz.Height) / 2);
+
+            if (tabControl2.SelectedIndex == e.Index)
+                e.DrawFocusRectangle();
+
+            e.Graphics.ResetClip();
+        }
+
         private void Form1_Load(object sender, EventArgs e)
         {
         }
