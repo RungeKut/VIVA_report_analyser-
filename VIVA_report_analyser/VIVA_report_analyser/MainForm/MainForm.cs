@@ -105,7 +105,8 @@ namespace VIVA_report_analyser.MainForm
         private void button3_Click(object sender, EventArgs e)
         {
             button3.Enabled = false;
-            MessageBox.Show("т.к. это хорошо заметно в последнем столбце расчетов МАХ отклонения", "Нереализованная функциональность", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            OutputTextBox outputTextBox = new OutputTextBox();
+            outputTextBox.Show();
         }
 
         private void UpdateProgressAction(ProgressInfo obj)

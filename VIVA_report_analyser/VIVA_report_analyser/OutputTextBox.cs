@@ -10,11 +10,17 @@ using System.Windows.Forms;
 
 namespace VIVA_report_analyser
 {
-    public partial class SelectFile : Form
+    public partial class OutputTextBox : Form
     {
-        public SelectFile()
+        public OutputTextBox()
         {
             InitializeComponent();
+            string outText;
+            foreach (var board in DataModel.openFiles)
+            {
+
+            }
+
         }
     }
 }

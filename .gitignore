@@ -1,6 +1,6 @@
 # git ignore file
 *.obj
-*.exe
+# *.exe
 *.pdb
 *.user
 *.aps
@@ -16,13 +16,13 @@
 *.cache
 *.ilk
 *.log
-[Bb]in
+#[Bb]in
 [Dd]ebug*/
 [Ll]og*/
 *.lib
 *.sbr
 obj/
-[Rr]elease*/
+#[Rr]elease*/
 _ReSharper*/
 
 TestCSProject/TestCSProject.suo

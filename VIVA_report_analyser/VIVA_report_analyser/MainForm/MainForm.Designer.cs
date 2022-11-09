@@ -83,7 +83,7 @@ namespace VIVA_report_analyser.MainForm
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(96, 52);
             this.button3.TabIndex = 4;
-            this.button3.Text = "Подсветить отсутствующие тесты";
+            this.button3.Text = "Список печатных плат";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
@@ -142,7 +142,7 @@ namespace VIVA_report_analyser.MainForm
             this.label1.Location = new System.Drawing.Point(1, 1);
             this.label1.Margin = new System.Windows.Forms.Padding(0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(1211, 13);
+            this.label1.Size = new System.Drawing.Size(1210, 13);
             this.label1.TabIndex = 2;
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -153,7 +153,7 @@ namespace VIVA_report_analyser.MainForm
             this.tableLayoutPanel1.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 210F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 211F));
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.progressBar1, 1, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -168,10 +168,10 @@ namespace VIVA_report_analyser.MainForm
             // progressBar1
             // 
             this.progressBar1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.progressBar1.Location = new System.Drawing.Point(1213, 1);
+            this.progressBar1.Location = new System.Drawing.Point(1212, 1);
             this.progressBar1.Margin = new System.Windows.Forms.Padding(0);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(210, 13);
+            this.progressBar1.Size = new System.Drawing.Size(211, 13);
             this.progressBar1.TabIndex = 3;
             // 
             // tableLayoutPanel2
