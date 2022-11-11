@@ -214,6 +214,7 @@ namespace VIVA_report_analyser.MainForm
                                     TabControl tabTests = new TabControl();
                                     page.Controls.Add(tabTests);
                                     tabTests.Dock = DockStyle.Fill;
+                                    tabTests.Multiline = true;
                                     tabTests.ItemSize = new System.Drawing.Size(0, 24);
                                     tabTests.SelectedIndex = 0;
                                     tabTests.TabIndex = 1;

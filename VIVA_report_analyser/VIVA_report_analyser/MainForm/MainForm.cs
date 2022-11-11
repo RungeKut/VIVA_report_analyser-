@@ -35,6 +35,8 @@ namespace VIVA_report_analyser.MainForm
             progressBar1.Maximum = 1000;
             progressBar1.Visible = true;
             StyleColor.Init();
+            tabControl2.Alignment = TabAlignment.Left;
+            //tabControl2.Multiline = false; //не работает совместно с TabAlignment
             tabControl2.MouseUp += RightMouseClickFileTab.FileTab_MouseClick;
             tabControl2.DrawItem += TabControl2_DrawItem;
         }
