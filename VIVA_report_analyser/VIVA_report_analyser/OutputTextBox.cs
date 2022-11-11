@@ -12,15 +12,23 @@ namespace VIVA_report_analyser
 {
     public partial class OutputTextBox : Form
     {
+        public static OutputTextBox outputTextBox = null;
         public OutputTextBox()
         {
+            outputTextBox = this;
             InitializeComponent();
+            outputTextBox.FormClosing += OutputTextBox_FormClosing;
             string outText;
             foreach (var board in DataModel.openFiles)
             {
 
             }
 
+        }
+
+        private void OutputTextBox_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            MainForm.MainForm.mainForm.button3.Enabled = true;
         }
     }
 }

@@ -67,14 +67,20 @@ namespace VIVA_report_analyser
         public static List<VivaXmlTestsClass> vivaXmlTests = new List<VivaXmlTestsClass>
         // Битовая маска указывает какие столбцы интересны для конкретного теста
         {
+            new VivaXmlTestsClass { name = "DISCHARGE",  translation ="Разряд"        },
+            new VivaXmlTestsClass { name = "FNODE",      translation ="Отклик цепи"   },
             new VivaXmlTestsClass { name = "CONTINUITY", translation ="Тест на обрыв" }, 
             new VivaXmlTestsClass { name = "ISOLATION",  translation ="Тест изоляции" },
+            new VivaXmlTestsClass { name = "JUMPER",     translation ="Перемычки"     },
             new VivaXmlTestsClass { name = "RESISTOR",   translation ="Резисторы"     },
             new VivaXmlTestsClass { name = "CAPACITOR",  translation ="Конденсаторы"  },
             new VivaXmlTestsClass { name = "INDUCTANCE", translation ="Индуктивности" },
             new VivaXmlTestsClass { name = "DIODE",      translation ="Диоды"         },
             new VivaXmlTestsClass { name = "TRANSISTOR", translation ="Транзисторы"   },
-            new VivaXmlTestsClass { name = "AUTIC",      translation ="Чип"           }
+            new VivaXmlTestsClass { name = "ZENER",      translation ="Стабилитроны"  },
+            new VivaXmlTestsClass { name = "AUTIC",      translation ="Чип (диоды)"   },
+            new VivaXmlTestsClass { name = "OPENFIX",    translation ="Чип (емкость)" },
+            new VivaXmlTestsClass { name = "ALI",        translation ="Высота"        }
         };
         public static List<СalculationsClass> Сalculations = new List<СalculationsClass>
         // Битовая маска указывает какие столбцы интересны для конкретного вычисления
