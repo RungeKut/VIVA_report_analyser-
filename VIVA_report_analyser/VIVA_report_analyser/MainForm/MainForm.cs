@@ -28,6 +28,8 @@ namespace VIVA_report_analyser.MainForm
             mainForm = this;
 
             mainForm.FormClosing += Form_FormClosing;
+            mainForm.DragEnter += MainForm_DragEnter;
+            mainForm.DragDrop += MainForm_DragDrop;
             Application.ApplicationExit += Application_ApplicationExit;
             //StartUpdateThread();
             
@@ -39,6 +41,68 @@ namespace VIVA_report_analyser.MainForm
             //tabControl2.Multiline = false; //не работает совместно с TabAlignment
             tabControl2.MouseUp += RightMouseClickFileTab.FileTab_MouseClick;
             tabControl2.DrawItem += TabControl2_DrawItem;
+        }
+
+        private void MainForm_DragDrop(object sender, DragEventArgs e)
+        {
+            string findFileMess = null;
+            //Извлекаем пути перетаскиваемых файлов
+            string[] filePaths = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+            int quantityFiles = filePaths.Length;
+            
+            DataModel.dataFiles.busy = true;
+            for (int file = 0; file < quantityFiles; file++)
+            {
+                string Path = filePaths[file];
+                string Name = (System.IO.Path.GetFileName(filePaths[file]));
+                if (DataModel.CheckExistenceFile(Name))
+                {
+                    findFileMess += Name + "\n";
+                }
+                else
+                {
+                    XDocument loadDoc = new XDocument(); // создаем пустой XML документ
+                    using (var Reader = new StreamReader(Path, System.Text.Encoding.UTF8))
+                    {
+                        loadDoc = XDocument.Load(Reader);
+                        Reader.Close();
+                    }
+                    DataModel.dataFiles.Add(new DataModel.DataFile()
+                    {
+                        Name = Name,
+                        Path = Path,
+                        errorOpen = false,
+                        doc = loadDoc
+                    });
+                }
+            }
+            DataModel.dataFiles.busy = false;
+            DataModel.dataFiles.needParser = true;
+            if (findFileMess != null)
+            {
+                MessageBox.Show("Файлы:\n" + findFileMess + "уже открыты в программе!", "Эти файлы уже открыты!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                findFileMess = null;
+            }
+            WorkThreads.parser.RunWorkerAsync();
+        }
+
+        private void MainForm_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop, false)) //Если допаются файлы то
+            {
+                bool allowFilesDrop = true;
+                foreach (string f in (string[])e.Data.GetData(DataFormats.FileDrop, true)) //Проверяем того ли они расширения
+                {
+                    allowFilesDrop = ((new System.IO.FileInfo(f)).Extension == ".xml") |
+                                     ((new System.IO.FileInfo(f)).Extension == ".Xml") |
+                                     ((new System.IO.FileInfo(f)).Extension == ".XML");
+                }
+                if (allowFilesDrop)
+                    e.Effect = DragDropEffects.All;
+                else
+                    e.Effect = DragDropEffects.None;
+            }
         }
 
         private void TabControl2_DrawItem(object sender, DrawItemEventArgs e)

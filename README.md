@@ -42,6 +42,7 @@ XML report analyser.
 + [Как правильно информировать о процессе выполнения задачи?](https://qna.habr.com/q/203613)
 + [TabControl с горизонтальными вкладками слева](https://www.cyberforum.ru/csharp-net/thread232918.html)
 + [Перерисовка элемента управления TreeView](https://russianblogs.com/article/11771548371/)
++ [Реализация Drag and drop в WinForms приложении на C#](https://lexpenz.com/programmirovanie/csharp/realizaciya-drag-and-drop-v-winforms-prilozhenii-na-c.html)
 
 ## Contacts
 
