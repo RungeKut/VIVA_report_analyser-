@@ -50,7 +50,7 @@ namespace VIVA_report_analyser
             new VivaXmlColumnsClass { name = "LB" ,            translation ="LB"                        }, // 20
             new VivaXmlColumnsClass { name = "IN" ,            translation ="IN"                        }, // 21
             new VivaXmlColumnsClass { name = "IDL",            translation ="IDL"                       }, // 22
-            new VivaXmlColumnsClass { name = "TR" ,            translation ="TR"                        }, // 23
+            new VivaXmlColumnsClass { name = "TR" ,            translation ="TR"                        }, // 23 Тест с ошибкой
             new VivaXmlColumnsClass { name = "MU" ,            translation ="Единицы измерения"         }, // 24
             new VivaXmlColumnsClass { name = "ML" ,            translation ="Минимальное"               }, // 25
             new VivaXmlColumnsClass { name = "MM" ,            translation ="Номинал"                   }, // 26
