@@ -208,7 +208,11 @@ namespace VIVA_report_analyser.MainForm
                             if (!DataModel.dataFiles[file].biSec.BI[numBI].visible) // Если секция еще не отображается, то создаем новую вкладку с ней
                                 if (DataModel.dataFiles[file].biSec.BI[numBI].closeNumber == 0)
                                 {
-                                    string tabName = DataModel.dataFiles[file].Name + " | " + DataModel.dataFiles[file].biSec.BI[numBI].ID + " | " + DataModel.dataFiles[file].biSec.BI[numBI].BC;
+                                    string tabName = null;
+                                    if (DataModel.dataFiles[file].biSec.BI[numBI].BC == "")
+                                        tabName = DataModel.dataFiles[file].Name + " | " + DataModel.dataFiles[file].biSec.BI[numBI].ID;
+                                    else
+                                        tabName = DataModel.dataFiles[file].biSec.BI[numBI].BC;
                                     TabPage page = new TabPage(tabName);
                                     page.Name = tabName;
                                     TabControl tabTests = new TabControl();
