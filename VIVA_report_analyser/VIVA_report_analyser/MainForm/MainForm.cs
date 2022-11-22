@@ -46,7 +46,7 @@ namespace VIVA_report_analyser.MainForm
         private void MainForm_DragDrop(object sender, DragEventArgs e)
         {
             string findFileMess = null;
-            if (e.Data.GetDataPresent(DataFormats.FileDrop, false)) //Если допаются файлы то
+            if (e.Data.GetDataPresent(DataFormats.FileDrop, false)) //Если дропаются файлы то
             {
                 bool allowFilesDrop = false;
                 //Извлекаем пути перетаскиваемых файлов
@@ -134,6 +134,7 @@ namespace VIVA_report_analyser.MainForm
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop, false)) //Если дропаются файлы то
             {
+                //Тут можно прописать условия при которых будет меняться курсор мыши и выполняться что-то в зависимости от дропаемых вещей до отпускания кнопки мыши
                 e.Effect = DragDropEffects.All;
             }
             else
@@ -215,6 +216,25 @@ namespace VIVA_report_analyser.MainForm
                 MessageBox.Show("Файлы:\n" + findFileMess + "имеют неподдерживаемый формат!", "Эти файлы не поддерживаются!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 findFileMess = null;
             }
+
+            //Восстановление размеров формы перед открытием
+            if (Properties.Settings.Default.WindowSize.Width <= 800 || Properties.Settings.Default.WindowSize.Height <= 600)
+            {
+                // Старт если параметры отсутствуют или по-умолчанию
+                this.WindowState = FormWindowState.Normal;
+                this.Width = 1440;
+                this.Height = 1010;
+            }
+            else
+            {
+                this.WindowState = Properties.Settings.Default.WindowState;
+
+                // Если окно было свернуто то разворачиваем (нам не нужно свернутое окно при запуске)
+                if (this.WindowState == FormWindowState.Minimized) this.WindowState = FormWindowState.Normal;
+                // Восстанавливаем положение и размер
+                this.Location = Properties.Settings.Default.WindowLocation;
+                this.Size = Properties.Settings.Default.WindowSize;
+            }
         }
         
         private void Application_ApplicationExit(object sender, EventArgs e)
@@ -224,7 +244,21 @@ namespace VIVA_report_analyser.MainForm
 
         private void Form_FormClosing(object sender, FormClosingEventArgs e)
         {
-            
+            //Возвращаем состояние формы
+            Properties.Settings.Default.WindowState = this.WindowState;
+            if (this.WindowState == FormWindowState.Normal)
+            {
+                //Если форма в нормальном состоянии
+                Properties.Settings.Default.WindowLocation = this.Location;
+                Properties.Settings.Default.WindowSize = this.Size;
+            }
+            else //Если форма свернута или развернута
+            {
+                Properties.Settings.Default.WindowLocation = this.RestoreBounds.Location;
+                Properties.Settings.Default.WindowSize = this.RestoreBounds.Size;
+            }
+            //Сохранение настроек
+            Properties.Settings.Default.Save();
         }
         private void button1_Click_1(object sender, EventArgs e)
         {
