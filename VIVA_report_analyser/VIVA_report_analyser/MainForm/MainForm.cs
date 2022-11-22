@@ -46,14 +46,57 @@ namespace VIVA_report_analyser.MainForm
         private void MainForm_DragDrop(object sender, DragEventArgs e)
         {
             string findFileMess = null;
-            //Извлекаем пути перетаскиваемых файлов
-            string[] filePaths = (string[])e.Data.GetData(DataFormats.FileDrop);
-
+            if (e.Data.GetDataPresent(DataFormats.FileDrop, false)) //Если допаются файлы то
+            {
+                bool allowFilesDrop = false;
+                //Извлекаем пути перетаскиваемых файлов
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop, true);
+                int fileQuantity = files.Length;
+                string[] filePaths = new string[fileQuantity];
+                
+                for (int i = 0; i < fileQuantity; i++)
+                {
+                    //Проверяем того ли они расширения
+                    string fileExtension = (new System.IO.FileInfo(files[i])).Extension;
+                    allowFilesDrop = (fileExtension == ".xml") |
+                                     (fileExtension == ".Xml") |
+                                     (fileExtension == ".XML");
+                    if (allowFilesDrop)
+                    {
+                        filePaths[i] = files[i];
+                    }
+                    else
+                    {
+                        filePaths[i] = null;
+                        findFileMess += System.IO.Path.GetFileName(files[i]) + "\n";
+                    }
+                }
+                if (filePaths.Length > 0)
+                {
+                    e.Effect = DragDropEffects.All;
+                    LoadDropFile(filePaths);
+                }
+                else
+                {
+                    e.Effect = DragDropEffects.None;
+                    MessageBox.Show("Поддерживаются только xml файлы!", "Формат не поддерживается!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            if (findFileMess != null)
+            {
+                MessageBox.Show("Файлы:\n" + findFileMess + "имеют неподдерживаемый формат!", "Эти файлы не поддерживаются!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                findFileMess = null;
+            }
+        }
+        private void LoadDropFile(string[] filePaths)
+        {
+            if (filePaths == null) return;
             int quantityFiles = filePaths.Length;
-            
+            string findFileMess = null;
             DataModel.dataFiles.busy = true;
             for (int file = 0; file < quantityFiles; file++)
             {
+                if (filePaths[file] == null) break;
                 string Path = filePaths[file];
                 string Name = (System.IO.Path.GetFileName(filePaths[file]));
                 if (DataModel.CheckExistenceFile(Name))
@@ -89,19 +132,13 @@ namespace VIVA_report_analyser.MainForm
 
         private void MainForm_DragEnter(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop, false)) //Если допаются файлы то
+            if (e.Data.GetDataPresent(DataFormats.FileDrop, false)) //Если дропаются файлы то
             {
-                bool allowFilesDrop = true;
-                foreach (string f in (string[])e.Data.GetData(DataFormats.FileDrop, true)) //Проверяем того ли они расширения
-                {
-                    allowFilesDrop = ((new System.IO.FileInfo(f)).Extension == ".xml") |
-                                     ((new System.IO.FileInfo(f)).Extension == ".Xml") |
-                                     ((new System.IO.FileInfo(f)).Extension == ".XML");
-                }
-                if (allowFilesDrop)
-                    e.Effect = DragDropEffects.All;
-                else
-                    e.Effect = DragDropEffects.None;
+                e.Effect = DragDropEffects.All;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
             }
         }
 
@@ -146,7 +183,40 @@ namespace VIVA_report_analyser.MainForm
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            //Обработка дропа файлов на ярлык приложения, "открыть с помощью" и поддержка ассоциации фалов с приложением
+            string findFileMess = null;
+            string[] args = Environment.GetCommandLineArgs();
+            if (args.Length >= 2)
+            {
+                bool allowFilesDrop = false;
+                //Удалим первый аргумент командной строки (путь к нашей программе)
+                string[] filePaths = new string[args.Length - 1];
+                for (int i = 0; i < args.Length - 1; i++)
+                {
+                    //За одно проверим расширения файлов
+                    string fileExtension = (new System.IO.FileInfo(args[i + 1])).Extension;
+                    allowFilesDrop = (fileExtension == ".xml") |
+                                     (fileExtension == ".Xml") |
+                                     (fileExtension == ".XML");
+                    if (allowFilesDrop)
+                    {
+                        filePaths[i] = args[i + 1];
+                    }
+                    else
+                    {
+                        filePaths[i] = null;
+                        findFileMess += System.IO.Path.GetFileName(args[i + 1]) + "\n";
+                    }
+                }
+                LoadDropFile(filePaths);
+            }
+            if (findFileMess != null)
+            {
+                MessageBox.Show("Файлы:\n" + findFileMess + "имеют неподдерживаемый формат!", "Эти файлы не поддерживаются!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                findFileMess = null;
+            }
         }
+        
         private void Application_ApplicationExit(object sender, EventArgs e)
         {
             
