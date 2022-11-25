@@ -113,7 +113,7 @@ namespace VIVA_report_analyser.MainForm
             if (e.Cancelled)
             {
                 MainForm.mainForm.label1.Text = "";
-                MainForm.mainForm.button1.Enabled = true;
+                MainForm.mainForm.openFileButton.Enabled = true;
                 MainForm.mainForm.progressBar1.Visible = false;
             }
             else
@@ -184,7 +184,7 @@ namespace VIVA_report_analyser.MainForm
             if (e.Cancelled)
             {
                 MainForm.mainForm.label1.Text = "";
-                MainForm.mainForm.button1.Enabled = true;
+                MainForm.mainForm.openFileButton.Enabled = true;
                 MainForm.mainForm.progressBar1.Visible = false;
             }
             else
@@ -262,7 +262,7 @@ namespace VIVA_report_analyser.MainForm
         }
         private static void Update_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            MainForm.mainForm.button1.Enabled = true;
+            MainForm.mainForm.openFileButton.Enabled = true;
             MainForm.mainForm.label1.Text = "";
             MainForm.mainForm.progressBar1.Visible = false;
         }

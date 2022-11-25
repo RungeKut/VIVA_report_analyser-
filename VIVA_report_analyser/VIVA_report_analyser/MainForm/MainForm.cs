@@ -21,26 +21,41 @@ namespace VIVA_report_analyser.MainForm
         public static MainForm mainForm = null;
         private delegate void EnableDelegate(bool enable);
         private static Logger log = LogManager.GetCurrentClassLogger();
+        public System.Windows.Forms.ToolTip toolTipButton = new System.Windows.Forms.ToolTip();
+        
         public MainForm()
         {
             log.Info("InitializeComponent main Form");
             WorkThreads.Init();
             mainForm = this;
 
-            mainForm.FormClosing += Form_FormClosing;
-            mainForm.DragEnter += MainForm_DragEnter;
-            mainForm.DragDrop += MainForm_DragDrop;
+            this.FormClosing += Form_FormClosing;
+            this.DragEnter += MainForm_DragEnter;
+            this.DragDrop += MainForm_DragDrop;
             Application.ApplicationExit += Application_ApplicationExit;
             //StartUpdateThread();
             
             InitializeComponent();
-            progressBar1.Maximum = 1000;
-            progressBar1.Visible = true;
+            this.progressBar1.Maximum = 1000;
+            this.progressBar1.Visible = true;
             StyleColor.Init();
-            tabControl2.Alignment = TabAlignment.Left;
+            MenuCheckedListBox.Init();
+            this.tabControl2.Alignment = TabAlignment.Left;
             //tabControl2.Multiline = false; //не работает совместно с TabAlignment
-            tabControl2.MouseUp += RightMouseClickFileTab.FileTab_MouseClick;
-            tabControl2.DrawItem += TabControl2_DrawItem;
+            this.tabControl2.MouseUp += RightMouseClickFileTab.FileTab_MouseClick;
+            this.tabControl2.DrawItem += TabControl2_DrawItem;
+            this.openFileButton.MouseHover += OpenFileButton_MouseHover;
+            this.updateButton.MouseHover += UpdateButton_MouseHover;
+        }
+
+        private void UpdateButton_MouseHover(object sender, EventArgs e)
+        {
+            toolTipButton.Show("Обновить", updateButton);
+        }
+
+        private void OpenFileButton_MouseHover(object sender, EventArgs e)
+        {
+            toolTipButton.Show("Открыть файлы", openFileButton);
         }
 
         private void MainForm_DragDrop(object sender, DragEventArgs e)
@@ -235,6 +250,7 @@ namespace VIVA_report_analyser.MainForm
                 this.Location = Properties.Settings.Default.WindowLocation;
                 this.Size = Properties.Settings.Default.WindowSize;
             }
+            //menuTabControl.MakeTransparent();
         }
         
         private void Application_ApplicationExit(object sender, EventArgs e)
@@ -260,9 +276,9 @@ namespace VIVA_report_analyser.MainForm
             //Сохранение настроек
             Properties.Settings.Default.Save();
         }
-        private void button1_Click_1(object sender, EventArgs e)
+        private void openFileButton_Click_1(object sender, EventArgs e)
         {
-            button1.Enabled = false;
+            openFileButton.Enabled = false;
             progressBar1.Visible = true;
             WorkThreads.openFiles.RunWorkerAsync();
         }

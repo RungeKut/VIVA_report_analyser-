@@ -36,15 +36,21 @@ namespace VIVA_report_analyser.MainForm
             this.button3 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.button1 = new System.Windows.Forms.Button();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
+            this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
+            this.openFileButton = new System.Windows.Forms.Button();
+            this.updateButton = new System.Windows.Forms.Button();
+            this.optionsCheckedListBox = new System.Windows.Forms.CheckedListBox();
+            this.menuTabControl = new System.Windows.Forms.TabControl();
             this.label1 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.tabPage2.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            this.tabControl1.SuspendLayout();
+            this.tableLayoutPanel3.SuspendLayout();
+            this.tableLayoutPanel4.SuspendLayout();
+            this.menuTabControl.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
@@ -60,7 +66,7 @@ namespace VIVA_report_analyser.MainForm
             this.tabControl2.Multiline = true;
             this.tabControl2.Name = "tabControl2";
             this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(1424, 836);
+            this.tabControl2.Size = new System.Drawing.Size(1424, 833);
             this.tabControl2.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tabControl2.TabIndex = 1;
             // 
@@ -72,7 +78,7 @@ namespace VIVA_report_analyser.MainForm
             this.tabPage2.Location = new System.Drawing.Point(4, 28);
             this.tabPage2.Margin = new System.Windows.Forms.Padding(0);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(1416, 88);
+            this.tabPage2.Size = new System.Drawing.Size(1416, 91);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Инструменты";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -101,38 +107,109 @@ namespace VIVA_report_analyser.MainForm
             // 
             this.tabPage1.BackColor = System.Drawing.SystemColors.Control;
             this.tabPage1.CausesValidation = false;
-            this.tabPage1.Controls.Add(this.button1);
+            this.tabPage1.Controls.Add(this.tableLayoutPanel3);
             this.tabPage1.Location = new System.Drawing.Point(4, 28);
             this.tabPage1.Margin = new System.Windows.Forms.Padding(0);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(1416, 88);
+            this.tabPage1.Size = new System.Drawing.Size(1416, 91);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Файл";
             // 
-            // button1
+            // tableLayoutPanel3
             // 
-            this.button1.BackColor = System.Drawing.Color.Transparent;
-            this.button1.Location = new System.Drawing.Point(18, 18);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(96, 52);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Добавить файлы";
-            this.button1.UseVisualStyleBackColor = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click_1);
+            this.tableLayoutPanel3.BackColor = System.Drawing.Color.ForestGreen;
+            this.tableLayoutPanel3.ColumnCount = 3;
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 88F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 300F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 1128F));
+            this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel4, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this.optionsCheckedListBox, 1, 0);
+            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel3.ForeColor = System.Drawing.SystemColors.Window;
+            this.tableLayoutPanel3.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.AddColumns;
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+            this.tableLayoutPanel3.RowCount = 1;
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(1416, 91);
+            this.tableLayoutPanel3.TabIndex = 5;
             // 
-            // tabControl1
+            // tableLayoutPanel4
             // 
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tabControl1.ItemSize = new System.Drawing.Size(80, 24);
-            this.tabControl1.Location = new System.Drawing.Point(0, 0);
-            this.tabControl1.Margin = new System.Windows.Forms.Padding(0);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.Padding = new System.Drawing.Point(0, 0);
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1424, 120);
-            this.tabControl1.TabIndex = 0;
+            this.tableLayoutPanel4.ColumnCount = 2;
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 44F));
+            this.tableLayoutPanel4.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel4.Controls.Add(this.openFileButton, 0, 0);
+            this.tableLayoutPanel4.Controls.Add(this.updateButton, 0, 1);
+            this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel4.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.AddColumns;
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel4.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel4.Name = "tableLayoutPanel4";
+            this.tableLayoutPanel4.RowCount = 2;
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel4.Size = new System.Drawing.Size(88, 91);
+            this.tableLayoutPanel4.TabIndex = 5;
+            // 
+            // openFileButton
+            // 
+            this.openFileButton.BackColor = System.Drawing.SystemColors.Window;
+            this.openFileButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("openFileButton.BackgroundImage")));
+            this.openFileButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.openFileButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.openFileButton.Location = new System.Drawing.Point(0, 0);
+            this.openFileButton.Margin = new System.Windows.Forms.Padding(0);
+            this.openFileButton.Name = "openFileButton";
+            this.openFileButton.Size = new System.Drawing.Size(44, 45);
+            this.openFileButton.TabIndex = 2;
+            this.openFileButton.Text = "\r\n";
+            this.openFileButton.UseVisualStyleBackColor = false;
+            this.openFileButton.Click += new System.EventHandler(this.openFileButton_Click_1);
+            // 
+            // updateButton
+            // 
+            this.updateButton.BackColor = System.Drawing.SystemColors.Window;
+            this.updateButton.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("updateButton.BackgroundImage")));
+            this.updateButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.updateButton.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.updateButton.Location = new System.Drawing.Point(0, 45);
+            this.updateButton.Margin = new System.Windows.Forms.Padding(0);
+            this.updateButton.Name = "updateButton";
+            this.updateButton.Size = new System.Drawing.Size(44, 46);
+            this.updateButton.TabIndex = 3;
+            this.updateButton.UseVisualStyleBackColor = false;
+            // 
+            // optionsCheckedListBox
+            // 
+            this.optionsCheckedListBox.BackColor = System.Drawing.Color.ForestGreen;
+            this.optionsCheckedListBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.optionsCheckedListBox.CausesValidation = false;
+            this.optionsCheckedListBox.CheckOnClick = true;
+            this.optionsCheckedListBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.optionsCheckedListBox.ForeColor = System.Drawing.SystemColors.Window;
+            this.optionsCheckedListBox.FormattingEnabled = true;
+            this.optionsCheckedListBox.IntegralHeight = false;
+            this.optionsCheckedListBox.Location = new System.Drawing.Point(88, 0);
+            this.optionsCheckedListBox.Margin = new System.Windows.Forms.Padding(0);
+            this.optionsCheckedListBox.Name = "optionsCheckedListBox";
+            this.optionsCheckedListBox.Size = new System.Drawing.Size(300, 91);
+            this.optionsCheckedListBox.TabIndex = 4;
+            // 
+            // menuTabControl
+            // 
+            this.menuTabControl.Controls.Add(this.tabPage1);
+            this.menuTabControl.Controls.Add(this.tabPage2);
+            this.menuTabControl.Dock = System.Windows.Forms.DockStyle.Top;
+            this.menuTabControl.ItemSize = new System.Drawing.Size(80, 24);
+            this.menuTabControl.Location = new System.Drawing.Point(0, 0);
+            this.menuTabControl.Margin = new System.Windows.Forms.Padding(0);
+            this.menuTabControl.Name = "menuTabControl";
+            this.menuTabControl.Padding = new System.Drawing.Point(0, 0);
+            this.menuTabControl.SelectedIndex = 0;
+            this.menuTabControl.Size = new System.Drawing.Size(1424, 123);
+            this.menuTabControl.TabIndex = 0;
             // 
             // label1
             // 
@@ -142,7 +219,7 @@ namespace VIVA_report_analyser.MainForm
             this.label1.Location = new System.Drawing.Point(1, 1);
             this.label1.Margin = new System.Windows.Forms.Padding(0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(1208, 13);
+            this.label1.Size = new System.Drawing.Size(1202, 13);
             this.label1.TabIndex = 2;
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
@@ -153,7 +230,7 @@ namespace VIVA_report_analyser.MainForm
             this.tableLayoutPanel1.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 213F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 219F));
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.progressBar1, 1, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -168,10 +245,10 @@ namespace VIVA_report_analyser.MainForm
             // progressBar1
             // 
             this.progressBar1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.progressBar1.Location = new System.Drawing.Point(1210, 1);
+            this.progressBar1.Location = new System.Drawing.Point(1204, 1);
             this.progressBar1.Margin = new System.Windows.Forms.Padding(0);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(213, 13);
+            this.progressBar1.Size = new System.Drawing.Size(219, 13);
             this.progressBar1.TabIndex = 3;
             // 
             // tableLayoutPanel2
@@ -181,13 +258,13 @@ namespace VIVA_report_analyser.MainForm
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.Controls.Add(this.tabControl2, 0, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 120);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 123);
             this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(1424, 836);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(1424, 833);
             this.tableLayoutPanel2.TabIndex = 5;
             // 
             // MainForm
@@ -195,12 +272,12 @@ namespace VIVA_report_analyser.MainForm
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.Control;
+            this.BackColor = System.Drawing.SystemColors.Window;
             this.ClientSize = new System.Drawing.Size(1424, 971);
             this.Controls.Add(this.tableLayoutPanel2);
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Controls.Add(this.tabControl1);
-            this.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.Controls.Add(this.menuTabControl);
+            this.ForeColor = System.Drawing.SystemColors.WindowText;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Location = new System.Drawing.Point(100, 15);
             this.MinimumSize = new System.Drawing.Size(800, 600);
@@ -211,7 +288,9 @@ namespace VIVA_report_analyser.MainForm
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabPage2.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
-            this.tabControl1.ResumeLayout(false);
+            this.tableLayoutPanel3.ResumeLayout(false);
+            this.tableLayoutPanel4.ResumeLayout(false);
+            this.menuTabControl.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
@@ -225,13 +304,17 @@ namespace VIVA_report_analyser.MainForm
         public System.Windows.Forms.TabPage tabPage2;
         public System.Windows.Forms.Button button2;
         public System.Windows.Forms.TabPage tabPage1;
-        public System.Windows.Forms.Button button1;
-        public System.Windows.Forms.TabControl tabControl1;
+        public System.Windows.Forms.Button openFileButton;
+        public System.Windows.Forms.TabControl menuTabControl;
         public System.Windows.Forms.Button button3;
         public System.Windows.Forms.Label label1;
         public System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         public System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         public System.Windows.Forms.ProgressBar progressBar1;
+        public System.Windows.Forms.Button updateButton;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
+        public System.Windows.Forms.CheckedListBox optionsCheckedListBox;
     }
 }
 
