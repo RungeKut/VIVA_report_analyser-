@@ -1,7 +1,12 @@
 # VIVA report analyser
 XML report analyser.
 
-## How it Works
+## Используемые пакеты NuGet
+Все используемые в этом проекте пакеты NuGet лежат в [этой папке](supplementary_files/NuGetPackages).
+
+NuGet Packege Manager Setting:
+![Image alt](supplementary_files/NuGetOptions.jpg "general view")​
+
 ### Предназначение:
 Программа ориентирована на обработку xml отчетов станка VIVA Pilot V8 NEXT производства Seica.
 ### Для работы необходимо:
