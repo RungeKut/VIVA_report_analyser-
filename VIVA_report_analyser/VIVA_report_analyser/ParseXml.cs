@@ -62,10 +62,9 @@ namespace VIVA_report_analyser
             new VivaXmlColumnsClass { name = "DG" ,            translation ="DG"                        }, // 32
             new VivaXmlColumnsClass { name = "FR" ,            translation ="Описание ошибки"           }, // 33
             new VivaXmlColumnsClass { name = "AL" ,            translation ="AL"                        }, // 34
-            new VivaXmlColumnsClass { name = "uniqueTestName", translation ="Идентификатор"             }  // 35
+            new VivaXmlColumnsClass { name = "uniqueTestName", translation ="Идентификатор"             }  // 35 Уникальный составной ключ для дальнейших вычислений
         };
         public static List<VivaXmlTestsClass> vivaXmlTests = new List<VivaXmlTestsClass>
-        // Битовая маска указывает какие столбцы интересны для конкретного теста
         {
             new VivaXmlTestsClass { name = "DISCHARGE",  translation ="Разряд"        },
             new VivaXmlTestsClass { name = "FNODE",      translation ="Отклик цепи"   },
@@ -83,7 +82,6 @@ namespace VIVA_report_analyser
             new VivaXmlTestsClass { name = "ALI",        translation ="Высота"        }
         };
         public static List<СalculationsClass> Сalculations = new List<СalculationsClass>
-        // Битовая маска указывает какие столбцы интересны для конкретного вычисления
         {
             new СalculationsClass { name = "All",          translation ="Все тесты"      }, 
             new СalculationsClass { name = "MaxDeviation", translation ="MAX отклонение" }

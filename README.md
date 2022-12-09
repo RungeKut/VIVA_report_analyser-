@@ -1,17 +1,34 @@
-# VIVA report analyser
-XML report analyser.
-
-## Используемые пакеты NuGet
-Все используемые в этом проекте пакеты NuGet лежат в [этой папке](supplementary_files/NuGetPackages).
-
-NuGet Packege Manager Setting:
-![Image alt](supplementary_files/NuGetOptions.jpg "general view")​
-
-### Предназначение:
-Программа ориентирована на обработку xml отчетов станка VIVA Pilot V8 NEXT производства Seica.
-### Для работы необходимо:
+<h1 id="project_name" align="center">VIVA report analyser</h1>
+<br>
+<h2 id="content">Содержание</h2>
+<ol>
+<li><a href="#destiny">Предназначение</a></li>
+<li><a href="#needwork">Для работы необходимо</a></li>
+<li><a href="#nuget">Используемые пакеты NuGet</a></li>
+</ol>
+<hr>
+<h2 id="destiny" align="center">Предназначение</h2>
+<br>
+Программа ориентирована на обработку xml отчетов станка VIVA Pilot V8 NEXT производства Seica. Позволяет просматривать их в удобном читаемом виде, выполнять анализ результатов и генерировать отчеты.
+<hr>
+<h2 id="needwork" align="center">Для работы необходимо</h2>
+<br>
 В проекте платы станка зайти в меню Board Options. В разделе Test Settings значение свойств Print All Tests Result, Print All Components Result, Save All the Reports установить значение 1.
-### Добавить файлы к расчету:
+<hr>
+<h2 id="nuget" align="center">Используемые пакеты NuGet</h2>
+<br>
+Все используемые в этом проекте пакеты NuGet лежат в [этой папке](supplementary_files/NuGetPackages).
+<br>
+NuGet Package Manager Setting:
+<br>
+<p align="center"><img src="supplementary_files/NuGetOptions.jpg" width="800"></p>​
+<hr>
+# Описание функционала приложения:
+<hr>
+## Входные файлы:
+
+Основные поддерживаемые программой файлы формата .xml структура которых описана в классе [ParseXml](VIVA_report_analyser/VIVA_report_analyser/ParseXml.cs).
+
 Чтобы открыть xml файлы на просмотр - нажимаем кнопку добавить файлы.
 Выбираем нужные файлы (можно несколько) и нажимаем Открыть.
 Программа укажет на неподдерживаемый формат файлов, а остальные попытается добавить.
