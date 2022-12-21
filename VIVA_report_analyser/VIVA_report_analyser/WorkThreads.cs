@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
 
-namespace VIVA_report_analyser.MainForm
+namespace VIVA_report_analyser.UI
 {
     public class WorkThreads
     {

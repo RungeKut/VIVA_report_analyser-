@@ -28,7 +28,7 @@ namespace VIVA_report_analyser
 
         private void OutputTextBox_FormClosing(object sender, FormClosingEventArgs e)
         {
-            MainForm.MainForm.mainForm.button3.Enabled = true;
+            UI.MainForm.mainForm.button3.Enabled = true;
         }
     }
 }
