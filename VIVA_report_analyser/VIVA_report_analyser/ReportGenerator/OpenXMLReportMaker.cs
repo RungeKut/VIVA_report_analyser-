@@ -14,10 +14,9 @@ namespace VIVA_report_analyser.ReportGenerator
 {
     internal class OpenXMLReportMaker : IReportGenerator
     {
+        Document document;
         public void MakeReportFromTemplate(string fileName)
         {
-            var templatePath = @"Y:\#10 Git Project\VIVA_report_analyser\supplementary_files\pattern.docx";
-            var documentPath = @"Y:\#10 Git Project\VIVA_report_analyser\supplementary_files\newFilename.docx";
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
                 AddExtension = true,
@@ -37,160 +36,78 @@ namespace VIVA_report_analyser.ReportGenerator
                 //e.Cancel = true;
                 return;
             }
-            documentPath = saveFileDialog.FileName;
-
-            using (var template = File.OpenRead(templatePath))
+            var documentPath = saveFileDialog.FileName;
+            WordprocessingDocument doc = null;
+            try
             {
-                using (var documentStream = File.Open(documentPath, FileMode.OpenOrCreate))
-                { // Скопируем шаблон
-                    template.CopyTo(documentStream);
-
-                    using (var document = WordprocessingDocument.Open(documentStream, true))
-                    {
-                        // Создадим временную таблицу
-                        DataTable dt = new DataTable();
-                        int rowCount = 0;
-                        Body body = document.MainDocumentPart.Document.Body;
-                        // Найдем первую таблицу в документе
-                        Table table = body.Elements<Table>().First();
-                        // Получим список список всех строк таблицы
-                        IEnumerable<TableRow> rows = table.Elements<TableRow>();
-                        // Пробежимся по ячейкам
-                        TableCell cell = rows.ElementAt<TableRow>(3).Elements<TableCell>().Last<TableCell>();
-                        //string designator = rows.ElementAt<TableRow>(3).Elements<TableCell>().Last<TableCell>().InnerText;
-                        //document.MainDocumentPart.Document.Body.Elements<Table>().First().Elements<TableRow>().ElementAt<TableRow>(3).Elements<TableCell>().Last<TableCell>().InnerText;
-                        //designator = "Сообщение";
-                        //body.Append(cell);
-                        //MessageBox.Show(cell.InnerText, "Сообщение", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        document.MainDocumentPart.Document.Save();
-                    }
-                }
+                doc = WordprocessingDocument.Create(documentPath, WordprocessingDocumentType.Document);
             }
-        }
-        
-        public void MakeReport(string fileName)
-        {
-            
-        }
-        public Paragraph AddNewText(String fontName, Boolean boldFlag, int fontSizeNumber, String str, JustificationValues val, Boolean breakFlag)
-        {
-            return AddNewText(fontName, boldFlag, fontSizeNumber, str, val, breakFlag, null, null);
-        }
-
-        public Paragraph AddNewText(String fontName, Boolean boldFlag, int fontSizeNumber, String str, JustificationValues val, Boolean breakFlag, int? after)
-        {
-            return AddNewText(fontName, boldFlag, fontSizeNumber, str, val, breakFlag, after, null);
-        }
-
-
-        public Paragraph AddNewText(String fontName, Boolean boldFlag, int fontSizeNumber, String str, JustificationValues val, Boolean breakFlag, int? after, int[] tabstop)
-        {
-            return AddNewText(fontName, boldFlag, fontSizeNumber, str, val, breakFlag, after, tabstop, false);
-        }
-
-        public Paragraph AddNewText(String fontName, Boolean boldFlag, int fontSizeNumber, String str, JustificationValues val, Boolean breakFlag, int? after, int[] tabstop, bool keepNext)
-        {
-            return AddNewText(fontName, boldFlag, fontSizeNumber, str, val, breakFlag, after, tabstop, keepNext, false);
-        }
-
-        public Paragraph AddNewText(String fontName, Boolean boldFlag, int fontSizeNumber, String str, JustificationValues val, Boolean breakFlag, int? after, int[] tabstop, bool keepNext, bool pageSectionBreak)
-        {
-            Paragraph paragraph = new Paragraph();
-
-            ParagraphProperties paragraphProperties = new ParagraphProperties();
-
-            if (keepNext)
+            catch (Exception ex)
             {
-                paragraphProperties.Append(new KeepNext());
-                paragraphProperties.Append(new KeepLines());
+                throw new Exception("Невозможно открыть файл с именем, выбранным для сохранения отчета", ex);
             }
 
-            Justification justification = new Justification() { Val = val };
-
-            ParagraphMarkRunProperties paragraphMarkRunProperties = new ParagraphMarkRunProperties();
-            RunFonts font = new RunFonts { Ascii = fontName };
-
-            font = new RunFonts() { Ascii = "Times New Roman", HighAnsi = "Times New Roman" };
-            if (boldFlag == true)
+            using (doc)
             {
-                Bold bold = new Bold();
-                paragraphMarkRunProperties.Append(bold);
+                MainDocumentPart mainPart = doc.AddMainDocumentPart();
+                mainPart.Document = new Document();
+                document = mainPart.Document;
+                Body body = doc.MainDocumentPart.Document.AppendChild(new Body());
+                PageSize ps;
+                PageMargin pm;
+                ps = new PageSize() { Width = (UInt32Value)16839U, Height = (UInt32Value)11907U, Orient = PageOrientationValues.Landscape };
+                pm = new PageMargin() { Top = 900, Right = (UInt32Value)850U, Bottom = 600, Left = (UInt32Value)850U, Footer = 300, Header = 450 };
+                SectionProperties sp = new SectionProperties() { RsidR = "00E0164B", RsidSect = "00E0164B" };
+                sp.AppendChild(ps);
+                sp.AppendChild(pm);
+
+                Table table1 = new Table();
+                TableBorders borders = new TableBorders();
+                TableProperties tableProp = new TableProperties();
+                //TableStyle tableStyle = new TableStyle() { Val = "TableGrid" };
+
+
+                TableWidth tableWidth = new TableWidth() { Width = "9356", Type = TableWidthUnitValues.Dxa };
+
+                tableProp.Append(tableWidth);
+
+                //tableProp.Append(tableStyle);
+                table1.AppendChild(tableProp);
+
+                TableGrid tg = new TableGrid(new GridColumn());
+                table1.AppendChild(tg);
+
+                TableRow row1 = new TableRow();
+                TableCell cell1_1 = new TableCell();
+                cell1_1.Append(OpenXML_Function.AddNewText(str: "АКТ", boldStyle: true, fontSize: 32, alignment: JustificationValues.Center, colour:"000065"));
+                row1.Append(cell1_1);
+                table1.Append(row1);
+
+                TableRow row2 = new TableRow();
+                TableCell cell1_2 = new TableCell();
+                cell1_2.Append(OpenXML_Function.AddNewText(str: "Автоматизированного электрического контроля ПУ № 1 от " + DateTime.Now.ToString("dd MMMM yyyy") + " г.", boldStyle: true, alignment: JustificationValues.Center, colour: "000065"));
+                row2.Append(cell1_2);
+                table1.Append(row2);
+
+                TableRow row3 = new TableRow();
+                TableCell cell1_3 = new TableCell();
+                cell1_3.Append(OpenXML_Function.AddNewText(str: ""));
+                row3.Append(cell1_3);
+                table1.Append(row3);
+
+                TableRow row4 = new TableRow();
+                TableCell cell1_4 = new TableCell();
+                cell1_4.Append(OpenXML_Function.AddNewText(str: "Децимальный номер ПУ:", boldStyle: true));
+                cell1_4.Append(new TableCellProperties(new TableCellWidth() { Width = "6521", Type = TableWidthUnitValues.Dxa }));
+                row4.Append(cell1_4);
+                TableCell cell2_4 = new TableCell();
+                cell2_4.Append(OpenXML_Function.AddNewText(str: "LNVK.000000.001", boldStyle: true));
+                cell2_4.Append(new TableCellProperties(new TableCellWidth() { Width = "2835", Type = TableWidthUnitValues.Dxa }));
+                row4.Append(cell2_4);
+                table1.Append(row4);
+
+                body.Append(table1);
             }
-            FontSize fontSize = new FontSize() { Val = fontSizeNumber.ToString() };
-
-            paragraphMarkRunProperties.Append(font);
-            paragraphMarkRunProperties.Append(fontSize);
-
-            paragraphProperties.Append(justification);
-            paragraphProperties.Append(paragraphMarkRunProperties);
-
-            if (tabstop != null)
-            {
-                Tabs tabs1 = new Tabs();
-                foreach (int pos in tabstop)
-                {
-
-                    TabStop tabStop1 = new TabStop() { Val = TabStopValues.Left, Position = pos };
-
-                    tabs1.Append(tabStop1);
-                }
-
-                paragraphProperties.Append(tabs1);
-            }
-
-            if (after != null)
-            {
-                SpacingBetweenLines spacingBetweenLines = new SpacingBetweenLines() { Line = "240", LineRule = LineSpacingRuleValues.Auto, Before = "0", After = after.ToString() };
-                paragraphProperties.Append(spacingBetweenLines);
-            }
-
-            Run run = new Run();
-            RunProperties rPr = new RunProperties();
-
-            font = new RunFonts() { Ascii = "Times New Roman", HighAnsi = "Times New Roman" };
-            if (boldFlag == true)
-            {
-                Bold bold = new Bold();
-                rPr.AppendChild(bold);
-            }
-            fontSize = new FontSize() { Val = fontSizeNumber.ToString() };
-
-            rPr.AppendChild(font);
-            rPr.AppendChild(fontSize);
-
-
-            run.Append(rPr);
-
-            if (pageSectionBreak)
-            {
-                LastRenderedPageBreak lastRenderedPageBreak1 = new LastRenderedPageBreak();
-                run.Append(lastRenderedPageBreak1);
-            }
-
-
-            String[] textBlocks = str.Split('\t');
-
-            for (int i = 0; i < textBlocks.Length; i++)
-            {
-
-                Text text1 = new Text();
-                text1.Text = textBlocks[i];
-
-
-                run.Append(text1);
-
-                if (i != textBlocks.Length - 1)
-                    run.Append(new TabChar());
-            }
-            if (breakFlag)
-            {
-                Break _break = new Break() { Type = BreakValues.Page };
-                run.Append(_break);
-            }
-
-            paragraph.Append(paragraphProperties);
-            paragraph.Append(run);
-            return paragraph;
         }
     }
 }

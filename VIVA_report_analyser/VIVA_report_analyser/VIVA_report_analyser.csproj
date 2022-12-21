@@ -86,7 +86,11 @@
     <Compile Include="ReportGenerator\IReportGenerator.cs" />
     <Compile Include="ReportGenerator\OpenXmlPowerToolsSearchAndReplace.cs" />
     <Compile Include="ReportGenerator\OpenXMLTagReplace.cs" />
+    <Compile Include="ReportGenerator\OpenXML_Function.cs" />
     <Compile Include="Settings\DbConnectiondSettings.cs" />
+    <Compile Include="UI\DoubleBufferedDataGridView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UI\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

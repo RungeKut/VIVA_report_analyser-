@@ -350,12 +350,4 @@ namespace VIVA_report_analyser.UI
             oxrm.MakeReportFromTemplate("TestReport");
         }
     }
-
-    public class DoubleBufferedDataGridView : DataGridView
-    // Двойная буфферизация для таблиц, ускоряет работу
-    {
-        protected override bool DoubleBuffered { get => true; }
-    }
-
-    
 }
